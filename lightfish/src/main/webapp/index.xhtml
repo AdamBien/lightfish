@@ -7,7 +7,11 @@
     </h:head>
     <h:body>
         <h:form>
-            <h:inputText value=""/><br/>
+            <h:panelGrid columns="2">
+            Location:<h:inputText value="#{index.location}"/><br/>
+            Interval:<h:inputText value="#{index.interval}"/><br/>
+            </h:panelGrid>
+            <h:commandButton value="Update" action="#{index.changeAdministration}"/>
         </h:form>
     </h:body>
 </html>
