@@ -1,10 +1,9 @@
-package org.lightfish.monitoring.control;
+package org.lightfish.business.monitoring.control;
 
-import org.lightfish.monitoring.control.DataProvider;
 import org.codehaus.jettison.json.JSONException;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *

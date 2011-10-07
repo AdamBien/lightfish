@@ -8,7 +8,7 @@
         <title>LightFish</title>
     </head>
     <body>
-        <h1>Welcome to LightFish - it brings light to GlassFish monitoring data</h1>
+        <h1>Welcome to LightFish - brings light to GlassFish monitoring data</h1>
         <p></p>
         <a href="http://localhost:8080/lightfish/resources/snapshots">All Snaphots</a>
         <br/>

@@ -1,4 +1,4 @@
-package org.lightfish.monitoring.entity;
+package org.lightfish.business.monitoring.entity;
 
 import java.util.Date;
 import javax.persistence.Entity;

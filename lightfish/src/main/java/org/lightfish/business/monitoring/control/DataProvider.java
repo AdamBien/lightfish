@@ -1,4 +1,4 @@
-package org.lightfish.monitoring.control;
+package org.lightfish.business.monitoring.control;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -6,7 +6,7 @@ import javax.annotation.PostConstruct;
 import javax.ws.rs.core.MediaType;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.lightfish.monitoring.entity.Snapshot;
+import org.lightfish.business.monitoring.entity.Snapshot;
 
 /**
  *

@@ -1,4 +1,4 @@
-package org.lightfish.monitoring.boundary;
+package org.lightfish.business.monitoring.boundary;
 
 import java.util.List;
 import javax.ejb.Schedule;
@@ -13,8 +13,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import org.lightfish.monitoring.control.DataProvider;
-import org.lightfish.monitoring.entity.Snapshot;
+import org.lightfish.business.monitoring.control.DataProvider;
+import org.lightfish.business.monitoring.entity.Snapshot;
 
 /**
  *
