@@ -3,6 +3,7 @@ package org.lightfish.business.monitoring.control;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -14,7 +15,6 @@ import org.lightfish.business.monitoring.entity.Snapshot;
  */
 public class DataProvider {
 
-    public static final String BASE_URL = "http://localhost:4848/monitoring/domain/server/";
     public static final String HEAP_SIZE = "jvm/memory/usedheapsize-count";
     private static final String THREAD_COUNT = "jvm/thread-system/threadcount";
     private static final String ERROR_COUNT = "http-service/server/request/errorcount";
@@ -24,10 +24,16 @@ public class DataProvider {
     private static final String ROLLED_BACK_TX = "transaction-service/rolledbackcount";
     private static final String QUEUED_CONNS = "network/connection-queue/countqueued";
     private Client client;
+    private String BASE_URL;
+    
+    @Inject
+    private String location;
 
     @PostConstruct
     public void initializeClient() {
         this.client = Client.create();
+        this.BASE_URL = "http://"+location+"/monitoring/domain/server/";
+        System.out.println("BASE_URL: " + this.BASE_URL);
     }
 
     public Snapshot fetchData(){

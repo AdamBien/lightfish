@@ -1,9 +1,10 @@
 package org.lightfish.presentation.administration;
 
 import javax.enterprise.inject.Model;
+import javax.inject.Inject;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.lightfish.business.configuration.boundary.Configurator;
 
 /**
  *
@@ -12,31 +13,32 @@ import javax.validation.constraints.Size;
 @Model
 public class Index {
     
-    @Size(min=5,max=30)
-    private String location;
     
-    @Min(1)
-    private int interval;
+    @Inject
+    Configurator configurator;
 
+    @Min(1)
     public int getInterval() {
-        return interval;
+        return configurator.getInterval();
     }
 
     public void setInterval(int interval) {
-        this.interval = interval;
+        this.configurator.setInterval(interval);
     }
 
+    @Size(min=5,max=30)
     public String getLocation() {
-        return location;
+        return this.configurator.getLocation();
     }
 
     public void setLocation(String location) {
-        this.location = location;
+        this.configurator.setLocation(location);
+    
     }
 
     
     public Object changeAdministration(){
-        System.out.println(location + ":" + interval);
+        System.out.println(this.configurator.getLocation() + ":" +this.configurator.getInterval());
         return null;
     }
     
