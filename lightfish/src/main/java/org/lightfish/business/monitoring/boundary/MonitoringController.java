@@ -1,9 +1,14 @@
 package org.lightfish.business.monitoring.boundary;
 
+import java.util.Date;
 import java.util.List;
-import javax.ejb.Schedule;
-import javax.ejb.Singleton;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import javax.ejb.*;
 import javax.enterprise.event.Event;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -20,10 +25,13 @@ import org.lightfish.business.monitoring.entity.Snapshot;
  *
  * @author Adam Bien, blog.adam-bien.com
  */
+
 @Singleton
 @Path("snapshots")
 @Produces(MediaType.APPLICATION_JSON)
 public class MonitoringController {
+    
+    private Logger LOG = Logger.getLogger(MonitoringController.class.getName());
     
     @Inject
     DataProvider dataProvider;
@@ -34,12 +42,27 @@ public class MonitoringController {
     @Inject
     Event<Snapshot> escalationSink;
     
-    @Schedule(minute="*",second="*/5",hour="*",persistent=false)
+    @Resource
+    TimerService timerService;
+
+    private Timer timer;
+    
+    @Inject
+    private Instance<Integer> interval;
+    
+    public void startTimer(){
+        ScheduleExpression expression = new ScheduleExpression();
+        expression.minute("*").second("*/"+interval.get()).hour("*");
+        this.timer = this.timerService.createCalendarTimer(expression);
+    }
+    
+    @Timeout
     public void gatherAndPersist(){
         Snapshot current = dataProvider.fetchData();
         em.persist(current);
         if(current.isSuspicious())
             escalationSink.fire(current);
+        LOG.info(".");
     }
     
     @GET
@@ -50,4 +73,11 @@ public class MonitoringController {
         return this.em.createQuery(select).getResultList();
         
     }
+    
+    @PreDestroy
+    public void stopTimer(){
+        if(timer != null)
+            this.timer.cancel();
+    }
+    
 }
