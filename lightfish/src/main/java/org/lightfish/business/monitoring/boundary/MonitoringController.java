@@ -39,8 +39,11 @@ public class MonitoringController {
     @PersistenceContext
     EntityManager em;
     
-    @Inject
+    @Inject @Severity(Severity.Level.ESCALATION)
     Event<Snapshot> escalationSink;
+
+    @Inject @Severity(Severity.Level.HEARTBEAT)
+    Event<Snapshot> heartBeat;
     
     @Resource
     TimerService timerService;
@@ -60,6 +63,7 @@ public class MonitoringController {
     public void gatherAndPersist(){
         Snapshot current = dataProvider.fetchData();
         em.persist(current);
+        heartBeat.fire(current);
         if(current.isSuspicious())
             escalationSink.fire(current);
         LOG.info(".");
