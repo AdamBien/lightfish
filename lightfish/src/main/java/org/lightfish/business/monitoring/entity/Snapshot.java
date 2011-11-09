@@ -48,6 +48,24 @@ public class Snapshot {
         this.monitoringTime = new Date();
     }
     
+    public static class Builder{
+        private Snapshot snapshot;
+
+        public Builder() {
+            this.snapshot = new Snapshot();
+        }
+        
+        public Builder usedHeapSize(long usedHeapSize){
+            snapshot.usedHeapSize = usedHeapSize;
+            return this;
+        }
+        
+        public Snapshot build(){
+            return this.snapshot;
+        }
+    
+    }
+    
     public boolean isSuspicious(){
         return (currentThreadBusy > 100);
     }

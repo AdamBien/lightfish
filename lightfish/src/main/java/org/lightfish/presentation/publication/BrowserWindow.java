@@ -1,8 +1,7 @@
 package org.lightfish.presentation.publication;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.Writer;
 import javax.servlet.AsyncContext;
 
 /**
@@ -18,12 +17,15 @@ public class BrowserWindow {
     }
     
     
-    public void send(String json){
-        try {
-            this.asyncContext.getResponse().getWriter().print(json);
+    public void send(){
             this.asyncContext.complete();
+    }
+    
+    public Writer getWriter(){
+        try {
+            return this.asyncContext.getResponse().getWriter();
         } catch (IOException ex) {
-            Logger.getLogger(BrowserWindow.class.getName()).log(Level.SEVERE, null, ex);
+            throw new IllegalStateException("Cannot return writer: " + ex,ex);
         }
     }
     
