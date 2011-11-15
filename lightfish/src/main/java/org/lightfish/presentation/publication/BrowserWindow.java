@@ -28,5 +28,29 @@ public class BrowserWindow {
             throw new IllegalStateException("Cannot return writer: " + ex,ex);
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final BrowserWindow other = (BrowserWindow) obj;
+        if (this.asyncContext != other.asyncContext && (this.asyncContext == null || !this.asyncContext.equals(other.asyncContext))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 73 * hash + (this.asyncContext != null ? this.asyncContext.hashCode() : 0);
+        return hash;
+    }
+    
+    
     
 }
