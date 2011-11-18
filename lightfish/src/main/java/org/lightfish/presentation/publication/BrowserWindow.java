@@ -3,6 +3,7 @@ package org.lightfish.presentation.publication;
 import java.io.IOException;
 import java.io.Writer;
 import javax.servlet.AsyncContext;
+import javax.servlet.ServletResponse;
 
 /**
  *
@@ -11,9 +12,12 @@ import javax.servlet.AsyncContext;
 public class BrowserWindow {
     
     private AsyncContext asyncContext;
+    private final ServletResponse response;
 
     public BrowserWindow(AsyncContext asyncContext) {
         this.asyncContext = asyncContext;
+        this.response = this.asyncContext.getResponse();
+        this.response.setContentType("application/xml");
     }
     
     
