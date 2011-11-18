@@ -1,7 +1,7 @@
 package org.lightfish.business.heartbeat.boundary;
 
 import java.io.Writer;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Singleton;
@@ -20,7 +20,7 @@ import org.lightfish.presentation.publication.BrowserWindow;
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class Publisher {
     
-    private CopyOnWriteArrayList<BrowserWindow> browserWindows = new CopyOnWriteArrayList<BrowserWindow>();
+    private ConcurrentLinkedQueue<BrowserWindow> browserWindows = new ConcurrentLinkedQueue<BrowserWindow>();
     
     @Inject
     Serializer serializer;
@@ -31,11 +31,15 @@ public class Publisher {
     
     public void onNewSnapshot(@Observes @Severity(Severity.Level.HEARTBEAT) Snapshot snapshot){
         for (BrowserWindow browserWindow : browserWindows) {
-            Writer writer = browserWindow.getWriter();
-            serializer.serialize(snapshot, writer);
-            browserWindow.send();
-            browserWindows.remove(browserWindow);
+            try{
+                Writer writer = browserWindow.getWriter();
+                serializer.serialize(snapshot, writer);
+                browserWindow.send();
+            }finally{
+                browserWindows.remove(browserWindow);
+            }
         }
+        System.out.println("--- windows: " + browserWindows);
     }
     
 }

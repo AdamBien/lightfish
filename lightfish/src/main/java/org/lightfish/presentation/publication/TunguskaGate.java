@@ -1,10 +1,7 @@
-/*
- * To change this template, choose Tools | Templates and open the template in
- * the editor.
- */
 package org.lightfish.presentation.publication;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.servlet.AsyncContext;
@@ -18,20 +15,20 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Adam Bien, blog.adam-bien.com
  */
-@WebServlet(name = "TunguskaGate", urlPatterns = {"/live"},asyncSupported=true)
+@WebServlet(name = "TunguskaGate", urlPatterns = {"/live"}, asyncSupported = true)
 public class TunguskaGate extends HttpServlet {
-    
+
     @Inject
     Event<BrowserWindow> events;
+    private final static Logger LOG = Logger.getLogger(TunguskaGate.class.getName());
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         AsyncContext startAsync = request.startAsync();
+        AsyncContext startAsync = request.startAsync();
         events.fire(new BrowserWindow(startAsync));
+        LOG.info("Event sent");
     }
-
-  
 
     /**
      * Returns a short description of the servlet.
