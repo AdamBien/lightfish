@@ -40,6 +40,10 @@ public class Index {
     
     }
 
+    public boolean isRunning(){
+        return this.controller.isRunning();
+    }
+
     
     public Object changeAdministration(){
         System.out.println(this.configurator.getLocation() + ":" +this.configurator.getInterval());

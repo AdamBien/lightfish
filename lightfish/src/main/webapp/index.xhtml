@@ -14,8 +14,8 @@
             <h:commandButton value="Update" action="#{index.changeAdministration}"/>
         </h:form>
         <h:form>
-            <h:commandButton value="Start" action="#{index.start}"/>
-            <h:commandButton value="Stop" action="#{index.stop}"/>
+            <h:commandButton disabled="#{index.running}" value="Start" action="#{index.start}"/>
+            <h:commandButton disabled="#{!index.running}" value="Stop" action="#{index.stop}"/>
         </h:form>
         <br/>
         <a href="/lightfish/live" target="_blank">Live Data</a>

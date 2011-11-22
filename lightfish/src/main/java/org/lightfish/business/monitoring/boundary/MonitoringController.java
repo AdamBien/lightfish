@@ -80,8 +80,13 @@ public class MonitoringController {
     
     @PreDestroy
     public void stopTimer(){
-        if(timer != null)
+        if(timer != null){
             this.timer.cancel();
+            this.timer  = null;
+        }
     }
-    
+
+    public boolean isRunning() {
+        return (this.timer != null);
+    }
 }
