@@ -5,6 +5,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -35,7 +36,6 @@ public class DashboardView implements SnapshotListener{
     private SnapshotView rollbackCountView;
     private SnapshotView totalErrorsView;
     private GridView gridView;
-    private WebView browserViewView;
 
     public DashboardView(Stage stage,DashboardPresenter dashboardPresenter) {
         this.dashboardPresenter = dashboardPresenter;
@@ -85,12 +85,13 @@ public class DashboardView implements SnapshotListener{
         suspicious.getChildren().add(this.totalErrorsView.createChart());
 
         this.gridView = new GridView(this.dashboardPresenter.getSnapshots());
-        this.horizontal.getChildren().addAll(transactions,this.busyThreadView.createChart(),suspicious,this.gridView.createTable());
+        BarChart<String,Number> chart = this.busyThreadView.createChart();
+        this.horizontal.getChildren().addAll(transactions, chart,suspicious,this.gridView.createTable());
     }
 
     private Node createURIInputView() {
         final Button button = new Button();
-        button.setText("Minimize Browser");
+        button.setText("-");
         button.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent actionEvent) {
                 toggleBrowserSize(button);
@@ -106,9 +107,9 @@ public class DashboardView implements SnapshotListener{
     private void toggleBrowserSize(Button button) {
         boolean minimized = this.browserView.toggleMinimize();
         if(minimized){
-            button.setText("Maximize Browser");
+            button.setText("+");
         }else{
-            button.setText("Minimize Browser");
+            button.setText("-");
         }
     }
 
