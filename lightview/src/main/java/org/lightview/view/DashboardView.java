@@ -12,7 +12,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.VBox;
-import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import org.lightview.entity.Snapshot;
 
@@ -31,16 +30,18 @@ public class DashboardView implements SnapshotListener{
     private SnapshotView threadCountView;
     private SnapshotView busyThreadView;
     private SnapshotView queuedConnectionsView;
-    private VBox horizontal;
+    private VBox vertical;
     private SnapshotView commitCountView;
     private SnapshotView rollbackCountView;
     private SnapshotView totalErrorsView;
     private GridView gridView;
+    private TabPane tabPane;
 
     public DashboardView(Stage stage,DashboardPresenter dashboardPresenter) {
         this.dashboardPresenter = dashboardPresenter;
         this.dashboardPresenter.addSnapshotsObserver(this);
         this.stage = stage;
+        this.tabPane = new TabPane();
         this.createViews();
         this.open();
         this.bind();
@@ -52,24 +53,19 @@ public class DashboardView implements SnapshotListener{
     }
 
     private void createViews() {
-        this.horizontal = new VBox();
-        this.horizontal.setPadding(new Insets(10, 10, 10, 10));
-        this.horizontal.getChildren().add(createURIInputView());
+
         HBox threadsAndMemory = new HBox();
         threadsAndMemory.setPadding(new Insets(10, 10, 10, 10));
-
         HBox suspicious = new HBox();
         suspicious.setPadding(new Insets(10, 10, 10, 10));
 
         this.browserView = new BrowserView();
-        this.horizontal.getChildren().add(browserView.view());
         this.heapView = new SnapshotView("Heap Size","Used Heap",null);
         this.threadCountView = new SnapshotView("Thread Count","Threads",null);
         this.busyThreadView = new SnapshotView("Busy Thread Count","Threads",null);
 
         threadsAndMemory.getChildren().add(this.heapView.createChart());
         threadsAndMemory.getChildren().add(this.threadCountView.createChart());
-        this.horizontal.getChildren().add(threadsAndMemory);
 
         HBox transactions = new HBox();
         transactions.setPadding(new Insets(10, 10, 10, 10));
@@ -85,8 +81,29 @@ public class DashboardView implements SnapshotListener{
         suspicious.getChildren().add(this.totalErrorsView.createChart());
 
         this.gridView = new GridView(this.dashboardPresenter.getSnapshots());
-        BarChart<String,Number> chart = this.busyThreadView.createChart();
-        this.horizontal.getChildren().addAll(transactions, chart,suspicious,this.gridView.createTable());
+        BarChart<String,Number> busyThreadView = this.busyThreadView.createChart();
+
+
+        Tab threadsAndMemoryTab = new Tab();
+        threadsAndMemoryTab.setContent(threadsAndMemory);
+        threadsAndMemoryTab.setText("Threads And Memory");
+
+        Tab transactionsTab = new Tab();
+        transactionsTab.setContent(transactions);
+        transactionsTab.setText("Transactions Tab");
+
+        Tab paranormalTab = new Tab();
+        paranormalTab.setContent(suspicious);
+        paranormalTab.setText("Paranormal Activities");
+
+        Tab busyThreadTab = new Tab();
+        busyThreadTab.setContent(busyThreadView);
+        busyThreadTab.setText("Busy Threads");
+
+        this.vertical = new VBox();
+        this.vertical.setPadding(new Insets(10, 10, 10, 10));
+        this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab,busyThreadTab);
+        this.vertical.getChildren().addAll(createURIInputView(),this.browserView.view(),this.tabPane,this.gridView.createTable());
     }
 
     private Node createURIInputView() {
@@ -114,7 +131,7 @@ public class DashboardView implements SnapshotListener{
     }
 
     public void open(){
-        Scene scene = new Scene(this.horizontal);
+        Scene scene = new Scene(this.vertical);
         stage.setFullScreen(true);
         stage.setScene(scene);
         stage.show();
