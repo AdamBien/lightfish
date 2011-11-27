@@ -17,6 +17,7 @@ public class DataProvider {
 
     public static final String HEAP_SIZE = "jvm/memory/usedheapsize-count";
     private static final String THREAD_COUNT = "jvm/thread-system/threadcount";
+    private static final String PEAK_THREAD_COUNT = "jvm/thread-system/peakthreadcount";
     private static final String ERROR_COUNT = "http-service/server/request/errorcount";
     private static final String AVG_PROCESSING_TIME = "http-service/server/request/processingtime";
     private static final String HTTP_BUSY_THREADS = "network/thread-pool/currentthreadsbusy";
@@ -27,7 +28,7 @@ public class DataProvider {
     private String BASE_URL;
     
     @Inject
-    private String location;
+    String location;
 
     @PostConstruct
     public void initializeClient() {
@@ -60,6 +61,11 @@ public class DataProvider {
     int threadCount() throws JSONException{
         final String uri = BASE_URL + THREAD_COUNT;
         return getInt(uri,"threadcount");
+    }
+
+    int peakThreadCount() throws JSONException{
+        final String uri = BASE_URL + PEAK_THREAD_COUNT;
+        return getInt(uri,"peakthreadcount");
     }
 
     int totalErrors() throws JSONException{
