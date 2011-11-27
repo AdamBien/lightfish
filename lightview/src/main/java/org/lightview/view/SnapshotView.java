@@ -3,10 +3,7 @@ package org.lightview.view;
 import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
 import javafx.scene.Node;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
+import javafx.scene.chart.*;
 import javafx.util.Duration;
 
 
@@ -22,7 +19,7 @@ public class SnapshotView implements NewEntryListener {
     private String yUnit;
     private XYChart.Series<String, Number> series;
     private static final int MAX_SIZE = 10;
-    private BarChart<String, Number> chart;
+    private XYChart<String, Number> chart;
     private static final double FADE_VALUE = 0.3;
 
     private boolean activated;
@@ -39,7 +36,7 @@ public class SnapshotView implements NewEntryListener {
            final CategoryAxis xAxis = new CategoryAxis();
            final NumberAxis yAxis = new NumberAxis();
            yAxis.setTickLabelFormatter(new NumberAxis.DefaultFormatter(yAxis,yUnit,null));
-           final BarChart chart = new BarChart(xAxis,yAxis);
+           final LineChart chart = new LineChart(xAxis,yAxis);
            chart.setLegendVisible(false);
            chart.setTitle(title);
            yAxis.setLabel(yAxisTitle);
@@ -48,7 +45,7 @@ public class SnapshotView implements NewEntryListener {
            chart.getData().add(series);
            Resizer.register(chart);
            this.chart = chart;
-            deactivate();
+           deactivate();
        }
 
     public void deactivate(){
