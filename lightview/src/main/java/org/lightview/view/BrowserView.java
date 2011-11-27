@@ -21,9 +21,11 @@ public class BrowserView extends CollapsibleView {
 
     private WebEngine engine;
     private WebView webView;
+    private final static int HEIGHT = 280;
 
     public BrowserView() {
         this.webView = new WebView();
+        this.webView.setPrefHeight(HEIGHT);
         this.engine = webView.getEngine();
         this.prefHeight = this.webView.getPrefHeight();
         this.registerListeners();
