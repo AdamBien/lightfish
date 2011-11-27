@@ -16,6 +16,7 @@ public class DataProviderIT {
     @Before
     public void initialize(){
         this.dataProvider = new DataProvider();
+        this.dataProvider.location = "localhost:4848";
         this.dataProvider.initializeClient();
     }
 
@@ -31,6 +32,13 @@ public class DataProviderIT {
         int threadCount = this.dataProvider.threadCount();
         System.out.println("Thread count: " + threadCount);
         assertTrue(threadCount > 0);
+    }
+
+    @Test
+    public void peakThreadCount() throws JSONException{
+        int peakThreadCount = this.dataProvider.peakThreadCount();
+        System.out.println("Peak Thread count: " + peakThreadCount);
+        assertTrue(peakThreadCount > 0);
     }
     
     @Test
