@@ -41,12 +41,13 @@ public class DataProvider {
         try {
             long usedHeapSize = usedHeapSize();
             int threadCount = threadCount();
+            int peakThreadCount = peakThreadCount();
             int totalErrors = totalErrors();
             int currentThreadBusy = currentThreadBusy();
             int committedTX = committedTX();
             int rolledBackTX = rolledBackTX();
             int queuedConnections = queuedConnections();
-            return new Snapshot(usedHeapSize, threadCount, totalErrors, currentThreadBusy, committedTX, rolledBackTX, queuedConnections);
+            return new Snapshot(usedHeapSize, threadCount,peakThreadCount, totalErrors, currentThreadBusy, committedTX, rolledBackTX, queuedConnections);
         } catch (JSONException e) {
             throw new IllegalStateException("Cannot fetch monitoring data because of: "+ e);
         }
