@@ -64,25 +64,24 @@ public class DashboardView implements SnapshotListener{
         this.threadCountView = new SnapshotView("Thread Count","Threads",null);
         this.busyThreadView = new SnapshotView("Busy Thread Count","Threads",null);
 
-        threadsAndMemory.getChildren().add(this.heapView.createChart());
-        threadsAndMemory.getChildren().add(this.threadCountView.createChart());
+        threadsAndMemory.getChildren().add(this.heapView.view());
+        threadsAndMemory.getChildren().add(this.threadCountView.view());
 
         HBox transactions = new HBox();
         transactions.setPadding(new Insets(10, 10, 10, 10));
         this.commitCountView = new SnapshotView("TX Commit","#",null);
         this.rollbackCountView = new SnapshotView("TX Rollback","#",null);
 
-        transactions.getChildren().add(this.commitCountView.createChart());
-        transactions.getChildren().add(this.rollbackCountView.createChart());
+        transactions.getChildren().add(this.commitCountView.view());
+        transactions.getChildren().add(this.rollbackCountView.view());
 
         this.queuedConnectionsView = new SnapshotView("Queued Connections","Connections",null);
         this.totalErrorsView = new SnapshotView("Errors","#",null);
-        suspicious.getChildren().add(this.queuedConnectionsView.createChart());
-        suspicious.getChildren().add(this.totalErrorsView.createChart());
+        suspicious.getChildren().add(this.queuedConnectionsView.view());
+        suspicious.getChildren().add(this.totalErrorsView.view());
+        suspicious.getChildren().add(this.busyThreadView.view());
 
         this.gridView = new GridView(this.dashboardPresenter.getSnapshots());
-        BarChart<String,Number> busyThreadView = this.busyThreadView.createChart();
-
 
         Tab threadsAndMemoryTab = new Tab();
         threadsAndMemoryTab.setContent(threadsAndMemory);
@@ -94,15 +93,11 @@ public class DashboardView implements SnapshotListener{
 
         Tab paranormalTab = new Tab();
         paranormalTab.setContent(suspicious);
-        paranormalTab.setText("Paranormal Activities");
-
-        Tab busyThreadTab = new Tab();
-        busyThreadTab.setContent(busyThreadView);
-        busyThreadTab.setText("Busy Threads");
+        paranormalTab.setText("Paranormal Activity");
 
         this.vertical = new VBox();
         this.vertical.setPadding(new Insets(10, 10, 10, 10));
-        this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab,busyThreadTab);
+        this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab);
         this.vertical.getChildren().addAll(createURIInputView(),this.browserView.view(),this.tabPane,this.gridView.createTable());
     }
 
