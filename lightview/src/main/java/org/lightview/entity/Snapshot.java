@@ -17,16 +17,18 @@ public class Snapshot {
     private Date monitoringTime;
     private long usedHeapSize;
     private int threadCount;
+    private int peakThreadCount;
     private int totalErrors;
     private int currentThreadBusy;
     private int committedTX;
     private int rolledBackTX;
     private int queuedConnections;
 
-    public Snapshot(long usedHeapSize, int threadCount, int totalErrors, int currentThreadBusy, int committedTX, int rolledBackTX, int queuedConnections) {
+    public Snapshot(long usedHeapSize, int threadCount, int peakThreadCount, int totalErrors, int currentThreadBusy, int committedTX, int rolledBackTX, int queuedConnections) {
         this();
         this.usedHeapSize = usedHeapSize;
         this.threadCount = threadCount;
+        this.peakThreadCount = peakThreadCount;
         this.totalErrors = totalErrors;
         this.currentThreadBusy = currentThreadBusy;
         this.committedTX = committedTX;
@@ -52,6 +54,10 @@ public class Snapshot {
 
     public int getThreadCount() {
         return threadCount;
+    }
+
+    public int getPeakThreadCount() {
+        return peakThreadCount;
     }
 
     public int getTotalErrors() {

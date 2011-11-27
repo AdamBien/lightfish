@@ -36,6 +36,7 @@ public class DashboardView implements SnapshotListener{
     private SnapshotView totalErrorsView;
     private GridView gridView;
     private TabPane tabPane;
+    private SnapshotView peakThreadCount;
 
     public DashboardView(Stage stage,DashboardPresenter dashboardPresenter) {
         this.dashboardPresenter = dashboardPresenter;
@@ -62,10 +63,12 @@ public class DashboardView implements SnapshotListener{
         this.browserView = new BrowserView();
         this.heapView = new SnapshotView("Heap Size","Used Heap",null);
         this.threadCountView = new SnapshotView("Thread Count","Threads",null);
+        this.peakThreadCount = new SnapshotView("Peak Thread Count", "Threads", null);
         this.busyThreadView = new SnapshotView("Busy Thread Count","Threads",null);
 
         threadsAndMemory.getChildren().add(this.heapView.view());
         threadsAndMemory.getChildren().add(this.threadCountView.view());
+        threadsAndMemory.getChildren().add(this.peakThreadCount.view());
 
         HBox transactions = new HBox();
         transactions.setPadding(new Insets(10, 10, 10, 10));
@@ -98,7 +101,7 @@ public class DashboardView implements SnapshotListener{
         this.vertical = new VBox();
         this.vertical.setPadding(new Insets(10, 10, 10, 10));
         this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab);
-        this.vertical.getChildren().addAll(createURIInputView(),this.browserView.view(),this.tabPane,this.gridView.createTable());
+        this.vertical.getChildren().addAll(createURIInputView(), this.browserView.view(), this.tabPane, this.gridView.createTable());
     }
 
     private Node createURIInputView() {
@@ -136,6 +139,7 @@ public class DashboardView implements SnapshotListener{
         String id = String.valueOf(snapshot.getId());
         this.heapView.onNewEntry(id, snapshot.getUsedHeapSizeInMB());
         this.threadCountView.onNewEntry(id,snapshot.getThreadCount());
+        this.peakThreadCount.onNewEntry(id,snapshot.getPeakThreadCount());
         this.busyThreadView.onNewEntry(id,snapshot.getCurrentThreadBusy());
         this.queuedConnectionsView.onNewEntry(id,snapshot.getQueuedConnections());
         this.commitCountView.onNewEntry(id,snapshot.getCommittedTX());
