@@ -37,6 +37,7 @@ public class DashboardView implements SnapshotListener{
     private GridView gridView;
     private TabPane tabPane;
     private SnapshotView peakThreadCount;
+    private Node uriInputView;
 
     public DashboardView(Stage stage,DashboardPresenter dashboardPresenter) {
         this.dashboardPresenter = dashboardPresenter;
@@ -55,53 +56,51 @@ public class DashboardView implements SnapshotListener{
 
     private void createViews() {
 
+        this.vertical = new VBox();
         HBox threadsAndMemory = new HBox();
-        threadsAndMemory.setPadding(new Insets(10, 10, 10, 10));
-        HBox suspicious = new HBox();
-        suspicious.setPadding(new Insets(10, 10, 10, 10));
+        HBox paranormal = new HBox();
+        HBox transactions = new HBox();
 
+        Insets boxInsets = new Insets(10, 10, 10, 10);
+
+        this.vertical.setPadding(boxInsets);
+        paranormal.setPadding(boxInsets);
+        threadsAndMemory.setPadding(boxInsets);
+        transactions.setPadding(boxInsets);
+
+        instantiateViews();
+
+        threadsAndMemory.getChildren().addAll(this.heapView.view(), this.threadCountView.view(), this.peakThreadCount.view());
+        transactions.getChildren().addAll(this.commitCountView.view(), this.rollbackCountView.view());
+        paranormal.getChildren().addAll(this.queuedConnectionsView.view(), this.totalErrorsView.view(), this.busyThreadView.view());
+
+        Tab threadsAndMemoryTab = createTab(threadsAndMemory,"Threads And Memory");
+        Tab transactionsTab = createTab(transactions, "Transactions");
+        Tab paranormalTab = createTab(paranormal,"Paranormal Activity");
+        this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab);
+
+        this.vertical.getChildren().addAll(uriInputView, this.browserView.view(), this.tabPane, this.gridView.createTable());
+    }
+
+    private void instantiateViews() {
+        this.uriInputView = createURIInputView();
         this.browserView = new BrowserView();
         this.heapView = new SnapshotView("Heap Size","Used Heap",null);
         this.threadCountView = new SnapshotView("Thread Count","Threads",null);
         this.peakThreadCount = new SnapshotView("Peak Thread Count", "Threads", null);
         this.busyThreadView = new SnapshotView("Busy Thread Count","Threads",null);
-
-        threadsAndMemory.getChildren().add(this.heapView.view());
-        threadsAndMemory.getChildren().add(this.threadCountView.view());
-        threadsAndMemory.getChildren().add(this.peakThreadCount.view());
-
-        HBox transactions = new HBox();
-        transactions.setPadding(new Insets(10, 10, 10, 10));
         this.commitCountView = new SnapshotView("TX Commit","#",null);
         this.rollbackCountView = new SnapshotView("TX Rollback","#",null);
-
-        transactions.getChildren().add(this.commitCountView.view());
-        transactions.getChildren().add(this.rollbackCountView.view());
-
-        this.queuedConnectionsView = new SnapshotView("Queued Connections","Connections",null);
         this.totalErrorsView = new SnapshotView("Errors","#",null);
-        suspicious.getChildren().add(this.queuedConnectionsView.view());
-        suspicious.getChildren().add(this.totalErrorsView.view());
-        suspicious.getChildren().add(this.busyThreadView.view());
-
+        this.queuedConnectionsView = new SnapshotView("Queued Connections","Connections",null);
         this.gridView = new GridView(this.dashboardPresenter.getSnapshots());
+    }
 
-        Tab threadsAndMemoryTab = new Tab();
-        threadsAndMemoryTab.setContent(threadsAndMemory);
-        threadsAndMemoryTab.setText("Threads And Memory");
-
-        Tab transactionsTab = new Tab();
-        transactionsTab.setContent(transactions);
-        transactionsTab.setText("Transactions");
-
-        Tab paranormalTab = new Tab();
-        paranormalTab.setContent(suspicious);
-        paranormalTab.setText("Paranormal Activity");
-
-        this.vertical = new VBox();
-        this.vertical.setPadding(new Insets(10, 10, 10, 10));
-        this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab);
-        this.vertical.getChildren().addAll(createURIInputView(), this.browserView.view(), this.tabPane, this.gridView.createTable());
+    private Tab createTab(Node content, String caption) {
+        Tab tab = new Tab();
+        tab.setContent(content);
+        tab.setText(caption);
+        return tab;
     }
 
     private Node createURIInputView() {
@@ -139,7 +138,7 @@ public class DashboardView implements SnapshotListener{
         String id = String.valueOf(snapshot.getId());
         this.heapView.onNewEntry(id, snapshot.getUsedHeapSizeInMB());
         this.threadCountView.onNewEntry(id,snapshot.getThreadCount());
-        this.peakThreadCount.onNewEntry(id,snapshot.getPeakThreadCount());
+        this.peakThreadCount.onNewEntry(id, snapshot.getPeakThreadCount());
         this.busyThreadView.onNewEntry(id,snapshot.getCurrentThreadBusy());
         this.queuedConnectionsView.onNewEntry(id,snapshot.getQueuedConnections());
         this.commitCountView.onNewEntry(id,snapshot.getCommittedTX());
