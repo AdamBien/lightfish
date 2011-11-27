@@ -92,7 +92,7 @@ public class DashboardView implements SnapshotListener{
 
         Tab transactionsTab = new Tab();
         transactionsTab.setContent(transactions);
-        transactionsTab.setText("Transactions Tab");
+        transactionsTab.setText("Transactions");
 
         Tab paranormalTab = new Tab();
         paranormalTab.setContent(suspicious);

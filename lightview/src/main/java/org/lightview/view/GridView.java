@@ -28,6 +28,7 @@ public class GridView {
         columns.add(createColumn("monitoringTime","Monitoring Time"));
         columns.add(createColumn("usedHeapSizeInMB","Heap Size"));
         columns.add(createColumn("threadCount","Thread Count"));
+        columns.add(createColumn("peakThreadCount","Peak Thread Count"));
         columns.add(createColumn("totalErrors","Total Errors"));
         columns.add(createColumn("currentThreadBusy","Busy Threads"));
         columns.add(createColumn("committedTX","Commits"));
