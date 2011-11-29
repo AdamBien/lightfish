@@ -7,8 +7,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.lightview.entity.Snapshot;
 
-import java.util.Observable;
-
 /**
  * User: blog.adam-bien.com
  * Date: 23.11.11

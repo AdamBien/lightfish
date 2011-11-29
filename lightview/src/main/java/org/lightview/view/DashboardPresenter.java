@@ -55,7 +55,7 @@ public class DashboardPresenter {
         return this.uri;
     }
 
-    public void addSnapshotsObserver(SnapshotListener listener){
+    public void setSnapshotsObserver(SnapshotListener listener){
         this.snapshotListener = listener;
     }
 
@@ -76,8 +76,8 @@ public class DashboardPresenter {
                     }
                 });
         service.stateProperty().addListener(new ChangeListener<Worker.State>(){
-            public void changed(ObservableValue<? extends Worker.State> arg0, Worker.State arg1, Worker.State arg2) {
-                if(arg2.equals(Worker.State.SUCCEEDED)){
+            public void changed(ObservableValue<? extends Worker.State> arg0, Worker.State oldState, Worker.State newState) {
+                if(newState.equals(Worker.State.SUCCEEDED)){
                     service.reset();
                     service.start();
                 }

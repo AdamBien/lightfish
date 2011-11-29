@@ -1,10 +1,11 @@
 package org.lightview.view;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.lightview.service.SnapshotProvider;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 /**
  * User: blog.adam-bien.com
@@ -22,6 +23,7 @@ public class DashboardPresenterTest {
     }
 
     @Test
+    @Ignore
     public void changeUri() throws Exception {
         this.cut.setUri("hugo");
     }

@@ -3,7 +3,10 @@ package org.lightview.view;
 import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
 import javafx.scene.Node;
-import javafx.scene.chart.*;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.util.Duration;
 
 
@@ -43,8 +46,8 @@ public class SnapshotView implements NewEntryListener {
            yAxis.setForceZeroInRange(true);
            this.series = new XYChart.Series<String,Number>();
            chart.getData().add(series);
-           Resizer.register(chart);
            this.chart = chart;
+           this.chart.setId("snapshotChart");
            deactivate();
        }
 

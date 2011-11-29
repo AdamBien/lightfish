@@ -2,13 +2,9 @@ package org.lightview.view;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.chart.BarChart;
 import javafx.scene.control.*;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.VBox;
@@ -41,7 +37,7 @@ public class DashboardView implements SnapshotListener{
 
     public DashboardView(Stage stage,DashboardPresenter dashboardPresenter) {
         this.dashboardPresenter = dashboardPresenter;
-        this.dashboardPresenter.addSnapshotsObserver(this);
+        this.dashboardPresenter.setSnapshotsObserver(this);
         this.stage = stage;
         this.tabPane = new TabPane();
         this.createViews();
@@ -55,18 +51,16 @@ public class DashboardView implements SnapshotListener{
     }
 
     private void createViews() {
-
         this.vertical = new VBox();
         HBox threadsAndMemory = new HBox();
         HBox paranormal = new HBox();
         HBox transactions = new HBox();
 
-        Insets boxInsets = new Insets(10, 10, 10, 10);
-
-        this.vertical.setPadding(boxInsets);
-        paranormal.setPadding(boxInsets);
-        threadsAndMemory.setPadding(boxInsets);
-        transactions.setPadding(boxInsets);
+        String hBoxClass = "boxSpacing";
+        this.vertical.getStyleClass().add(hBoxClass);
+        threadsAndMemory.getStyleClass().add(hBoxClass);
+        paranormal.getStyleClass().add(hBoxClass);
+        transactions.getStyleClass().add(hBoxClass);
 
         instantiateViews();
 
@@ -127,13 +121,6 @@ public class DashboardView implements SnapshotListener{
         }
     }
 
-    public void open(){
-        Scene scene = new Scene(this.vertical);
-        stage.setFullScreen(true);
-        stage.setScene(scene);
-        stage.show();
-    }
-
     public void onSnapshotArrival(Snapshot snapshot) {
         String id = String.valueOf(snapshot.getId());
         this.heapView.onNewEntry(id, snapshot.getUsedHeapSizeInMB());
@@ -141,8 +128,17 @@ public class DashboardView implements SnapshotListener{
         this.peakThreadCount.onNewEntry(id, snapshot.getPeakThreadCount());
         this.busyThreadView.onNewEntry(id,snapshot.getCurrentThreadBusy());
         this.queuedConnectionsView.onNewEntry(id,snapshot.getQueuedConnections());
-        this.commitCountView.onNewEntry(id,snapshot.getCommittedTX());
-        this.rollbackCountView.onNewEntry(id,snapshot.getRolledBackTX());
-        this.totalErrorsView.onNewEntry(id,snapshot.getTotalErrors());
+        this.commitCountView.onNewEntry(id, snapshot.getCommittedTX());
+        this.rollbackCountView.onNewEntry(id, snapshot.getRolledBackTX());
+        this.totalErrorsView.onNewEntry(id, snapshot.getTotalErrors());
+    }
+
+
+    public void open(){
+        Scene scene = new Scene(this.vertical);
+        scene.getStylesheets().add(this.getClass().getResource("lightfish.css").toExternalForm());
+        stage.setFullScreen(true);
+        stage.setScene(scene);
+        stage.show();
     }
 }

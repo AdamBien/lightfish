@@ -1,0 +1,7 @@
+.boxSpacing{
+    -fx-padding: 10 10 10 10;
+}
+
+.chart-title {
+    -fx-font-size: 1.0em;
+}
