@@ -23,7 +23,7 @@ public class Configurator {
         this.configuration = new HashMap<String, String>();
         this.configuration.put("location", "localhost:4848");
         this.configuration.put("jdbcPoolNames","SamplePool");
-        this.configuration.put("interval","5");
+        this.configuration.put("interval","1");
     }
 
     @Produces
