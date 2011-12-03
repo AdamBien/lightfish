@@ -10,6 +10,7 @@ import org.lightfish.business.monitoring.entity.Snapshot;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
+import java.util.Iterator;
 
 /**
  *
@@ -27,24 +28,19 @@ public class SnapshotProvider {
     private static final String ROLLED_BACK_TX = "transaction-service/rolledbackcount";
     private static final String QUEUED_CONNS = "network/connection-queue/countqueued";
     
-    private static final String RESOURCES = "/resources";
+    static final String RESOURCES = "resources";
 
-    private static final String NUMCONNFREE = "numconnfree";
 
     private Client client;
-    private String BASE_URL;
+    private String baseUri;
     
     @Inject
     String location;
-    
-    @Inject 
-    String[] jdbcPoolNames;
 
     @PostConstruct
     public void initializeClient() {
         this.client = Client.create();
-        this.BASE_URL = "http://"+location+"/monitoring/domain/server/";
-        System.out.println("BASE_URL: " + this.BASE_URL);
+        this.baseUri = "http://"+location+"/monitoring/domain/server/";
     }
 
     public Snapshot fetchSnapshot(){
@@ -58,7 +54,7 @@ public class SnapshotProvider {
             int rolledBackTX = rolledBackTX();
             int queuedConnections = queuedConnections();
             Snapshot snapshot = new Snapshot(usedHeapSize, threadCount, peakThreadCount, totalErrors, currentThreadBusy, committedTX, rolledBackTX, queuedConnections);
-            for (String jdbcPoolName : jdbcPoolNames) {
+            for (String jdbcPoolName : resources()) {
                 snapshot.add(fetchResource(jdbcPoolName));
             }
             return snapshot;
@@ -102,48 +98,52 @@ public class SnapshotProvider {
 
 
     String constructResourceString(String resourceName){
-        return BASE_URL + RESOURCES + "/" + resourceName;
+        return baseUri + RESOURCES + "/" + resourceName;
     }
     
     long usedHeapSize() throws JSONException{
-        final String uri = BASE_URL + HEAP_SIZE;
-        return getLong(uri,"usedheapsize-count");
+        final String uri = baseUri + HEAP_SIZE;
+        return getLong(uri, "usedheapsize-count");
     }
 
     int threadCount() throws JSONException{
-        final String uri = BASE_URL + THREAD_COUNT;
+        final String uri = baseUri + THREAD_COUNT;
         return getInt(uri,"threadcount");
     }
 
     int peakThreadCount() throws JSONException{
-        final String uri = BASE_URL + PEAK_THREAD_COUNT;
+        final String uri = baseUri + PEAK_THREAD_COUNT;
         return getInt(uri,"peakthreadcount");
     }
 
     int totalErrors() throws JSONException{
-        final String uri = BASE_URL + ERROR_COUNT;
+        final String uri = baseUri + ERROR_COUNT;
         return getInt(uri,"errorcount");
     }
 
     int currentThreadBusy() throws JSONException{
-        final String uri = BASE_URL + HTTP_BUSY_THREADS;
+        final String uri = baseUri + HTTP_BUSY_THREADS;
         return getInt(uri,"currentthreadsbusy");
     }
     
     
     int committedTX() throws JSONException{
-        final String uri = BASE_URL + COMMITTED_TX;
+        final String uri = baseUri + COMMITTED_TX;
         return getInt(uri,"committedcount");
     }
 
     int rolledBackTX() throws JSONException{
-        final String uri = BASE_URL + ROLLED_BACK_TX;
+        final String uri = baseUri + ROLLED_BACK_TX;
         return getInt(uri,"rolledbackcount");
     }
     
     int queuedConnections() throws JSONException{
-        final String uri = BASE_URL + QUEUED_CONNS;
+        final String uri = baseUri + QUEUED_CONNS;
         return getInt(uri,"countqueued");
+    }
+    
+    String[] resources() throws JSONException{
+        return getStringArray(RESOURCES,"childResources");
     }
     
     
@@ -163,8 +163,24 @@ public class SnapshotProvider {
     int getInt(String uri,String name,String key) throws JSONException{
         ClientResponse result = client.resource(uri).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
         return getJSONObject(result,name).getInt(key);
-    
     }
+
+    String[] getStringArray(String name,String key) throws JSONException{
+        ClientResponse result = client.resource(this.baseUri+name).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+        JSONObject response = result.getEntity(JSONObject.class);
+        response = response.getJSONObject("extraProperties").
+                getJSONObject("childResources");
+        int length = response.length();
+        String retVal[] = new String[length];
+        Iterator keys = response.keys();
+        int counter=0;
+        while (keys.hasNext()){
+            retVal[counter++] = (String) keys.next();
+        }
+        return retVal;
+    }
+    
+    
 
     JSONObject getJSONObject(ClientResponse result,String name) throws JSONException {
         JSONObject response = result.getEntity(JSONObject.class);
@@ -172,4 +188,5 @@ public class SnapshotProvider {
                 getJSONObject("entity").
                 getJSONObject(name);
     }
+
 }

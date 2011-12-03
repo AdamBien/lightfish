@@ -1,15 +1,17 @@
 package org.lightfish.business.monitoring.control;
 
 import org.codehaus.jettison.json.JSONException;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
  * @author Adam Bien, blog.adam-bien.com
  */
-public class DataProviderIT {
+public class SnapshotProviderIT {
     
     SnapshotProvider dataProvider;
     
@@ -74,6 +76,16 @@ public class DataProviderIT {
         int queuedConnections = this.dataProvider.queuedConnections();
         System.out.println("# queuedConnections: " + queuedConnections);
         assertTrue(queuedConnections != -1);
-    
+    }
+
+    @Test
+    public void getStringArray() throws JSONException{
+        String[] actual = this.dataProvider.getStringArray(SnapshotProvider.RESOURCES, "childResources");
+        assertNotNull(actual);
+        for (String slot : actual) {
+            assertNotNull(slot);
+            System.out.println(slot);
+        }
+
     }
 }

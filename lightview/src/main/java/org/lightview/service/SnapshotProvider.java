@@ -30,6 +30,5 @@ public class SnapshotProvider extends Service<Snapshot> {
                 return fetcher.getSnapshot();
             }
         };
-
     }
 }
