@@ -13,6 +13,8 @@ import org.lightfish.business.monitoring.boundary.MonitoringController;
  */
 @Model
 public class Index {
+    public static final String INTERVAL = "interval";
+    public static final String LOCATION = "location";
     
     
     @Inject
@@ -23,30 +25,28 @@ public class Index {
     
     @Min(1)
     public int getInterval() {
-        return configurator.getInterval();
+        return configurator.getValueAsInt(INTERVAL);
     }
 
     public void setInterval(int interval) {
-        this.configurator.setInterval(interval);
+        this.configurator.setValue(INTERVAL,interval);
     }
 
     @Size(min=5,max=30)
     public String getLocation() {
-        return this.configurator.getLocation();
+        return this.configurator.getValue(LOCATION);
     }
 
     public void setLocation(String location) {
-        this.configurator.setLocation(location);
+        this.configurator.setValue(LOCATION,location);
     
     }
 
     public boolean isRunning(){
         return this.controller.isRunning();
     }
-
     
     public Object changeAdministration(){
-        System.out.println(this.configurator.getLocation() + ":" +this.configurator.getInterval());
         return null;
     }
     

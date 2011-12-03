@@ -18,7 +18,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import org.lightfish.business.monitoring.control.DataProvider;
+import org.lightfish.business.monitoring.control.SnapshotProvider;
 import org.lightfish.business.monitoring.entity.Snapshot;
 
 /**
@@ -34,7 +34,7 @@ public class MonitoringController {
     private Logger LOG = Logger.getLogger(MonitoringController.class.getName());
     
     @Inject
-    DataProvider dataProvider;
+    SnapshotProvider dataProvider;
     
     @PersistenceContext
     EntityManager em;
@@ -61,7 +61,7 @@ public class MonitoringController {
     
     @Timeout
     public void gatherAndPersist(){
-        Snapshot current = dataProvider.fetchData();
+        Snapshot current = dataProvider.fetchSnapshot();
         em.persist(current);
         heartBeat.fire(current);
         if(current.isSuspicious())

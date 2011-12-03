@@ -2,18 +2,20 @@ package org.lightfish.business.monitoring.control;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.lightfish.business.monitoring.entity.ConnectionPool;
+import org.lightfish.business.monitoring.entity.Snapshot;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.lightfish.business.monitoring.entity.Snapshot;
 
 /**
  *
  * @author Adam Bien, blog.adam-bien.com
  */
-public class DataProvider {
+public class SnapshotProvider {
 
     public static final String HEAP_SIZE = "jvm/memory/usedheapsize-count";
     private static final String THREAD_COUNT = "jvm/thread-system/threadcount";
@@ -24,11 +26,19 @@ public class DataProvider {
     private static final String COMMITTED_TX = "transaction-service/committedcount";
     private static final String ROLLED_BACK_TX = "transaction-service/rolledbackcount";
     private static final String QUEUED_CONNS = "network/connection-queue/countqueued";
+    
+    private static final String RESOURCES = "/resources";
+
+    private static final String NUMCONNFREE = "numconnfree";
+
     private Client client;
     private String BASE_URL;
     
     @Inject
     String location;
+    
+    @Inject 
+    String[] jdbcPoolNames;
 
     @PostConstruct
     public void initializeClient() {
@@ -37,7 +47,7 @@ public class DataProvider {
         System.out.println("BASE_URL: " + this.BASE_URL);
     }
 
-    public Snapshot fetchData(){
+    public Snapshot fetchSnapshot(){
         try {
             long usedHeapSize = usedHeapSize();
             int threadCount = threadCount();
@@ -47,12 +57,53 @@ public class DataProvider {
             int committedTX = committedTX();
             int rolledBackTX = rolledBackTX();
             int queuedConnections = queuedConnections();
-            return new Snapshot(usedHeapSize, threadCount,peakThreadCount, totalErrors, currentThreadBusy, committedTX, rolledBackTX, queuedConnections);
+            Snapshot snapshot = new Snapshot(usedHeapSize, threadCount, peakThreadCount, totalErrors, currentThreadBusy, committedTX, rolledBackTX, queuedConnections);
+            for (String jdbcPoolName : jdbcPoolNames) {
+                snapshot.add(fetchResource(jdbcPoolName));
+            }
+            return snapshot;
         } catch (JSONException e) {
             throw new IllegalStateException("Cannot fetch monitoring data because of: "+ e);
         }
     }
 
+    public ConnectionPool fetchResource(String jndiName){
+        try {
+
+        int numconnfree = numconnfree(jndiName);
+        int waitqueuelength = waitqueuelength(jndiName);
+        int numpotentialconnleak = numpotentialconnleak(jndiName);
+        int numconnused = numconnused(jndiName);
+        return new ConnectionPool(jndiName, numconnfree,numconnused,waitqueuelength, numpotentialconnleak);
+        } catch (JSONException e) {
+            throw new IllegalStateException("Cannot fetch monitoring resource data for " + jndiName + " bacause: ", e);
+        }
+    }
+
+    int numconnfree(String jndiName) throws JSONException{
+        String uri =  constructResourceString(jndiName);
+        return getInt(uri,"numconnfree","current");
+    }
+
+    int numconnused(String jndiName) throws JSONException{
+        String uri =  constructResourceString(jndiName);
+        return getInt(uri,"numconnused","current");
+    }
+
+    int waitqueuelength(String jndiName) throws JSONException{
+        String uri =  constructResourceString(jndiName);
+        return getInt(uri,"waitqueuelength");
+    }
+
+    int numpotentialconnleak(String jndiName) throws JSONException{
+        String uri =  constructResourceString(jndiName);
+        return getInt(uri,"numpotentialconnleak");
+    }
+
+
+    String constructResourceString(String resourceName){
+        return BASE_URL + RESOURCES + "/" + resourceName;
+    }
     
     long usedHeapSize() throws JSONException{
         final String uri = BASE_URL + HEAP_SIZE;
@@ -97,13 +148,21 @@ public class DataProvider {
     
     
     long getLong(String uri,String name) throws JSONException{
-        ClientResponse result = client.resource(uri).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
-        return getJSONObject(result,name).getLong("count");
-    
+        return getLong(uri, name, "count");
+        
     }
     int getInt(String uri,String name) throws JSONException{
+        return getInt(uri, name, "count");
+    }
+
+    long getLong(String uri,String name,String key) throws JSONException{
         ClientResponse result = client.resource(uri).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
-        return getJSONObject(result,name).getInt("count");
+        return getJSONObject(result,name).getLong(key);
+    
+    }
+    int getInt(String uri,String name,String key) throws JSONException{
+        ClientResponse result = client.resource(uri).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+        return getJSONObject(result,name).getInt(key);
     
     }
 

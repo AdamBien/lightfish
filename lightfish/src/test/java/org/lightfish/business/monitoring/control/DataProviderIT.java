@@ -11,11 +11,11 @@ import org.junit.Test;
  */
 public class DataProviderIT {
     
-    DataProvider dataProvider;
+    SnapshotProvider dataProvider;
     
     @Before
     public void initialize(){
-        this.dataProvider = new DataProvider();
+        this.dataProvider = new SnapshotProvider();
         this.dataProvider.location = "localhost:4848";
         this.dataProvider.initializeClient();
     }

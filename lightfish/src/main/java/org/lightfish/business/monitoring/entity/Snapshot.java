@@ -1,15 +1,12 @@
 package org.lightfish.business.monitoring.entity;
 
-import java.util.Date;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -34,6 +31,9 @@ public class Snapshot {
     private int rolledBackTX;
     private int queuedConnections;
 
+    @OneToMany(cascade= CascadeType.PERSIST)
+    private List<ConnectionPool> pools;
+
     public Snapshot(long usedHeapSize, int threadCount, int peakThreadCount, int totalErrors, int currentThreadBusy, int committedTX, int rolledBackTX, int queuedConnections) {
         this();
         this.usedHeapSize = usedHeapSize;
@@ -48,8 +48,13 @@ public class Snapshot {
 
     public Snapshot() {
         this.monitoringTime = new Date();
+        this.pools = new ArrayList<ConnectionPool>();
     }
-    
+
+    public void add(ConnectionPool connectionPool) {
+        this.pools.add(connectionPool);
+    }
+
     public static class Builder{
         private Snapshot snapshot;
 
