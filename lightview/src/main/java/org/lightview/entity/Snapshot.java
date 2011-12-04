@@ -85,8 +85,20 @@ public class Snapshot {
         return queuedConnections;
     }
 
+    public List<ConnectionPool> getPools() {
+        return pools;
+    }
+
     @Override
     public String toString() {
         return "Snapshot{" + "id=" + id + ", monitoringTime=" + monitoringTime + ", usedHeapSize=" + usedHeapSize + ", threadCount=" + threadCount + ", totalErrors=" + totalErrors + ", currentThreadBusy=" + currentThreadBusy + ", committedTX=" + committedTX + ", rolledBackTX=" + rolledBackTX + ", queuedConnections=" + queuedConnections + '}';
+    }
+
+    public ConnectionPool getPool(String jndiName) {
+        for (ConnectionPool pool : pools) {
+            if(jndiName.equals(pool.getJndiName()))
+                return pool;
+        }
+        return null;
     }
 }

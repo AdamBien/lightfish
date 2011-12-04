@@ -9,7 +9,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.lightview.entity.ConnectionPool;
 import org.lightview.entity.Snapshot;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * User: blog.adam-bien.com
@@ -34,12 +40,14 @@ public class DashboardView implements SnapshotListener{
     private TabPane tabPane;
     private SnapshotView peakThreadCount;
     private Node uriInputView;
+    private Map<String,ConnectionPoolView> poolViews;
 
     public DashboardView(Stage stage,DashboardPresenter dashboardPresenter) {
         this.dashboardPresenter = dashboardPresenter;
         this.dashboardPresenter.setSnapshotsObserver(this);
         this.stage = stage;
         this.tabPane = new TabPane();
+        this.poolViews = new HashMap<String, ConnectionPoolView>();
         this.createViews();
         this.open();
         this.bind();
@@ -131,8 +139,27 @@ public class DashboardView implements SnapshotListener{
         this.commitCountView.onNewEntry(id, snapshot.getCommittedTX());
         this.rollbackCountView.onNewEntry(id, snapshot.getRolledBackTX());
         this.totalErrorsView.onNewEntry(id, snapshot.getTotalErrors());
+        organizeConnectionPoolViews(snapshot.getPools());
+        updateConnectionPoolViews(snapshot);
     }
 
+    void organizeConnectionPoolViews(List<ConnectionPool> connectionPools){
+        for (ConnectionPool connectionPool : connectionPools) {
+            String jndiName = connectionPool.getJndiName();
+            if(!this.poolViews.containsKey(jndiName)){
+                ConnectionPoolView connectionPoolView = new ConnectionPoolView(jndiName);
+                this.poolViews.put(jndiName,connectionPoolView);
+                this.tabPane.getTabs().add(createTab(connectionPoolView.view(),"Resource: "+jndiName));
+            }
+        }
+    }
+
+    void updateConnectionPoolViews(Snapshot snapshot){
+        Collection<ConnectionPoolView> views = this.poolViews.values();
+        for (ConnectionPoolView view : views) {
+            view.onSnapshotArrival(snapshot);
+        }
+    }
 
     public void open(){
         Scene scene = new Scene(this.vertical);
