@@ -2,6 +2,10 @@ package org.lightview.view;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
@@ -15,7 +19,7 @@ import javafx.util.Duration;
  * Date: 22.11.11
  * Time: 19:37
  */
-public class SnapshotView implements NewEntryListener {
+public class SnapshotView{
 
     private String title;
     private String yAxisTitle;
@@ -24,15 +28,18 @@ public class SnapshotView implements NewEntryListener {
     private static final int MAX_SIZE = 10;
     private XYChart<String, Number> chart;
     private static final double FADE_VALUE = 0.3;
-
+    private DoubleProperty currentValue;
     private boolean activated;
+    private long counter=0;
 
 
     public SnapshotView(String title, String yAxisTitle,String yUnit) {
         this.title = title;
         this.yAxisTitle = yAxisTitle;
         this.yUnit = yUnit;
+        this.currentValue = new SimpleDoubleProperty();
         this.initialize();
+        this.registerListeners();
     }
 
     private void initialize() {
@@ -51,6 +58,18 @@ public class SnapshotView implements NewEntryListener {
            deactivate();
        }
 
+    private void registerListeners(){
+        this.currentValue.addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) {
+                onNewEntry(newValue);
+            }
+        });
+    }
+
+    public DoubleProperty currentValue() {
+        return currentValue;
+    }
+
     public void deactivate(){
         FadeTransition fadeAway = FadeTransitionBuilder.create().fromValue(1.0).toValue(FADE_VALUE).duration(Duration.seconds(1)).node(this.chart).build();
         fadeAway.play();
@@ -67,9 +86,9 @@ public class SnapshotView implements NewEntryListener {
         return this.chart;
     }
 
-    public void onNewEntry(String id, long value) {
-
-        if(value != 0){
+    public void onNewEntry(Number value) {
+        String id = String.valueOf(counter++);
+        if(value.intValue() != 0){
             this.series.getData().add(new XYChart.Data<String,Number>(id,value));
             if(this.series.getData().size() > MAX_SIZE)
                 this.series.getData().remove(0);

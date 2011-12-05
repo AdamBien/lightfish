@@ -1,7 +1,6 @@
 package org.lightview.view;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -15,14 +14,31 @@ import org.lightview.service.SnapshotProvider;
  * Date: 21.11.11
  * Time: 17:50
  */
-public class DashboardPresenter {
+public class DashboardPresenter implements DashboardPresenterBindings {
 
-    private SnapshotListener snapshotListener;
-    private StringProperty uri = new SimpleStringProperty();
-    private ObservableList<Snapshot> snapshots = FXCollections.observableArrayList();
+    private StringProperty uri;
+    private ObservableList<Snapshot> snapshots;
     SnapshotProvider service;
+    private LongProperty usedHeapSizeInMB;
+    private LongProperty threadCount;
+    private IntegerProperty peakThreadCount;
+    private IntegerProperty busyThreads;
+    private IntegerProperty queuedConnections;
+    private IntegerProperty commitCount;
+    private IntegerProperty rollbackCount;
+    private IntegerProperty totalErrors;
 
     public DashboardPresenter(){
+        this.snapshots = FXCollections.observableArrayList();
+        this.uri = new SimpleStringProperty();
+        this.usedHeapSizeInMB = new SimpleLongProperty();
+        this.threadCount = new SimpleLongProperty();
+        this.peakThreadCount = new SimpleIntegerProperty();
+        this.busyThreads = new SimpleIntegerProperty();
+        this.queuedConnections = new SimpleIntegerProperty();
+        this.commitCount = new SimpleIntegerProperty();
+        this.rollbackCount = new SimpleIntegerProperty();
+        this.totalErrors = new SimpleIntegerProperty();
         this.initializeListeners();
     }
 
@@ -55,10 +71,6 @@ public class DashboardPresenter {
         return this.uri;
     }
 
-    public void setSnapshotsObserver(SnapshotListener listener){
-        this.snapshotListener = listener;
-    }
-
 
      void startFetching() {
         this.service = new SnapshotProvider(getUri());
@@ -69,18 +81,17 @@ public class DashboardPresenter {
                     public void changed(ObservableValue<? extends Snapshot> observable, Snapshot old, Snapshot newValue) {
                         if(newValue != null){
                             snapshots.add(newValue);
-                            if(snapshotListener != null) {
-                                snapshotListener.onSnapshotArrival(newValue);
-                            }
+                                onSnapshotArrival(newValue);
                         }
                     }
+
                 });
          registerRestarting();
      }
 
-    private void registerRestarting() {
+    void registerRestarting() {
         service.stateProperty().addListener(new ChangeListener<Worker.State>(){
-            public void changed(ObservableValue<? extends Worker.State> arg0, Worker.State oldState, Worker.State newState) {
+            public void changed(ObservableValue<? extends Worker.State> observable, Worker.State oldState, Worker.State newState) {
                 if(newState.equals(Worker.State.SUCCEEDED) || newState.equals(Worker.State.FAILED)){
                     service.reset();
                     service.start();
@@ -88,6 +99,50 @@ public class DashboardPresenter {
             }
 
         });
+    }
+
+    void onSnapshotArrival(Snapshot snapshot) {
+        this.usedHeapSizeInMB.set(snapshot.getUsedHeapSizeInMB());
+        this.threadCount.set(snapshot.getThreadCount());
+        this.peakThreadCount.set(snapshot.getPeakThreadCount());
+        this.busyThreads.set(snapshot.getCurrentThreadBusy());
+        this.queuedConnections.set(snapshot.getQueuedConnections());
+        this.commitCount.set(snapshot.getCommittedTX());
+        this.rollbackCount.set(snapshot.getRolledBackTX());
+        this.totalErrors.set(snapshot.getTotalErrors());
+
+    }
+
+    public LongProperty getUsedHeapSizeInMB() {
+        return usedHeapSizeInMB;
+    }
+
+    public LongProperty getThreadCount() {
+        return threadCount;
+    }
+
+    public IntegerProperty getPeakThreadCount() {
+        return peakThreadCount;
+    }
+
+    public IntegerProperty getBusyThreads() {
+        return busyThreads;
+    }
+
+    public IntegerProperty getQueuedConnections() {
+        return queuedConnections;
+    }
+
+    public IntegerProperty getCommitCount() {
+        return commitCount;
+    }
+
+    public IntegerProperty getRollbackCount() {
+        return rollbackCount;
+    }
+
+    public IntegerProperty getTotalErrors() {
+        return totalErrors;
     }
 
     public ObservableList<Snapshot> getSnapshots() {

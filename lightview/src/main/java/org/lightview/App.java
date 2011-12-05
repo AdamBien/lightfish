@@ -13,16 +13,12 @@ import java.net.MalformedURLException;
  */
 public class App extends Application {
 
-
     @Override
     public void start(Stage primaryStage) {
         DashboardPresenter dashboardPresenter = new DashboardPresenter();
         new DashboardView(primaryStage,dashboardPresenter);
     }
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) throws MalformedURLException {
         launch(args);
     }

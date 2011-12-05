@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public class DashboardView implements SnapshotListener{
 
-    DashboardPresenter dashboardPresenter;
+    DashboardPresenterBindings dashboardPresenter;
     Stage stage;
     private TextField txtUri;
     private BrowserView browserView;
@@ -42,9 +42,8 @@ public class DashboardView implements SnapshotListener{
     private Node uriInputView;
     private Map<String,ConnectionPoolView> poolViews;
 
-    public DashboardView(Stage stage,DashboardPresenter dashboardPresenter) {
+    public DashboardView(Stage stage,DashboardPresenterBindings dashboardPresenter) {
         this.dashboardPresenter = dashboardPresenter;
-        this.dashboardPresenter.setSnapshotsObserver(this);
         this.stage = stage;
         this.tabPane = new TabPane();
         this.poolViews = new HashMap<String, ConnectionPoolView>();
@@ -56,6 +55,17 @@ public class DashboardView implements SnapshotListener{
     private void bind() {
         this.dashboardPresenter.getUriProperty().bind(txtUri.textProperty());
         this.browserView.getUriProperty().bind(txtUri.textProperty());
+        this.heapView.currentValue().bind(this.dashboardPresenter.getUsedHeapSizeInMB());
+
+        this.threadCountView.currentValue().bind(this.dashboardPresenter.getThreadCount());
+        this.busyThreadView.currentValue().bind(this.dashboardPresenter.getBusyThreads());
+        this.peakThreadCount.currentValue().bind(this.dashboardPresenter.getPeakThreadCount());
+
+        this.commitCountView.currentValue().bind(this.dashboardPresenter.getCommitCount());
+        this.rollbackCountView.currentValue().bind(this.dashboardPresenter.getRollbackCount());
+
+        this.queuedConnectionsView.currentValue().bind(this.dashboardPresenter.getQueuedConnections());
+        this.totalErrorsView.currentValue().bind(this.dashboardPresenter.getTotalErrors());
     }
 
     private void createViews() {
@@ -87,6 +97,7 @@ public class DashboardView implements SnapshotListener{
     private void instantiateViews() {
         this.uriInputView = createURIInputView();
         this.browserView = new BrowserView();
+
         this.heapView = new SnapshotView("Heap Size","Used Heap",null);
         this.threadCountView = new SnapshotView("Thread Count","Threads",null);
         this.peakThreadCount = new SnapshotView("Peak Thread Count", "Threads", null);
@@ -97,6 +108,7 @@ public class DashboardView implements SnapshotListener{
         this.queuedConnectionsView = new SnapshotView("Queued Connections","Connections",null);
         this.gridView = new GridView(this.dashboardPresenter.getSnapshots());
     }
+
 
     private Tab createTab(Node content, String caption) {
         Tab tab = new Tab();
@@ -130,15 +142,6 @@ public class DashboardView implements SnapshotListener{
     }
 
     public void onSnapshotArrival(Snapshot snapshot) {
-        String id = String.valueOf(snapshot.getId());
-        this.heapView.onNewEntry(id, snapshot.getUsedHeapSizeInMB());
-        this.threadCountView.onNewEntry(id,snapshot.getThreadCount());
-        this.peakThreadCount.onNewEntry(id, snapshot.getPeakThreadCount());
-        this.busyThreadView.onNewEntry(id,snapshot.getCurrentThreadBusy());
-        this.queuedConnectionsView.onNewEntry(id,snapshot.getQueuedConnections());
-        this.commitCountView.onNewEntry(id, snapshot.getCommittedTX());
-        this.rollbackCountView.onNewEntry(id, snapshot.getRolledBackTX());
-        this.totalErrorsView.onNewEntry(id, snapshot.getTotalErrors());
         organizeConnectionPoolViews(snapshot.getPools());
         updateConnectionPoolViews(snapshot);
     }
@@ -149,7 +152,7 @@ public class DashboardView implements SnapshotListener{
             if(!this.poolViews.containsKey(jndiName)){
                 ConnectionPoolView connectionPoolView = new ConnectionPoolView(jndiName);
                 this.poolViews.put(jndiName,connectionPoolView);
-                this.tabPane.getTabs().add(createTab(connectionPoolView.view(),"Resource: "+jndiName));
+                this.tabPane.getTabs().add(createTab(connectionPoolView.view(), "Resource: " + jndiName));
             }
         }
     }

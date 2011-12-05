@@ -44,10 +44,12 @@ public class ConnectionPoolView implements SnapshotListener {
     }
 
     private void updateView(String id,ConnectionPool pool) {
+    /*
         this.freeConnections.onNewEntry(id,pool.getNumconnfree());
         this.usedConnections.onNewEntry(id,pool.getNumconnused());
         this.connectionLeaks.onNewEntry(id,pool.getNumpotentialconnleak());
         this.waitQueueLength.onNewEntry(id,pool.getWaitqueuelength());
+    */
     }
 
 
