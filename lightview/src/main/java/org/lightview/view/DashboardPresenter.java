@@ -66,7 +66,7 @@ public class DashboardPresenter {
         service.valueProperty().addListener(
                 new ChangeListener<Snapshot>() {
 
-                    public void changed(ObservableValue<? extends Snapshot> arg0, Snapshot old, Snapshot newValue) {
+                    public void changed(ObservableValue<? extends Snapshot> observable, Snapshot old, Snapshot newValue) {
                         if(newValue != null){
                             snapshots.add(newValue);
                             if(snapshotListener != null) {
@@ -75,16 +75,20 @@ public class DashboardPresenter {
                         }
                     }
                 });
+         registerRestarting();
+     }
+
+    private void registerRestarting() {
         service.stateProperty().addListener(new ChangeListener<Worker.State>(){
             public void changed(ObservableValue<? extends Worker.State> arg0, Worker.State oldState, Worker.State newState) {
-                if(newState.equals(Worker.State.SUCCEEDED)){
+                if(newState.equals(Worker.State.SUCCEEDED) || newState.equals(Worker.State.FAILED)){
                     service.reset();
                     service.start();
                 }
             }
 
         });
-}
+    }
 
     public ObservableList<Snapshot> getSnapshots() {
         return snapshots;

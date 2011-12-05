@@ -11,8 +11,8 @@ import java.util.List;
  *
  * @author Adam Bien, blog.adam-bien.com
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Snapshot {
     
     private long id;
