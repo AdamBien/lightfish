@@ -7,8 +7,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.concurrent.Worker;
-import org.lightview.entity.ConnectionPool;
-import org.lightview.entity.Snapshot;
+import org.lightview.model.ConnectionPool;
+import org.lightview.model.Snapshot;
 import org.lightview.service.SnapshotProvider;
 
 import java.util.List;

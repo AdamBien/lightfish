@@ -2,7 +2,7 @@ package org.lightview.service;
 
 import com.sun.jersey.api.client.Client;
 import javax.ws.rs.core.MediaType;
-import org.lightview.entity.Snapshot;
+import org.lightview.model.Snapshot;
 
 /**
  *

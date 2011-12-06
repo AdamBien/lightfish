@@ -2,7 +2,7 @@ package org.lightview.service;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import org.lightview.entity.Snapshot;
+import org.lightview.model.Snapshot;
 
 /**
  *

@@ -5,7 +5,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import org.lightview.entity.Snapshot;
+import org.lightview.model.Snapshot;
 
 /**
  * User: blog.adam-bien.com

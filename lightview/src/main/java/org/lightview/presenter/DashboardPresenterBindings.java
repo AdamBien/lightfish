@@ -5,7 +5,7 @@ import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
-import org.lightview.entity.Snapshot;
+import org.lightview.model.Snapshot;
 
 /**
  * User: blog.adam-bien.com

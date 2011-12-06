@@ -1,7 +1,7 @@
 package org.lightview.presenter;
 
 import javafx.beans.property.*;
-import org.lightview.entity.ConnectionPool;
+import org.lightview.model.ConnectionPool;
 
 /**
  * User: blog.adam-bien.com
