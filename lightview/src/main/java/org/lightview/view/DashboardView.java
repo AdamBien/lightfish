@@ -1,5 +1,6 @@
 package org.lightview.view;
 
+import javafx.beans.property.LongProperty;
 import javafx.collections.MapChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -42,29 +43,28 @@ public class DashboardView{
         this.stage = stage;
         this.tabPane = new TabPane();
         this.createViews();
-        this.open();
         this.bind();
+        this.open();
     }
 
     private void bind() {
         this.dashboardPresenter.getUriProperty().bind(txtUri.textProperty());
         this.browserView.getUriProperty().bind(txtUri.textProperty());
-        this.heapView.currentValue().bind(this.dashboardPresenter.getUsedHeapSizeInMB());
+        this.heapView.value().bind(this.dashboardPresenter.getUsedHeapSizeInMB());
 
-        this.threadCountView.currentValue().bind(this.dashboardPresenter.getThreadCount());
-        this.busyThreadView.currentValue().bind(this.dashboardPresenter.getBusyThreads());
-        this.peakThreadCount.currentValue().bind(this.dashboardPresenter.getPeakThreadCount());
+        this.threadCountView.value().bind(this.dashboardPresenter.getThreadCount());
+        this.busyThreadView.value().bind(this.dashboardPresenter.getBusyThreads());
+        this.peakThreadCount.value().bind(this.dashboardPresenter.getPeakThreadCount());
 
-        this.commitCountView.currentValue().bind(this.dashboardPresenter.getCommitCount());
-        this.rollbackCountView.currentValue().bind(this.dashboardPresenter.getRollbackCount());
+        this.commitCountView.value().bind(this.dashboardPresenter.getCommitCount());
+        this.rollbackCountView.value().bind(this.dashboardPresenter.getRollbackCount());
 
-        this.queuedConnectionsView.currentValue().bind(this.dashboardPresenter.getQueuedConnections());
-        this.totalErrorsView.currentValue().bind(this.dashboardPresenter.getTotalErrors());
+        this.queuedConnectionsView.value().bind(this.dashboardPresenter.getQueuedConnections());
+        this.totalErrorsView.value().bind(this.dashboardPresenter.getTotalErrors());
 
         this.dashboardPresenter.getPools().addListener(new MapChangeListener<String, ConnectionPoolBindings>() {
             public void onChanged(Change<? extends String, ? extends ConnectionPoolBindings> change) {
                 ConnectionPoolBindings valueAdded = change.getValueAdded();
-                ConnectionPoolBindings valueRemoved = change.getValueRemoved();
                 if(valueAdded != null)
                     createPoolTab(valueAdded);
             }
@@ -100,15 +100,15 @@ public class DashboardView{
     private void instantiateViews() {
         this.uriInputView = createURIInputView();
         this.browserView = new BrowserView();
-
-        this.heapView = new SnapshotView("Heap Size","Used Heap",null);
-        this.threadCountView = new SnapshotView("Thread Count","Threads",null);
-        this.peakThreadCount = new SnapshotView("Peak Thread Count", "Threads", null);
-        this.busyThreadView = new SnapshotView("Busy Thread Count","Threads",null);
-        this.commitCountView = new SnapshotView("TX Commit","#",null);
-        this.rollbackCountView = new SnapshotView("TX Rollback","#",null);
-        this.totalErrorsView = new SnapshotView("Errors","#",null);
-        this.queuedConnectionsView = new SnapshotView("Queued Connections","Connections",null);
+        LongProperty id = this.dashboardPresenter.getId();
+        this.heapView = new SnapshotView(id,"Heap Size","Used Heap",null);
+        this.threadCountView = new SnapshotView(id,"Thread Count","Threads",null);
+        this.peakThreadCount = new SnapshotView(id,"Peak Thread Count", "Threads", null);
+        this.busyThreadView = new SnapshotView(id,"Busy Thread Count","Threads",null);
+        this.commitCountView = new SnapshotView(id,"TX Commit","#",null);
+        this.rollbackCountView = new SnapshotView(id,"TX Rollback","#",null);
+        this.totalErrorsView = new SnapshotView(id,"Errors","#",null);
+        this.queuedConnectionsView = new SnapshotView(id,"Queued Connections","Connections",null);
         this.gridView = new GridView(this.dashboardPresenter.getSnapshots());
     }
 
@@ -121,8 +121,9 @@ public class DashboardView{
     }
 
     void createPoolTab(ConnectionPoolBindings valueAdded) {
+        LongProperty id = this.dashboardPresenter.getId();
         String jndiName = valueAdded.getJndiName().get();
-        ConnectionPoolView connectionPoolView = new ConnectionPoolView(jndiName,valueAdded);
+        ConnectionPoolView connectionPoolView = new ConnectionPoolView(id,jndiName,valueAdded);
         Node view = connectionPoolView.view();
         Tab tab = createTab(view, "Resource: " + jndiName);
         this.tabPane.getTabs().add(tab);

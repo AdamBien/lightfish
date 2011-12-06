@@ -3,6 +3,7 @@ package org.lightview.view;
 import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -30,14 +31,14 @@ public class SnapshotView{
     private static final double FADE_VALUE = 0.3;
     private DoubleProperty currentValue;
     private boolean activated;
-    private long counter=0;
+    private LongProperty idProvider;
 
-
-    public SnapshotView(String title, String yAxisTitle,String yUnit) {
+    public SnapshotView(LongProperty idProvider,String title, String yAxisTitle,String yUnit) {
         this.title = title;
         this.yAxisTitle = yAxisTitle;
         this.yUnit = yUnit;
         this.currentValue = new SimpleDoubleProperty();
+        this.idProvider = idProvider;
         this.initialize();
         this.registerListeners();
     }
@@ -66,7 +67,7 @@ public class SnapshotView{
         });
     }
 
-    public DoubleProperty currentValue() {
+    public DoubleProperty value() {
         return currentValue;
     }
 
@@ -87,7 +88,9 @@ public class SnapshotView{
     }
 
     public void onNewEntry(Number value) {
-        String id = String.valueOf(counter++);
+        String id = "-";
+        if(idProvider != null)
+            id = String.valueOf(idProvider.get());
         if(value.intValue() != 0){
             this.series.getData().add(new XYChart.Data<String,Number>(id,value));
             if(this.series.getData().size() > MAX_SIZE)

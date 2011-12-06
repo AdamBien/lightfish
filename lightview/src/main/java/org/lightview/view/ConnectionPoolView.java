@@ -1,5 +1,6 @@
 package org.lightview.view;
 
+import javafx.beans.property.LongProperty;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import org.lightview.presenter.ConnectionPoolBindings;
@@ -18,19 +19,21 @@ public class ConnectionPoolView {
     private SnapshotView waitQueueLength;
     private SnapshotView connectionLeaks;
     private ConnectionPoolBindings bindings;
+    private LongProperty idProvider;
 
-    public ConnectionPoolView(String jndiName,ConnectionPoolBindings connectionPoolBindings) {
+    public ConnectionPoolView(LongProperty idProvider,String jndiName,ConnectionPoolBindings connectionPoolBindings) {
         this.jndiName = jndiName;
         this.bindings = connectionPoolBindings;
+        this.idProvider = idProvider;
         this.createSnapshotViews();
         this.bind();
     }
 
     private void createSnapshotViews(){
-        this.freeConnections = new SnapshotView("Free Connections", "Connections", "");
-        this.usedConnections = new SnapshotView("Used Connections", "Connections", "");
-        this.waitQueueLength = new SnapshotView("Wait Queue Length", "Queue Length", "");
-        this.connectionLeaks = new SnapshotView("Potential Connection Leak", "Leaks", "");
+        this.freeConnections = new SnapshotView(idProvider,"Free Connections", "Connections", "");
+        this.usedConnections = new SnapshotView(idProvider,"Used Connections", "Connections", "");
+        this.waitQueueLength = new SnapshotView(idProvider,"Wait Queue Length", "Queue Length", "");
+        this.connectionLeaks = new SnapshotView(idProvider,"Potential Connection Leak", "Leaks", "");
         this.box = new HBox();
         box.getChildren().add(freeConnections.view());
         box.getChildren().add(usedConnections.view());
@@ -41,10 +44,10 @@ public class ConnectionPoolView {
 
 
     private void bind() {
-        this.freeConnections.currentValue().bind(this.bindings.getNumconnfree());
-        this.usedConnections.currentValue().bind(this.bindings.getNumconnused());
-        this.waitQueueLength.currentValue().bind(this.bindings.getWaitqueuelength());
-        this.connectionLeaks.currentValue().bind(this.bindings.getNumpotentialconnleak());
+        this.freeConnections.value().bind(this.bindings.getNumconnfree());
+        this.usedConnections.value().bind(this.bindings.getNumconnused());
+        this.waitQueueLength.value().bind(this.bindings.getWaitqueuelength());
+        this.connectionLeaks.value().bind(this.bindings.getNumpotentialconnleak());
     }
 
 

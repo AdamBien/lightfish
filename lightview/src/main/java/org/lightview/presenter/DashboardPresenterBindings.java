@@ -34,4 +34,6 @@ public interface DashboardPresenterBindings {
     StringProperty getUriProperty();
 
     ObservableMap<String, ConnectionPoolBindings> getPools();
+
+    LongProperty getId();
 }
