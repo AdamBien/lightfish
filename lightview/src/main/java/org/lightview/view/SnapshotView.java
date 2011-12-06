@@ -3,7 +3,7 @@ package org.lightview.view;
 import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.LongProperty;
+import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -31,9 +31,9 @@ public class SnapshotView{
     private static final double FADE_VALUE = 0.3;
     private DoubleProperty currentValue;
     private boolean activated;
-    private LongProperty idProvider;
+    private ReadOnlyLongProperty idProvider;
 
-    public SnapshotView(LongProperty idProvider,String title, String yAxisTitle,String yUnit) {
+    public SnapshotView(ReadOnlyLongProperty idProvider,String title, String yAxisTitle,String yUnit) {
         this.title = title;
         this.yAxisTitle = yAxisTitle;
         this.yUnit = yUnit;

@@ -1,7 +1,7 @@
 package org.lightview.presenter;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.LongProperty;
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
@@ -13,27 +13,16 @@ import org.lightview.entity.Snapshot;
  * Time: 20:56
  */
 public interface DashboardPresenterBindings {
-    LongProperty getUsedHeapSizeInMB();
-
-    LongProperty getThreadCount();
-
-    IntegerProperty getPeakThreadCount();
-
-    IntegerProperty getBusyThreads();
-
-    IntegerProperty getQueuedConnections();
-
-    IntegerProperty getCommitCount();
-
-    IntegerProperty getRollbackCount();
-
-    IntegerProperty getTotalErrors();
-
-    ObservableList<Snapshot> getSnapshots();
-
     StringProperty getUriProperty();
-
+    ReadOnlyLongProperty getId();
+    ReadOnlyLongProperty getUsedHeapSizeInMB();
+    ReadOnlyLongProperty getThreadCount();
+    ReadOnlyIntegerProperty getPeakThreadCount();
+    ReadOnlyIntegerProperty getBusyThreads();
+    ReadOnlyIntegerProperty getQueuedConnections();
+    ReadOnlyIntegerProperty getCommitCount();
+    ReadOnlyIntegerProperty getRollbackCount();
+    ReadOnlyIntegerProperty getTotalErrors();
     ObservableMap<String, ConnectionPoolBindings> getPools();
-
-    LongProperty getId();
+    ObservableList<Snapshot> getSnapshots();
 }

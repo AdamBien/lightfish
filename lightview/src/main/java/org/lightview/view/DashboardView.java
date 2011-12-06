@@ -1,6 +1,6 @@
 package org.lightview.view;
 
-import javafx.beans.property.LongProperty;
+import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.collections.MapChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -100,7 +100,7 @@ public class DashboardView{
     private void instantiateViews() {
         this.uriInputView = createURIInputView();
         this.browserView = new BrowserView();
-        LongProperty id = this.dashboardPresenter.getId();
+        ReadOnlyLongProperty id = this.dashboardPresenter.getId();
         this.heapView = new SnapshotView(id,"Heap Size","Used Heap",null);
         this.threadCountView = new SnapshotView(id,"Thread Count","Threads",null);
         this.peakThreadCount = new SnapshotView(id,"Peak Thread Count", "Threads", null);
@@ -121,9 +121,9 @@ public class DashboardView{
     }
 
     void createPoolTab(ConnectionPoolBindings valueAdded) {
-        LongProperty id = this.dashboardPresenter.getId();
+        ReadOnlyLongProperty id = this.dashboardPresenter.getId();
         String jndiName = valueAdded.getJndiName().get();
-        ConnectionPoolView connectionPoolView = new ConnectionPoolView(id,jndiName,valueAdded);
+        ConnectionPoolView connectionPoolView = new ConnectionPoolView(id,valueAdded);
         Node view = connectionPoolView.view();
         Tab tab = createTab(view, "Resource: " + jndiName);
         this.tabPane.getTabs().add(tab);

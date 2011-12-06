@@ -1,6 +1,6 @@
 package org.lightview.view;
 
-import javafx.beans.property.LongProperty;
+import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import org.lightview.presenter.ConnectionPoolBindings;
@@ -13,16 +13,14 @@ import org.lightview.presenter.ConnectionPoolBindings;
 public class ConnectionPoolView {
 
     private HBox box;
-    private String jndiName;
     private SnapshotView freeConnections;
     private SnapshotView usedConnections;
     private SnapshotView waitQueueLength;
     private SnapshotView connectionLeaks;
     private ConnectionPoolBindings bindings;
-    private LongProperty idProvider;
+    private ReadOnlyLongProperty idProvider;
 
-    public ConnectionPoolView(LongProperty idProvider,String jndiName,ConnectionPoolBindings connectionPoolBindings) {
-        this.jndiName = jndiName;
+    public ConnectionPoolView(ReadOnlyLongProperty idProvider,ConnectionPoolBindings connectionPoolBindings) {
         this.bindings = connectionPoolBindings;
         this.idProvider = idProvider;
         this.createSnapshotViews();
