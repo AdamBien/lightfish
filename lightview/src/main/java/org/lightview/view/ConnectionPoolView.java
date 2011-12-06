@@ -2,26 +2,28 @@ package org.lightview.view;
 
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
-import org.lightview.entity.ConnectionPool;
-import org.lightview.entity.Snapshot;
+import org.lightview.presenter.ConnectionPoolBindings;
 
 /**
  * User: blog.adam-bien.com
  * Date: 03.12.11
  * Time: 10:51
  */
-public class ConnectionPoolView implements SnapshotListener {
+public class ConnectionPoolView {
 
+    private HBox box;
+    private String jndiName;
     private SnapshotView freeConnections;
     private SnapshotView usedConnections;
     private SnapshotView waitQueueLength;
     private SnapshotView connectionLeaks;
-    private String jndiName;
-    private HBox box;
+    private ConnectionPoolBindings bindings;
 
-    public ConnectionPoolView(String jndiName) {
+    public ConnectionPoolView(String jndiName,ConnectionPoolBindings connectionPoolBindings) {
         this.jndiName = jndiName;
+        this.bindings = connectionPoolBindings;
         this.createSnapshotViews();
+        this.bind();
     }
 
     private void createSnapshotViews(){
@@ -37,19 +39,12 @@ public class ConnectionPoolView implements SnapshotListener {
 
     }
 
-    public void onSnapshotArrival(Snapshot snapshot) {
-        String id = String.valueOf(snapshot.getId());
-        ConnectionPool pool = snapshot.getPool(this.jndiName);
-        updateView(id,pool);
-    }
 
-    private void updateView(String id,ConnectionPool pool) {
-    /*
-        this.freeConnections.onNewEntry(id,pool.getNumconnfree());
-        this.usedConnections.onNewEntry(id,pool.getNumconnused());
-        this.connectionLeaks.onNewEntry(id,pool.getNumpotentialconnleak());
-        this.waitQueueLength.onNewEntry(id,pool.getWaitqueuelength());
-    */
+    private void bind() {
+        this.freeConnections.currentValue().bind(this.bindings.getNumconnfree());
+        this.usedConnections.currentValue().bind(this.bindings.getNumconnused());
+        this.waitQueueLength.currentValue().bind(this.bindings.getWaitqueuelength());
+        this.connectionLeaks.currentValue().bind(this.bindings.getNumpotentialconnleak());
     }
 
 

@@ -1,9 +1,10 @@
-package org.lightview.view;
+package org.lightview.presenter;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import org.lightview.entity.Snapshot;
 
 /**
@@ -31,4 +32,6 @@ public interface DashboardPresenterBindings {
     ObservableList<Snapshot> getSnapshots();
 
     StringProperty getUriProperty();
+
+    ObservableMap<String, ConnectionPoolBindings> getPools();
 }

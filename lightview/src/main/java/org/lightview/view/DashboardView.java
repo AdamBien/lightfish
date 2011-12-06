@@ -1,5 +1,6 @@
 package org.lightview.view;
 
+import javafx.collections.MapChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -9,20 +10,15 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.lightview.entity.ConnectionPool;
-import org.lightview.entity.Snapshot;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.lightview.presenter.ConnectionPoolBindings;
+import org.lightview.presenter.DashboardPresenterBindings;
 
 /**
  * User: blog.adam-bien.com
  * Date: 18.11.11
  * Time: 17:19
  */
-public class DashboardView implements SnapshotListener{
+public class DashboardView{
 
     DashboardPresenterBindings dashboardPresenter;
     Stage stage;
@@ -40,13 +36,11 @@ public class DashboardView implements SnapshotListener{
     private TabPane tabPane;
     private SnapshotView peakThreadCount;
     private Node uriInputView;
-    private Map<String,ConnectionPoolView> poolViews;
 
     public DashboardView(Stage stage,DashboardPresenterBindings dashboardPresenter) {
         this.dashboardPresenter = dashboardPresenter;
         this.stage = stage;
         this.tabPane = new TabPane();
-        this.poolViews = new HashMap<String, ConnectionPoolView>();
         this.createViews();
         this.open();
         this.bind();
@@ -66,6 +60,15 @@ public class DashboardView implements SnapshotListener{
 
         this.queuedConnectionsView.currentValue().bind(this.dashboardPresenter.getQueuedConnections());
         this.totalErrorsView.currentValue().bind(this.dashboardPresenter.getTotalErrors());
+
+        this.dashboardPresenter.getPools().addListener(new MapChangeListener<String, ConnectionPoolBindings>() {
+            public void onChanged(Change<? extends String, ? extends ConnectionPoolBindings> change) {
+                ConnectionPoolBindings valueAdded = change.getValueAdded();
+                ConnectionPoolBindings valueRemoved = change.getValueRemoved();
+                if(valueAdded != null)
+                    createPoolTab(valueAdded);
+            }
+        });
     }
 
     private void createViews() {
@@ -117,6 +120,14 @@ public class DashboardView implements SnapshotListener{
         return tab;
     }
 
+    void createPoolTab(ConnectionPoolBindings valueAdded) {
+        String jndiName = valueAdded.getJndiName().get();
+        ConnectionPoolView connectionPoolView = new ConnectionPoolView(jndiName,valueAdded);
+        Node view = connectionPoolView.view();
+        Tab tab = createTab(view, "Resource: " + jndiName);
+        this.tabPane.getTabs().add(tab);
+    }
+
     private Node createURIInputView() {
         final Button button = new Button();
         button.setText("-");
@@ -140,30 +151,6 @@ public class DashboardView implements SnapshotListener{
             button.setText("-");
         }
     }
-
-    public void onSnapshotArrival(Snapshot snapshot) {
-        organizeConnectionPoolViews(snapshot.getPools());
-        updateConnectionPoolViews(snapshot);
-    }
-
-    void organizeConnectionPoolViews(List<ConnectionPool> connectionPools){
-        for (ConnectionPool connectionPool : connectionPools) {
-            String jndiName = connectionPool.getJndiName();
-            if(!this.poolViews.containsKey(jndiName)){
-                ConnectionPoolView connectionPoolView = new ConnectionPoolView(jndiName);
-                this.poolViews.put(jndiName,connectionPoolView);
-                this.tabPane.getTabs().add(createTab(connectionPoolView.view(), "Resource: " + jndiName));
-            }
-        }
-    }
-
-    void updateConnectionPoolViews(Snapshot snapshot){
-        Collection<ConnectionPoolView> views = this.poolViews.values();
-        for (ConnectionPoolView view : views) {
-            view.onSnapshotArrival(snapshot);
-        }
-    }
-
     public void open(){
         Scene scene = new Scene(this.vertical);
         scene.getStylesheets().add(this.getClass().getResource("lightfish.css").toExternalForm());

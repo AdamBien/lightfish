@@ -1,13 +1,17 @@
-package org.lightview.view;
+package org.lightview.presenter;
 
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.concurrent.Worker;
+import org.lightview.entity.ConnectionPool;
 import org.lightview.entity.Snapshot;
 import org.lightview.service.SnapshotProvider;
+
+import java.util.List;
 
 /**
  * User: blog.adam-bien.com
@@ -18,6 +22,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
 
     private StringProperty uri;
     private ObservableList<Snapshot> snapshots;
+    private ObservableMap<String, ConnectionPoolBindings> pools;
     SnapshotProvider service;
     private LongProperty usedHeapSizeInMB;
     private LongProperty threadCount;
@@ -28,8 +33,9 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     private IntegerProperty rollbackCount;
     private IntegerProperty totalErrors;
 
-    public DashboardPresenter(){
+    public DashboardPresenter() {
         this.snapshots = FXCollections.observableArrayList();
+        this.pools = FXCollections.observableHashMap();
         this.uri = new SimpleStringProperty();
         this.usedHeapSizeInMB = new SimpleLongProperty();
         this.threadCount = new SimpleLongProperty();
@@ -42,7 +48,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         this.initializeListeners();
     }
 
-    void initializeListeners(){
+    void initializeListeners() {
         this.uri.addListener(new ChangeListener<String>() {
             public void changed(ObservableValue<? extends String> observableValue, String s, String newUri) {
                 restartService();
@@ -51,7 +57,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     }
 
     void restartService() {
-        if(this.service != null && this.service.isRunning()){
+        if (this.service != null && this.service.isRunning()) {
             this.service.cancel();
             this.service.reset();
         }
@@ -59,40 +65,40 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     }
 
 
-    public void setUri(String uri){
+    public void setUri(String uri) {
         this.uri.setValue(uri);
     }
 
-    public String getUri(){
+    public String getUri() {
         return this.uri.getValue();
     }
 
-    public StringProperty getUriProperty(){
+    public StringProperty getUriProperty() {
         return this.uri;
     }
 
 
-     void startFetching() {
+    void startFetching() {
         this.service = new SnapshotProvider(getUri());
         service.start();
         service.valueProperty().addListener(
                 new ChangeListener<Snapshot>() {
 
                     public void changed(ObservableValue<? extends Snapshot> observable, Snapshot old, Snapshot newValue) {
-                        if(newValue != null){
+                        if (newValue != null) {
                             snapshots.add(newValue);
-                                onSnapshotArrival(newValue);
+                            onSnapshotArrival(newValue);
                         }
                     }
 
                 });
-         registerRestarting();
-     }
+        registerRestarting();
+    }
 
     void registerRestarting() {
-        service.stateProperty().addListener(new ChangeListener<Worker.State>(){
+        service.stateProperty().addListener(new ChangeListener<Worker.State>() {
             public void changed(ObservableValue<? extends Worker.State> observable, Worker.State oldState, Worker.State newState) {
-                if(newState.equals(Worker.State.SUCCEEDED) || newState.equals(Worker.State.FAILED)){
+                if (newState.equals(Worker.State.SUCCEEDED) || newState.equals(Worker.State.FAILED)) {
                     service.reset();
                     service.start();
                 }
@@ -110,8 +116,24 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         this.commitCount.set(snapshot.getCommittedTX());
         this.rollbackCount.set(snapshot.getRolledBackTX());
         this.totalErrors.set(snapshot.getTotalErrors());
-
+        this.updatePools(snapshot);
     }
+
+
+    void updatePools(Snapshot snapshot) {
+        List<ConnectionPool> connectionPools = snapshot.getPools();
+        for (ConnectionPool connectionPool : connectionPools) {
+            String jndiName = connectionPool.getJndiName();
+            ConnectionPoolBindings bindings = ConnectionPoolBindings.from(connectionPool);
+            ConnectionPoolBindings poolBindings = this.pools.get(jndiName);
+            if(poolBindings != null){
+                poolBindings.update(connectionPool);
+            }else{
+                this.pools.put(jndiName,bindings);
+            }
+        }
+    }
+
 
     public LongProperty getUsedHeapSizeInMB() {
         return usedHeapSizeInMB;
@@ -147,5 +169,9 @@ public class DashboardPresenter implements DashboardPresenterBindings {
 
     public ObservableList<Snapshot> getSnapshots() {
         return snapshots;
+    }
+
+    public ObservableMap<String,ConnectionPoolBindings> getPools() {
+        return pools;
     }
 }
