@@ -1,9 +1,6 @@
 package org.lightview.presenter;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import org.lightview.entity.ConnectionPool;
 
 /**
@@ -27,23 +24,23 @@ public class ConnectionPoolBindings {
         this.numconnused = new SimpleIntegerProperty();
     }
 
-    public StringProperty getJndiName() {
+    public ReadOnlyStringProperty getJndiName() {
         return jndiName;
     }
 
-    public IntegerProperty getNumconnfree() {
+    public ReadOnlyIntegerProperty getNumconnfree() {
         return numconnfree;
     }
 
-    public IntegerProperty getWaitqueuelength() {
+    public ReadOnlyIntegerProperty getWaitqueuelength() {
         return waitqueuelength;
     }
 
-    public IntegerProperty getNumpotentialconnleak() {
+    public ReadOnlyIntegerProperty getNumpotentialconnleak() {
         return numpotentialconnleak;
     }
 
-    public IntegerProperty getNumconnused() {
+    public ReadOnlyIntegerProperty getNumconnused() {
         return numconnused;
     }
 
