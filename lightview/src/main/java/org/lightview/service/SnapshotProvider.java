@@ -16,10 +16,6 @@ public class SnapshotProvider extends Service<Snapshot> {
         this.liveDataURL = liveDataURL;
     }
 
-    public String getLiveDataURL() {
-        return liveDataURL;
-    }
-
     @Override
     protected Task<Snapshot> createTask() {
         return new Task<Snapshot>() {

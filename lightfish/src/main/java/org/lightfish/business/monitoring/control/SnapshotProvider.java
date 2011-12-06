@@ -185,7 +185,7 @@ public class SnapshotProvider {
     JSONObject getJSONObject(ClientResponse result,String name) throws JSONException {
         JSONObject response = result.getEntity(JSONObject.class);
         return response.getJSONObject("extraProperties").
-                getJSONObject("model").
+                getJSONObject("entity").
                 getJSONObject(name);
     }
 

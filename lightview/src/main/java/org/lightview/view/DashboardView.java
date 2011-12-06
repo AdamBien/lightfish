@@ -155,7 +155,7 @@ public class DashboardView{
     public void open(){
         Scene scene = new Scene(this.vertical);
         scene.getStylesheets().add(this.getClass().getResource("lightfish.css").toExternalForm());
-        stage.setFullScreen(true);
+        stage.setFullScreen(false);
         stage.setScene(scene);
         stage.show();
     }
