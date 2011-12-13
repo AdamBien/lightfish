@@ -30,11 +30,12 @@ public class Snapshot {
     private int committedTX;
     private int rolledBackTX;
     private int queuedConnections;
+    private int activeSessions;
 
     @OneToMany(cascade= CascadeType.PERSIST)
     private List<ConnectionPool> pools;
 
-    public Snapshot(long usedHeapSize, int threadCount, int peakThreadCount, int totalErrors, int currentThreadBusy, int committedTX, int rolledBackTX, int queuedConnections) {
+    public Snapshot(long usedHeapSize, int threadCount, int peakThreadCount, int totalErrors, int currentThreadBusy, int committedTX, int rolledBackTX, int queuedConnections,int activeSessions) {
         this();
         this.usedHeapSize = usedHeapSize;
         this.threadCount = threadCount;
@@ -44,6 +45,7 @@ public class Snapshot {
         this.committedTX = committedTX;
         this.rolledBackTX = rolledBackTX;
         this.queuedConnections = queuedConnections;
+        this.activeSessions = activeSessions;
     }
 
     public Snapshot() {
@@ -79,6 +81,19 @@ public class Snapshot {
 
     @Override
     public String toString() {
-        return "Snapshot{" + "id=" + id + ", monitoringTime=" + monitoringTime + ", usedHeapSize=" + usedHeapSize + ", threadCount=" + threadCount + ", totalErrors=" + totalErrors + ", currentThreadBusy=" + currentThreadBusy + ", committedTX=" + committedTX + ", rolledBackTX=" + rolledBackTX + ", queuedConnections=" + queuedConnections + '}';
+        return "Snapshot{" +
+                "id=" + id +
+                ", monitoringTime=" + monitoringTime +
+                ", usedHeapSize=" + usedHeapSize +
+                ", threadCount=" + threadCount +
+                ", peakThreadCount=" + peakThreadCount +
+                ", totalErrors=" + totalErrors +
+                ", currentThreadBusy=" + currentThreadBusy +
+                ", committedTX=" + committedTX +
+                ", rolledBackTX=" + rolledBackTX +
+                ", queuedConnections=" + queuedConnections +
+                ", activeSessions=" + activeSessions +
+                ", pools=" + pools +
+                '}';
     }
 }

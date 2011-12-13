@@ -23,6 +23,7 @@ public interface DashboardPresenterBindings {
     ReadOnlyIntegerProperty getCommitCount();
     ReadOnlyIntegerProperty getRollbackCount();
     ReadOnlyIntegerProperty getTotalErrors();
+    ReadOnlyIntegerProperty getActiveSessions();
     ObservableMap<String, ConnectionPoolBindings> getPools();
     ObservableList<Snapshot> getSnapshots();
 }

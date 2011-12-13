@@ -33,6 +33,7 @@ public class DashboardView{
     private SnapshotView commitCountView;
     private SnapshotView rollbackCountView;
     private SnapshotView totalErrorsView;
+    private SnapshotView currentSessionsView;
     private GridView gridView;
     private TabPane tabPane;
     private SnapshotView peakThreadCount;
@@ -61,6 +62,7 @@ public class DashboardView{
 
         this.queuedConnectionsView.value().bind(this.dashboardPresenter.getQueuedConnections());
         this.totalErrorsView.value().bind(this.dashboardPresenter.getTotalErrors());
+        this.currentSessionsView.value().bind(this.dashboardPresenter.getActiveSessions());
 
         this.dashboardPresenter.getPools().addListener(new MapChangeListener<String, ConnectionPoolBindings>() {
             public void onChanged(Change<? extends String, ? extends ConnectionPoolBindings> change) {
@@ -76,23 +78,27 @@ public class DashboardView{
         HBox threadsAndMemory = new HBox();
         HBox paranormal = new HBox();
         HBox transactions = new HBox();
+        HBox web = new HBox();
 
         String hBoxClass = "boxSpacing";
         this.vertical.getStyleClass().add(hBoxClass);
         threadsAndMemory.getStyleClass().add(hBoxClass);
         paranormal.getStyleClass().add(hBoxClass);
         transactions.getStyleClass().add(hBoxClass);
+        web.getStyleClass().add(hBoxClass);
 
         instantiateViews();
 
         threadsAndMemory.getChildren().addAll(this.heapView.view(), this.threadCountView.view(), this.peakThreadCount.view());
         transactions.getChildren().addAll(this.commitCountView.view(), this.rollbackCountView.view());
         paranormal.getChildren().addAll(this.queuedConnectionsView.view(), this.totalErrorsView.view(), this.busyThreadView.view());
+        web.getChildren().addAll(this.currentSessionsView.view());
 
         Tab threadsAndMemoryTab = createTab(threadsAndMemory,"Threads And Memory");
         Tab transactionsTab = createTab(transactions, "Transactions");
         Tab paranormalTab = createTab(paranormal,"Paranormal Activity");
-        this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab);
+        Tab webTab = createTab(web,"Web");
+        this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab,webTab);
 
         this.vertical.getChildren().addAll(uriInputView, this.browserView.view(), this.tabPane, this.gridView.createTable());
     }
@@ -109,6 +115,7 @@ public class DashboardView{
         this.rollbackCountView = new SnapshotView(id,"TX Rollback","#",null);
         this.totalErrorsView = new SnapshotView(id,"Errors","#",null);
         this.queuedConnectionsView = new SnapshotView(id,"Queued Connections","Connections",null);
+        this.currentSessionsView = new SnapshotView(id,"HTTP Sessions","#",null);
         this.gridView = new GridView(this.dashboardPresenter.getSnapshots());
     }
 

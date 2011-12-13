@@ -27,6 +27,7 @@ public class SnapshotProvider {
     private static final String COMMITTED_TX = "transaction-service/committedcount";
     private static final String ROLLED_BACK_TX = "transaction-service/rolledbackcount";
     private static final String QUEUED_CONNS = "network/connection-queue/countqueued";
+    private static final String CURRENT_SESSIONS = "web/session/activesessionscurrent";
     
     static final String RESOURCES = "resources";
 
@@ -53,7 +54,8 @@ public class SnapshotProvider {
             int committedTX = committedTX();
             int rolledBackTX = rolledBackTX();
             int queuedConnections = queuedConnections();
-            Snapshot snapshot = new Snapshot(usedHeapSize, threadCount, peakThreadCount, totalErrors, currentThreadBusy, committedTX, rolledBackTX, queuedConnections);
+            int activeSessionsCurrent = activeSessionsCurrent();
+            Snapshot snapshot = new Snapshot(usedHeapSize, threadCount, peakThreadCount, totalErrors, currentThreadBusy, committedTX, rolledBackTX, queuedConnections,activeSessionsCurrent);
             for (String jdbcPoolName : resources()) {
                 snapshot.add(fetchResource(jdbcPoolName));
             }
@@ -62,6 +64,8 @@ public class SnapshotProvider {
             throw new IllegalStateException("Cannot fetch monitoring data because of: "+ e);
         }
     }
+
+   
 
     public ConnectionPool fetchResource(String jndiName){
         try {
@@ -111,6 +115,12 @@ public class SnapshotProvider {
         return getInt(uri,"threadcount");
     }
 
+    int activeSessionsCurrent() throws JSONException{
+        final String uri = baseUri + CURRENT_SESSIONS;
+        return getInt(uri,"activesessionscurrent","current");
+    }
+    
+    
     int peakThreadCount() throws JSONException{
         final String uri = baseUri + PEAK_THREAD_COUNT;
         return getInt(uri,"peakthreadcount");

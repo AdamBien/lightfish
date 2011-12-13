@@ -25,20 +25,9 @@ public class Snapshot {
     private int committedTX;
     private int rolledBackTX;
     private int queuedConnections;
+    private int activeSessions;
 
     private List<ConnectionPool> pools;
-
-    public Snapshot(long usedHeapSize, int threadCount, int peakThreadCount, int totalErrors, int currentThreadBusy, int committedTX, int rolledBackTX, int queuedConnections) {
-        this();
-        this.usedHeapSize = usedHeapSize;
-        this.threadCount = threadCount;
-        this.peakThreadCount = peakThreadCount;
-        this.totalErrors = totalErrors;
-        this.currentThreadBusy = currentThreadBusy;
-        this.committedTX = committedTX;
-        this.rolledBackTX = rolledBackTX;
-        this.queuedConnections = queuedConnections;
-    }
 
     public Snapshot() {
         this.monitoringTime = new Date();
@@ -83,6 +72,14 @@ public class Snapshot {
 
     public int getQueuedConnections() {
         return queuedConnections;
+    }
+
+    public long getUsedHeapSize() {
+        return usedHeapSize;
+    }
+
+    public int getActiveSessions() {
+        return activeSessions;
     }
 
     public List<ConnectionPool> getPools() {

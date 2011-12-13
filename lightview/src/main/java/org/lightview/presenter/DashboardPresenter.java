@@ -32,6 +32,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     private IntegerProperty commitCount;
     private IntegerProperty rollbackCount;
     private IntegerProperty totalErrors;
+    private IntegerProperty currentSessions;
     private LongProperty id;
 
     public DashboardPresenter() {
@@ -46,6 +47,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         this.commitCount = new SimpleIntegerProperty();
         this.rollbackCount = new SimpleIntegerProperty();
         this.totalErrors = new SimpleIntegerProperty();
+        this.currentSessions = new SimpleIntegerProperty();
         this.id = new SimpleLongProperty();
         this.initializeListeners();
     }
@@ -118,6 +120,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         this.commitCount.set(snapshot.getCommittedTX());
         this.rollbackCount.set(snapshot.getRolledBackTX());
         this.totalErrors.set(snapshot.getTotalErrors());
+        this.currentSessions.set(snapshot.getActiveSessions());
         this.id.set(snapshot.getId());
         this.updatePools(snapshot);
     }
@@ -168,6 +171,10 @@ public class DashboardPresenter implements DashboardPresenterBindings {
 
     public IntegerProperty getTotalErrors() {
         return totalErrors;
+    }
+
+    public IntegerProperty getActiveSessions() {
+        return currentSessions;
     }
 
     public LongProperty getId() {
