@@ -9,21 +9,24 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Adam Bien, blog.adam-bien.com
  */
-public class MonitoringAdminTest {
+public class MonitoringAdminIT {
     
     private MonitoringAdmin cut;
     
     @Before
     public void init(){
         this.cut = new MonitoringAdmin();
+        this.cut.location = "localhost:4848";
+        this.cut.initializeClient();
     }
 
     @Test
-    public void getModulesWithLevel() {
-        String expected = "web-container=HIGH:ejb-container=HIGH:";
-        String actual = this.cut.getModulesWithLevel("HIGH");
-        assertTrue(actual.startsWith(expected));
-        assertTrue(actual.endsWith("HIGH"));
-        System.out.println(actual);
+    public void activateMonitoring() {
+        assertTrue(this.cut.activateMonitoring());
+    }
+
+    @Test
+    public void deactivateMonitoring() {
+        assertTrue(this.cut.deactivateMonitoring());
     }
 }
