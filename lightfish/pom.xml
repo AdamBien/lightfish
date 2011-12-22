@@ -88,6 +88,6 @@
                 </executions>
             </plugin>
         </plugins>
-        <finalName>StressTestMonitor</finalName>
+        <finalName>lightfish</finalName>
     </build>
 </project>
