@@ -1,11 +1,13 @@
 package org.lightfish.presentation.administration;
 
+import org.lightfish.business.configuration.boundary.Configurator;
+import org.lightfish.business.monitoring.boundary.MonitoringAdmin;
+import org.lightfish.business.monitoring.boundary.MonitoringController;
+
 import javax.enterprise.inject.Model;
 import javax.inject.Inject;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
-import org.lightfish.business.configuration.boundary.Configurator;
-import org.lightfish.business.monitoring.boundary.MonitoringController;
 
 /**
  *
@@ -22,6 +24,9 @@ public class Index {
 
     @Inject
     MonitoringController controller;
+
+    @Inject
+    MonitoringAdmin monitoringAdmin;
     
     @Min(1)
     public int getInterval() {
@@ -30,6 +35,16 @@ public class Index {
 
     public void setInterval(int interval) {
         this.configurator.setValue(INTERVAL,interval);
+    }
+
+    public Object activateMonitoring(){
+        this.monitoringAdmin.activateMonitoring();
+        return null;
+    }
+
+    public Object deactivateMonitoring(){
+        this.monitoringAdmin.deactivateMonitoring();
+        return null;
     }
 
     @Size(min=5,max=30)

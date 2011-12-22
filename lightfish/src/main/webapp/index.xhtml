@@ -16,6 +16,8 @@
         <h:form>
             <h:commandButton disabled="#{index.running}" value="Start" action="#{index.start}"/>
             <h:commandButton disabled="#{!index.running}" value="Stop" action="#{index.stop}"/>
+            <h:commandButton value="Activate Monitoring" action="#{index.activateMonitoring}"/>
+            <h:commandButton value="Deactivate Monitoring" action="#{index.deactivateMonitoring}"/>
         </h:form>
         <br/>
         <a href="/lightfish/live" target="_blank">Live Data</a>

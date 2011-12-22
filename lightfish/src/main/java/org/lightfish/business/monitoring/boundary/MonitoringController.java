@@ -1,9 +1,8 @@
 package org.lightfish.business.monitoring.boundary;
 
-import java.util.Date;
-import java.util.List;
-import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
+import org.lightfish.business.monitoring.control.SnapshotProvider;
+import org.lightfish.business.monitoring.entity.Snapshot;
+
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.ejb.*;
@@ -18,8 +17,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import org.lightfish.business.monitoring.control.SnapshotProvider;
-import org.lightfish.business.monitoring.entity.Snapshot;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  *
@@ -44,7 +43,7 @@ public class MonitoringController {
 
     @Inject @Severity(Severity.Level.HEARTBEAT)
     Event<Snapshot> heartBeat;
-    
+
     @Resource
     TimerService timerService;
 
@@ -58,7 +57,8 @@ public class MonitoringController {
         expression.minute("*").second("*/"+interval.get()).hour("*");
         this.timer = this.timerService.createCalendarTimer(expression);
     }
-    
+
+
     @Timeout
     public void gatherAndPersist(){
         Snapshot current = dataProvider.fetchSnapshot();
