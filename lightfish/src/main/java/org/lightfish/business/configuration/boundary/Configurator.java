@@ -1,12 +1,11 @@
 package org.lightfish.business.configuration.boundary;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -23,7 +22,7 @@ public class Configurator {
         this.configuration = new HashMap<String, String>();
         this.configuration.put("location", "localhost:4848");
         this.configuration.put("jdbcPoolNames","SamplePool");
-        this.configuration.put("interval","1");
+        this.configuration.put("interval","2");
     }
 
     @Produces
