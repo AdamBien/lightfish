@@ -43,6 +43,12 @@ public class SnapshotView{
         this.registerListeners();
     }
 
+    public SnapshotView(ReadOnlyLongProperty idProvider,String title, String yAxisTitle) {
+        this(idProvider,title,yAxisTitle,null);
+    }
+
+
+
     private void initialize() {
            final CategoryAxis xAxis = new CategoryAxis();
            final NumberAxis yAxis = new NumberAxis();

@@ -26,6 +26,7 @@ public class Snapshot {
     private int rolledBackTX;
     private int queuedConnections;
     private int activeSessions;
+    private int expiredSessions;
 
     private List<ConnectionPool> pools;
 
@@ -78,6 +79,10 @@ public class Snapshot {
         return usedHeapSize;
     }
 
+    public int getExpiredSessions() {
+        return expiredSessions;
+    }
+
     public int getActiveSessions() {
         return activeSessions;
     }
@@ -86,16 +91,30 @@ public class Snapshot {
         return pools;
     }
 
-    @Override
-    public String toString() {
-        return "Snapshot{" + "id=" + id + ", monitoringTime=" + monitoringTime + ", usedHeapSize=" + usedHeapSize + ", threadCount=" + threadCount + ", totalErrors=" + totalErrors + ", currentThreadBusy=" + currentThreadBusy + ", committedTX=" + committedTX + ", rolledBackTX=" + rolledBackTX + ", queuedConnections=" + queuedConnections + '}';
-    }
-
     public ConnectionPool getPool(String jndiName) {
         for (ConnectionPool pool : pools) {
             if(jndiName.equals(pool.getJndiName()))
                 return pool;
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "Snapshot{" +
+                "id=" + id +
+                ", monitoringTime=" + monitoringTime +
+                ", usedHeapSize=" + usedHeapSize +
+                ", threadCount=" + threadCount +
+                ", peakThreadCount=" + peakThreadCount +
+                ", totalErrors=" + totalErrors +
+                ", currentThreadBusy=" + currentThreadBusy +
+                ", committedTX=" + committedTX +
+                ", rolledBackTX=" + rolledBackTX +
+                ", queuedConnections=" + queuedConnections +
+                ", activeSessions=" + activeSessions +
+                ", expiredSessions=" + expiredSessions +
+                ", pools=" + pools +
+                '}';
     }
 }

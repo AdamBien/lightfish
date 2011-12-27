@@ -33,7 +33,8 @@ public class DashboardView{
     private SnapshotView commitCountView;
     private SnapshotView rollbackCountView;
     private SnapshotView totalErrorsView;
-    private SnapshotView currentSessionsView;
+    private SnapshotView activeSessionsView;
+    private SnapshotView expiredSessionsView;
     private GridView gridView;
     private TabPane tabPane;
     private SnapshotView peakThreadCount;
@@ -48,29 +49,21 @@ public class DashboardView{
         this.open();
     }
 
-    private void bind() {
-        this.dashboardPresenter.getUriProperty().bind(txtUri.textProperty());
-        this.browserView.getUriProperty().bind(txtUri.textProperty());
-        this.heapView.value().bind(this.dashboardPresenter.getUsedHeapSizeInMB());
-
-        this.threadCountView.value().bind(this.dashboardPresenter.getThreadCount());
-        this.busyThreadView.value().bind(this.dashboardPresenter.getBusyThreads());
-        this.peakThreadCount.value().bind(this.dashboardPresenter.getPeakThreadCount());
-
-        this.commitCountView.value().bind(this.dashboardPresenter.getCommitCount());
-        this.rollbackCountView.value().bind(this.dashboardPresenter.getRollbackCount());
-
-        this.queuedConnectionsView.value().bind(this.dashboardPresenter.getQueuedConnections());
-        this.totalErrorsView.value().bind(this.dashboardPresenter.getTotalErrors());
-        this.currentSessionsView.value().bind(this.dashboardPresenter.getActiveSessions());
-
-        this.dashboardPresenter.getPools().addListener(new MapChangeListener<String, ConnectionPoolBindings>() {
-            public void onChanged(Change<? extends String, ? extends ConnectionPoolBindings> change) {
-                ConnectionPoolBindings valueAdded = change.getValueAdded();
-                if(valueAdded != null)
-                    createPoolTab(valueAdded);
-            }
-        });
+    private void instantiateViews() {
+        this.uriInputView = createURIInputView();
+        this.browserView = new BrowserView();
+        ReadOnlyLongProperty id = this.dashboardPresenter.getId();
+        this.heapView = new SnapshotView(id,"Heap Size","Used Heap");
+        this.threadCountView = new SnapshotView(id,"Thread Count","Threads");
+        this.peakThreadCount = new SnapshotView(id,"Peak Thread Count", "Threads");
+        this.busyThreadView = new SnapshotView(id,"Busy Thread Count","Threads");
+        this.commitCountView = new SnapshotView(id,"TX Commit","#");
+        this.rollbackCountView = new SnapshotView(id,"TX Rollback","#");
+        this.totalErrorsView = new SnapshotView(id,"Errors","#");
+        this.queuedConnectionsView = new SnapshotView(id,"Queued Connections","Connections");
+        this.activeSessionsView = new SnapshotView(id,"HTTP Sessions","#");
+        this.expiredSessionsView = new SnapshotView(id,"Expired Sessions","#");
+        this.gridView = new GridView(this.dashboardPresenter.getSnapshots());
     }
 
     private void createViews() {
@@ -92,7 +85,8 @@ public class DashboardView{
         threadsAndMemory.getChildren().addAll(this.heapView.view(), this.threadCountView.view(), this.peakThreadCount.view());
         transactions.getChildren().addAll(this.commitCountView.view(), this.rollbackCountView.view());
         paranormal.getChildren().addAll(this.queuedConnectionsView.view(), this.totalErrorsView.view(), this.busyThreadView.view());
-        web.getChildren().addAll(this.currentSessionsView.view());
+        web.getChildren().addAll(this.activeSessionsView.view());
+        web.getChildren().addAll(this.expiredSessionsView.view());
 
         Tab threadsAndMemoryTab = createTab(threadsAndMemory,"Threads And Memory");
         Tab transactionsTab = createTab(transactions, "Transactions");
@@ -103,20 +97,30 @@ public class DashboardView{
         this.vertical.getChildren().addAll(uriInputView, this.browserView.view(), this.tabPane, this.gridView.createTable());
     }
 
-    private void instantiateViews() {
-        this.uriInputView = createURIInputView();
-        this.browserView = new BrowserView();
-        ReadOnlyLongProperty id = this.dashboardPresenter.getId();
-        this.heapView = new SnapshotView(id,"Heap Size","Used Heap",null);
-        this.threadCountView = new SnapshotView(id,"Thread Count","Threads",null);
-        this.peakThreadCount = new SnapshotView(id,"Peak Thread Count", "Threads", null);
-        this.busyThreadView = new SnapshotView(id,"Busy Thread Count","Threads",null);
-        this.commitCountView = new SnapshotView(id,"TX Commit","#",null);
-        this.rollbackCountView = new SnapshotView(id,"TX Rollback","#",null);
-        this.totalErrorsView = new SnapshotView(id,"Errors","#",null);
-        this.queuedConnectionsView = new SnapshotView(id,"Queued Connections","Connections",null);
-        this.currentSessionsView = new SnapshotView(id,"HTTP Sessions","#",null);
-        this.gridView = new GridView(this.dashboardPresenter.getSnapshots());
+    private void bind() {
+        this.dashboardPresenter.getUriProperty().bind(txtUri.textProperty());
+        this.browserView.getUriProperty().bind(txtUri.textProperty());
+        this.heapView.value().bind(this.dashboardPresenter.getUsedHeapSizeInMB());
+
+        this.threadCountView.value().bind(this.dashboardPresenter.getThreadCount());
+        this.busyThreadView.value().bind(this.dashboardPresenter.getBusyThreads());
+        this.peakThreadCount.value().bind(this.dashboardPresenter.getPeakThreadCount());
+
+        this.commitCountView.value().bind(this.dashboardPresenter.getCommitCount());
+        this.rollbackCountView.value().bind(this.dashboardPresenter.getRollbackCount());
+
+        this.queuedConnectionsView.value().bind(this.dashboardPresenter.getQueuedConnections());
+        this.totalErrorsView.value().bind(this.dashboardPresenter.getTotalErrors());
+        this.activeSessionsView.value().bind(this.dashboardPresenter.getActiveSessions());
+        this.expiredSessionsView.value().bind(this.dashboardPresenter.getExpiredSessions());
+
+        this.dashboardPresenter.getPools().addListener(new MapChangeListener<String, ConnectionPoolBindings>() {
+            public void onChanged(Change<? extends String, ? extends ConnectionPoolBindings> change) {
+                ConnectionPoolBindings valueAdded = change.getValueAdded();
+                if(valueAdded != null)
+                    createPoolTab(valueAdded);
+            }
+        });
     }
 
 
