@@ -79,6 +79,22 @@ public class SnapshotProviderIT {
     }
 
     @Test
+    public void activeSessions() throws JSONException{
+        int activeSessions = this.dataProvider.activeSessionsCurrent();
+        System.out.println("# activeSessions: " + activeSessions);
+        assertTrue(activeSessions != -1);
+    }
+
+    @Test
+    public void expiredSessions() throws JSONException{
+        int expiredSessions = this.dataProvider.expiredSessions();
+        System.out.println("# expiredSessions: " + expiredSessions);
+        assertTrue(expiredSessions != -1);
+    }
+
+
+
+    @Test
     public void getStringArray() throws JSONException{
         String[] actual = this.dataProvider.getStringArray(SnapshotProvider.RESOURCES, "childResources");
         assertNotNull(actual);

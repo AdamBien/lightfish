@@ -31,23 +31,13 @@ public class Snapshot {
     private int rolledBackTX;
     private int queuedConnections;
     private int activeSessions;
-
+    private int expiredSessions;
+    
     @OneToMany(cascade= CascadeType.PERSIST)
     private List<ConnectionPool> pools;
 
-    public Snapshot(long usedHeapSize, int threadCount, int peakThreadCount, int totalErrors, int currentThreadBusy, int committedTX, int rolledBackTX, int queuedConnections,int activeSessions) {
-        this();
-        this.usedHeapSize = usedHeapSize;
-        this.threadCount = threadCount;
-        this.peakThreadCount = peakThreadCount;
-        this.totalErrors = totalErrors;
-        this.currentThreadBusy = currentThreadBusy;
-        this.committedTX = committedTX;
-        this.rolledBackTX = rolledBackTX;
-        this.queuedConnections = queuedConnections;
-        this.activeSessions = activeSessions;
-    }
 
+    
     public Snapshot() {
         this.monitoringTime = new Date();
         this.pools = new ArrayList<ConnectionPool>();
@@ -68,6 +58,48 @@ public class Snapshot {
             snapshot.usedHeapSize = usedHeapSize;
             return this;
         }
+        
+        public Builder expiredSessions(int expiredSessions){
+            snapshot.expiredSessions = expiredSessions;
+            return this;
+        }
+
+        public Builder threadCount(int threadCount){
+            snapshot.threadCount = threadCount;            
+            return this;
+        }
+
+        public Builder peakThreadCount(int peakThreadCount){
+            snapshot.peakThreadCount = peakThreadCount;
+            return this;
+        }
+
+        public Builder totalErrors(int totalErrors){
+            snapshot.totalErrors = totalErrors;
+            return this;
+        }
+        public Builder currentThreadBusy(int currentThreadBusy){
+            snapshot.currentThreadBusy = currentThreadBusy;
+            return this;
+
+        }
+        public Builder committedTX(int committedTX){
+            snapshot.committedTX = committedTX;
+            return this;
+        }
+        public Builder rolledBackTX(int rolledBackTX){
+            snapshot.rolledBackTX = rolledBackTX;
+            return this;
+        }
+        public Builder queuedConnections(int queuedConnections){
+            snapshot.queuedConnections = queuedConnections;
+            return this;
+        }
+        public Builder activeSessions(int activeSessions){
+            snapshot.activeSessions = activeSessions;
+            return this;
+        }
+    
         
         public Snapshot build(){
             return this.snapshot;
@@ -93,6 +125,7 @@ public class Snapshot {
                 ", rolledBackTX=" + rolledBackTX +
                 ", queuedConnections=" + queuedConnections +
                 ", activeSessions=" + activeSessions +
+                ", expiredSessions=" + expiredSessions +
                 ", pools=" + pools +
                 '}';
     }
