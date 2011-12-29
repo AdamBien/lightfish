@@ -20,14 +20,21 @@ public class Browser extends Collapsible {
     private WebView webView;
     private final static int HEIGHT = 280;
 
-    public Browser() {
+    Browser() {}
+
+    Node view() {
+        if(webView == null)
+            initialize();
+        return webView;
+    }
+
+    private void initialize() {
         this.webView = new WebView();
         this.webView.setPrefHeight(HEIGHT);
         this.engine = webView.getEngine();
         this.prefHeight = this.webView.getPrefHeight();
         this.registerListeners();
     }
-
 
 
     public StringProperty getURI() {
@@ -38,19 +45,19 @@ public class Browser extends Collapsible {
         uri.addListener(new ChangeListener<String>() {
             public void changed(ObservableValue<? extends String> arg0, String old, String newValue) {
                 if (newValue != null) {
-                    engine.load(skipLastSegment(newValue));
+                    engine.load(skipLastSlash(newValue));
                 }
             }
         });
     }
 
-    private String skipLastSegment(String uri) {
+    String skipLastSlash(String uri) {
+        if(!uri.endsWith("/"))
+            return uri;
         return uri.substring(0, uri.lastIndexOf("/"));
     }
 
-    Node view() {
-        return webView;
-    }
+
 
 
     @Override
