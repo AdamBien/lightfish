@@ -43,7 +43,7 @@ public class Browser extends Collapsible {
 
     private void registerListeners() {
         uri.addListener(new ChangeListener<String>() {
-            public void changed(ObservableValue<? extends String> arg0, String old, String newValue) {
+            public void changed(ObservableValue<? extends String> observable, String old, String newValue) {
                 if (newValue != null) {
                     engine.load(skipLastSlash(newValue));
                 }
@@ -56,9 +56,6 @@ public class Browser extends Collapsible {
             return uri;
         return uri.substring(0, uri.lastIndexOf("/"));
     }
-
-
-
 
     @Override
     public DoubleProperty getMaxHeightProperty() {

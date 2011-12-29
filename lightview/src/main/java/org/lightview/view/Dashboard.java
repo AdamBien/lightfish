@@ -53,16 +53,16 @@ public class Dashboard {
         this.uriInputView = createURIInputView();
         this.browser = new Browser();
         ReadOnlyLongProperty id = this.dashboardPresenter.getId();
-        this.heap = new Snapshot(id,"Heap Size","Used Heap");
-        this.threadCount = new Snapshot(id,"Thread Count","Threads");
-        this.peakThreadCount = new Snapshot(id,"Peak Thread Count", "Threads");
-        this.busyThread = new Snapshot(id,"Busy Thread Count","Threads");
-        this.commitCount = new Snapshot(id,"TX Commit","#");
-        this.rollbackCount = new Snapshot(id,"TX Rollback","#");
-        this.totalErrors = new Snapshot(id,"Errors","#");
-        this.queuedConnections = new Snapshot(id,"Queued Connections","Connections");
-        this.activeSessions = new Snapshot(id,"HTTP Sessions","#");
-        this.expiredSessions = new Snapshot(id,"Expired Sessions","#");
+        this.heap = new Snapshot(id, "Heap Size", "Used Heap");
+        this.threadCount = new Snapshot(id, "Thread Count", "Threads");
+        this.peakThreadCount = new Snapshot(id, "Peak Thread Count", "Threads");
+        this.busyThread = new Snapshot(id, "Busy Thread Count", "Threads");
+        this.commitCount = new Snapshot(id, "TX Commit", "#");
+        this.rollbackCount = new Snapshot(id, "TX Rollback", "#");
+        this.totalErrors = new Snapshot(id, "Errors", "#");
+        this.queuedConnections = new Snapshot(id, "Queued Connections", "Connections");
+        this.activeSessions = new Snapshot(id, "HTTP Sessions", "#");
+        this.expiredSessions = new Snapshot(id, "Expired Sessions", "#");
         this.grid = new Grid(this.dashboardPresenter.getSnapshots());
     }
 
@@ -88,11 +88,11 @@ public class Dashboard {
         web.getChildren().addAll(this.activeSessions.view());
         web.getChildren().addAll(this.expiredSessions.view());
 
-        Tab threadsAndMemoryTab = createTab(threadsAndMemory,"Threads And Memory");
+        Tab threadsAndMemoryTab = createTab(threadsAndMemory, "Threads And Memory");
         Tab transactionsTab = createTab(transactions, "Transactions");
-        Tab paranormalTab = createTab(paranormal,"Paranormal Activity");
-        Tab webTab = createTab(web,"Web");
-        this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab,webTab);
+        Tab paranormalTab = createTab(paranormal, "Paranormal Activity");
+        Tab webTab = createTab(web, "Web");
+        this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab, webTab);
 
         this.vertical.getChildren().addAll(uriInputView, this.browser.view(), this.tabPane, this.grid.createTable());
     }
@@ -117,7 +117,7 @@ public class Dashboard {
         this.dashboardPresenter.getPools().addListener(new MapChangeListener<String, ConnectionPoolBindings>() {
             public void onChanged(Change<? extends String, ? extends ConnectionPoolBindings> change) {
                 ConnectionPoolBindings valueAdded = change.getValueAdded();
-                if(valueAdded != null)
+                if (valueAdded != null)
                     createPoolTab(valueAdded);
             }
         });
@@ -134,7 +134,7 @@ public class Dashboard {
     void createPoolTab(ConnectionPoolBindings valueAdded) {
         ReadOnlyLongProperty id = this.dashboardPresenter.getId();
         String jndiName = valueAdded.getJndiName().get();
-        ConnectionPool connectionPool = new ConnectionPool(id,valueAdded);
+        ConnectionPool connectionPool = new ConnectionPool(id, valueAdded);
         Node view = connectionPool.view();
         Tab tab = createTab(view, "Resource: " + jndiName);
         this.tabPane.getTabs().add(tab);
@@ -149,21 +149,28 @@ public class Dashboard {
             }
         });
         HBox hBox = HBoxBuilder.create().spacing(10).build();
-        this.txtUri = TextFieldBuilder.create().editable(true).text("http://localhost:8080/lightfish/live").prefColumnCount(40).minHeight(20).build();
+        this.txtUri = TextFieldBuilder.
+                create().
+                editable(true).
+                text("http://localhost:8080/lightfish/live").
+                prefColumnCount(40).
+                minHeight(20).
+                build();
         Label uri = LabelBuilder.create().labelFor(txtUri).text("LightFish location:").build();
-        hBox.getChildren().addAll(uri, txtUri,button);
+        hBox.getChildren().addAll(uri, txtUri, button);
         return hBox;
     }
 
     private void toggleBrowserSize(Button button) {
         boolean minimized = this.browser.toggleMinimize();
-        if(minimized){
+        if (minimized) {
             button.setText("+");
-        }else{
+        } else {
             button.setText("-");
         }
     }
-    public void open(){
+
+    public void open() {
         Scene scene = new Scene(this.vertical);
         scene.getStylesheets().add(this.getClass().getResource("lightfish.css").toExternalForm());
         stage.setFullScreen(false);
