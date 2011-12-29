@@ -10,17 +10,17 @@ import org.lightview.presenter.ConnectionPoolBindings;
  * Date: 03.12.11
  * Time: 10:51
  */
-public class ConnectionPoolView {
+public class ConnectionPool {
 
     private HBox box;
-    private SnapshotView freeConnections;
-    private SnapshotView usedConnections;
-    private SnapshotView waitQueueLength;
-    private SnapshotView connectionLeaks;
+    private Snapshot freeConnections;
+    private Snapshot usedConnections;
+    private Snapshot waitQueueLength;
+    private Snapshot connectionLeaks;
     private ConnectionPoolBindings bindings;
     private ReadOnlyLongProperty idProvider;
 
-    public ConnectionPoolView(ReadOnlyLongProperty idProvider,ConnectionPoolBindings connectionPoolBindings) {
+    public ConnectionPool(ReadOnlyLongProperty idProvider, ConnectionPoolBindings connectionPoolBindings) {
         this.bindings = connectionPoolBindings;
         this.idProvider = idProvider;
         this.createSnapshotViews();
@@ -28,10 +28,10 @@ public class ConnectionPoolView {
     }
 
     private void createSnapshotViews(){
-        this.freeConnections = new SnapshotView(idProvider,"Free Connections", "Connections", "");
-        this.usedConnections = new SnapshotView(idProvider,"Used Connections", "Connections", "");
-        this.waitQueueLength = new SnapshotView(idProvider,"Wait Queue Length", "Queue Length", "");
-        this.connectionLeaks = new SnapshotView(idProvider,"Potential Connection Leak", "Leaks", "");
+        this.freeConnections = new Snapshot(idProvider,"Free Connections", "Connections", "");
+        this.usedConnections = new Snapshot(idProvider,"Used Connections", "Connections", "");
+        this.waitQueueLength = new Snapshot(idProvider,"Wait Queue Length", "Queue Length", "");
+        this.connectionLeaks = new Snapshot(idProvider,"Potential Connection Leak", "Leaks", "");
         this.box = new HBox();
         box.getChildren().add(freeConnections.view());
         box.getChildren().add(usedConnections.view());

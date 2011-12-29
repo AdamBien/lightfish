@@ -13,7 +13,7 @@ import javafx.util.Duration;
  * Date: 24.11.11
  * Time: 20:29
  */
-public abstract class CollapsibleView {
+public abstract class Collapsible {
     protected double prefHeight;
     private boolean minimized = false;
 

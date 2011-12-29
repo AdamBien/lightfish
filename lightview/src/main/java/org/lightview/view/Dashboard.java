@@ -19,28 +19,28 @@ import org.lightview.presenter.DashboardPresenterBindings;
  * Date: 18.11.11
  * Time: 17:19
  */
-public class DashboardView{
+public class Dashboard {
 
     DashboardPresenterBindings dashboardPresenter;
     Stage stage;
     private TextField txtUri;
-    private BrowserView browserView;
-    private SnapshotView heapView;
-    private SnapshotView threadCountView;
-    private SnapshotView busyThreadView;
-    private SnapshotView queuedConnectionsView;
+    private Browser browser;
+    private Snapshot heap;
+    private Snapshot threadCount;
+    private Snapshot busyThread;
+    private Snapshot queuedConnections;
     private VBox vertical;
-    private SnapshotView commitCountView;
-    private SnapshotView rollbackCountView;
-    private SnapshotView totalErrorsView;
-    private SnapshotView activeSessionsView;
-    private SnapshotView expiredSessionsView;
-    private GridView gridView;
+    private Snapshot commitCount;
+    private Snapshot rollbackCount;
+    private Snapshot totalErrors;
+    private Snapshot activeSessions;
+    private Snapshot expiredSessions;
+    private Grid grid;
     private TabPane tabPane;
-    private SnapshotView peakThreadCount;
+    private Snapshot peakThreadCount;
     private Node uriInputView;
 
-    public DashboardView(Stage stage,DashboardPresenterBindings dashboardPresenter) {
+    public Dashboard(Stage stage, DashboardPresenterBindings dashboardPresenter) {
         this.dashboardPresenter = dashboardPresenter;
         this.stage = stage;
         this.tabPane = new TabPane();
@@ -51,19 +51,19 @@ public class DashboardView{
 
     private void instantiateViews() {
         this.uriInputView = createURIInputView();
-        this.browserView = new BrowserView();
+        this.browser = new Browser();
         ReadOnlyLongProperty id = this.dashboardPresenter.getId();
-        this.heapView = new SnapshotView(id,"Heap Size","Used Heap");
-        this.threadCountView = new SnapshotView(id,"Thread Count","Threads");
-        this.peakThreadCount = new SnapshotView(id,"Peak Thread Count", "Threads");
-        this.busyThreadView = new SnapshotView(id,"Busy Thread Count","Threads");
-        this.commitCountView = new SnapshotView(id,"TX Commit","#");
-        this.rollbackCountView = new SnapshotView(id,"TX Rollback","#");
-        this.totalErrorsView = new SnapshotView(id,"Errors","#");
-        this.queuedConnectionsView = new SnapshotView(id,"Queued Connections","Connections");
-        this.activeSessionsView = new SnapshotView(id,"HTTP Sessions","#");
-        this.expiredSessionsView = new SnapshotView(id,"Expired Sessions","#");
-        this.gridView = new GridView(this.dashboardPresenter.getSnapshots());
+        this.heap = new Snapshot(id,"Heap Size","Used Heap");
+        this.threadCount = new Snapshot(id,"Thread Count","Threads");
+        this.peakThreadCount = new Snapshot(id,"Peak Thread Count", "Threads");
+        this.busyThread = new Snapshot(id,"Busy Thread Count","Threads");
+        this.commitCount = new Snapshot(id,"TX Commit","#");
+        this.rollbackCount = new Snapshot(id,"TX Rollback","#");
+        this.totalErrors = new Snapshot(id,"Errors","#");
+        this.queuedConnections = new Snapshot(id,"Queued Connections","Connections");
+        this.activeSessions = new Snapshot(id,"HTTP Sessions","#");
+        this.expiredSessions = new Snapshot(id,"Expired Sessions","#");
+        this.grid = new Grid(this.dashboardPresenter.getSnapshots());
     }
 
     private void createViews() {
@@ -82,11 +82,11 @@ public class DashboardView{
 
         instantiateViews();
 
-        threadsAndMemory.getChildren().addAll(this.heapView.view(), this.threadCountView.view(), this.peakThreadCount.view());
-        transactions.getChildren().addAll(this.commitCountView.view(), this.rollbackCountView.view());
-        paranormal.getChildren().addAll(this.queuedConnectionsView.view(), this.totalErrorsView.view(), this.busyThreadView.view());
-        web.getChildren().addAll(this.activeSessionsView.view());
-        web.getChildren().addAll(this.expiredSessionsView.view());
+        threadsAndMemory.getChildren().addAll(this.heap.view(), this.threadCount.view(), this.peakThreadCount.view());
+        transactions.getChildren().addAll(this.commitCount.view(), this.rollbackCount.view());
+        paranormal.getChildren().addAll(this.queuedConnections.view(), this.totalErrors.view(), this.busyThread.view());
+        web.getChildren().addAll(this.activeSessions.view());
+        web.getChildren().addAll(this.expiredSessions.view());
 
         Tab threadsAndMemoryTab = createTab(threadsAndMemory,"Threads And Memory");
         Tab transactionsTab = createTab(transactions, "Transactions");
@@ -94,25 +94,25 @@ public class DashboardView{
         Tab webTab = createTab(web,"Web");
         this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab,webTab);
 
-        this.vertical.getChildren().addAll(uriInputView, this.browserView.view(), this.tabPane, this.gridView.createTable());
+        this.vertical.getChildren().addAll(uriInputView, this.browser.view(), this.tabPane, this.grid.createTable());
     }
 
     private void bind() {
         this.dashboardPresenter.getUriProperty().bind(txtUri.textProperty());
-        this.browserView.getUriProperty().bind(txtUri.textProperty());
-        this.heapView.value().bind(this.dashboardPresenter.getUsedHeapSizeInMB());
+        this.browser.getURI().bind(txtUri.textProperty());
+        this.heap.value().bind(this.dashboardPresenter.getUsedHeapSizeInMB());
 
-        this.threadCountView.value().bind(this.dashboardPresenter.getThreadCount());
-        this.busyThreadView.value().bind(this.dashboardPresenter.getBusyThreads());
+        this.threadCount.value().bind(this.dashboardPresenter.getThreadCount());
+        this.busyThread.value().bind(this.dashboardPresenter.getBusyThreads());
         this.peakThreadCount.value().bind(this.dashboardPresenter.getPeakThreadCount());
 
-        this.commitCountView.value().bind(this.dashboardPresenter.getCommitCount());
-        this.rollbackCountView.value().bind(this.dashboardPresenter.getRollbackCount());
+        this.commitCount.value().bind(this.dashboardPresenter.getCommitCount());
+        this.rollbackCount.value().bind(this.dashboardPresenter.getRollbackCount());
 
-        this.queuedConnectionsView.value().bind(this.dashboardPresenter.getQueuedConnections());
-        this.totalErrorsView.value().bind(this.dashboardPresenter.getTotalErrors());
-        this.activeSessionsView.value().bind(this.dashboardPresenter.getActiveSessions());
-        this.expiredSessionsView.value().bind(this.dashboardPresenter.getExpiredSessions());
+        this.queuedConnections.value().bind(this.dashboardPresenter.getQueuedConnections());
+        this.totalErrors.value().bind(this.dashboardPresenter.getTotalErrors());
+        this.activeSessions.value().bind(this.dashboardPresenter.getActiveSessions());
+        this.expiredSessions.value().bind(this.dashboardPresenter.getExpiredSessions());
 
         this.dashboardPresenter.getPools().addListener(new MapChangeListener<String, ConnectionPoolBindings>() {
             public void onChanged(Change<? extends String, ? extends ConnectionPoolBindings> change) {
@@ -134,8 +134,8 @@ public class DashboardView{
     void createPoolTab(ConnectionPoolBindings valueAdded) {
         ReadOnlyLongProperty id = this.dashboardPresenter.getId();
         String jndiName = valueAdded.getJndiName().get();
-        ConnectionPoolView connectionPoolView = new ConnectionPoolView(id,valueAdded);
-        Node view = connectionPoolView.view();
+        ConnectionPool connectionPool = new ConnectionPool(id,valueAdded);
+        Node view = connectionPool.view();
         Tab tab = createTab(view, "Resource: " + jndiName);
         this.tabPane.getTabs().add(tab);
     }
@@ -156,7 +156,7 @@ public class DashboardView{
     }
 
     private void toggleBrowserSize(Button button) {
-        boolean minimized = this.browserView.toggleMinimize();
+        boolean minimized = this.browser.toggleMinimize();
         if(minimized){
             button.setText("+");
         }else{

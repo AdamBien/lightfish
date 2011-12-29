@@ -20,7 +20,7 @@ import javafx.util.Duration;
  * Date: 22.11.11
  * Time: 19:37
  */
-public class SnapshotView{
+public class Snapshot {
 
     private String title;
     private String yAxisTitle;
@@ -33,7 +33,7 @@ public class SnapshotView{
     private boolean activated;
     private ReadOnlyLongProperty idProvider;
 
-    public SnapshotView(ReadOnlyLongProperty idProvider,String title, String yAxisTitle,String yUnit) {
+    public Snapshot(ReadOnlyLongProperty idProvider, String title, String yAxisTitle, String yUnit) {
         this.title = title;
         this.yAxisTitle = yAxisTitle;
         this.yUnit = yUnit;
@@ -43,7 +43,7 @@ public class SnapshotView{
         this.registerListeners();
     }
 
-    public SnapshotView(ReadOnlyLongProperty idProvider,String title, String yAxisTitle) {
+    public Snapshot(ReadOnlyLongProperty idProvider, String title, String yAxisTitle) {
         this(idProvider,title,yAxisTitle,null);
     }
 

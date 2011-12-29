@@ -3,7 +3,7 @@ package org.lightview;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import org.lightview.presenter.DashboardPresenter;
-import org.lightview.view.DashboardView;
+import org.lightview.view.Dashboard;
 
 import java.net.MalformedURLException;
 
@@ -16,7 +16,7 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
         DashboardPresenter dashboardPresenter = new DashboardPresenter();
-        new DashboardView(primaryStage,dashboardPresenter);
+        new Dashboard(primaryStage,dashboardPresenter);
     }
 
     public static void main(String[] args) throws MalformedURLException {

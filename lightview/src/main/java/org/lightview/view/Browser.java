@@ -12,7 +12,7 @@ import javafx.scene.web.WebView;
 /**
  * @author Adam Bien <blog.adam-bien.com>
  */
-public class BrowserView extends CollapsibleView {
+public class Browser extends Collapsible {
 
     private StringProperty uri = new SimpleStringProperty();
 
@@ -20,7 +20,7 @@ public class BrowserView extends CollapsibleView {
     private WebView webView;
     private final static int HEIGHT = 280;
 
-    public BrowserView() {
+    public Browser() {
         this.webView = new WebView();
         this.webView.setPrefHeight(HEIGHT);
         this.engine = webView.getEngine();
@@ -30,7 +30,7 @@ public class BrowserView extends CollapsibleView {
 
 
 
-    public StringProperty getUriProperty() {
+    public StringProperty getURI() {
         return uri;
     }
 
