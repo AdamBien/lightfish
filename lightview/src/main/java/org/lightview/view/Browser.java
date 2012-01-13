@@ -9,6 +9,9 @@ import javafx.scene.Node;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 /**
  * @author Adam Bien <blog.adam-bien.com>
  */
@@ -44,13 +47,28 @@ public class Browser extends Collapsible {
     private void registerListeners() {
         uri.addListener(new ChangeListener<String>() {
             public void changed(ObservableValue<? extends String> observable, String old, String newValue) {
-                if (newValue != null) {
+                if (isValid(newValue)) {
                     engine.load(skipLastSlash(newValue));
                 }
             }
         });
     }
 
+    boolean isValid(String newValue) {
+        if(newValue == null){
+            return false;
+        }
+
+        try {
+            new URL(newValue);
+        } catch (MalformedURLException e) {
+            System.out.println("URI: " + newValue + " is invalid: " + e);
+            return false;
+        }
+        return true;
+    }
+
+    
     String skipLastSlash(String uri) {
         if(!uri.endsWith("/"))
             return uri;
