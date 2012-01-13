@@ -48,7 +48,6 @@ public class Snapshot {
     }
 
 
-
     private void initialize() {
            final CategoryAxis xAxis = new CategoryAxis();
            final NumberAxis yAxis = new NumberAxis();
@@ -77,23 +76,23 @@ public class Snapshot {
         return currentValue;
     }
 
-    public void deactivate(){
+    public Node view(){
+        return this.chart;
+    }
+
+    void deactivate(){
         FadeTransition fadeAway = FadeTransitionBuilder.create().fromValue(1.0).toValue(FADE_VALUE).duration(Duration.seconds(1)).node(this.chart).build();
         fadeAway.play();
         activated = false;
     }
 
-    public void activate(){
+    void activate(){
         FadeTransition fadeAway = FadeTransitionBuilder.create().fromValue(FADE_VALUE).toValue(1.0).duration(Duration.seconds(1)).node(this.chart).build();
         fadeAway.play();
         activated = true;
     }
 
-    public Node view(){
-        return this.chart;
-    }
-
-    public void onNewEntry(Number value) {
+    void onNewEntry(Number value) {
         String id = "-";
         if(idProvider != null)
             id = String.valueOf(idProvider.get());
@@ -106,6 +105,4 @@ public class Snapshot {
                 activate();
         }
     }
-
-
 }

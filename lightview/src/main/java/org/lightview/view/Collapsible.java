@@ -4,8 +4,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.value.WritableValue;
-import javafx.scene.web.WebView;
 import javafx.util.Duration;
 
 /**
@@ -16,22 +14,6 @@ import javafx.util.Duration;
 public abstract class Collapsible {
     protected double prefHeight;
     private boolean minimized = false;
-
-    public void minimize() {
-        animate(0);
-    }
-
-    public void maximize() {
-        animate(this.prefHeight);
-    }
-
-    public void animate(double toValue){
-        Timeline timeline = new Timeline();
-        timeline.getKeyFrames().add(
-                new KeyFrame(Duration.seconds(1),
-                        new KeyValue(getMaxHeightProperty(), toValue)));
-        timeline.playFromStart();
-    }
 
     public boolean toggleMinimize() {
         if (minimized) {
@@ -45,5 +27,21 @@ public abstract class Collapsible {
 
     }
 
-    public abstract DoubleProperty getMaxHeightProperty();
+    void minimize() {
+        animate(0);
+    }
+
+    void maximize() {
+        animate(this.prefHeight);
+    }
+
+    void animate(double toValue){
+        Timeline timeline = new Timeline();
+        timeline.getKeyFrames().add(
+                new KeyFrame(Duration.seconds(1),
+                        new KeyValue(getMaxHeightProperty(), toValue)));
+        timeline.playFromStart();
+    }
+
+    protected abstract DoubleProperty getMaxHeightProperty();
 }

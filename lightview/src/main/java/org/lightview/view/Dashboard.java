@@ -29,15 +29,16 @@ public class Dashboard {
     private Snapshot threadCount;
     private Snapshot busyThread;
     private Snapshot queuedConnections;
-    private VBox vertical;
     private Snapshot commitCount;
     private Snapshot rollbackCount;
     private Snapshot totalErrors;
     private Snapshot activeSessions;
     private Snapshot expiredSessions;
+    private Snapshot peakThreadCount;
+    private VBox vertical;
     private Grid grid;
     private TabPane tabPane;
-    private Snapshot peakThreadCount;
+
     private Node uriInputView;
 
     public Dashboard(Stage stage, DashboardPresenterBindings dashboardPresenter) {
@@ -49,21 +50,12 @@ public class Dashboard {
         this.open();
     }
 
-    private void instantiateViews() {
-        this.uriInputView = createURIInputView();
-        this.browser = new Browser();
-        ReadOnlyLongProperty id = this.dashboardPresenter.getId();
-        this.heap = new Snapshot(id, "Heap Size", "Used Heap");
-        this.threadCount = new Snapshot(id, "Thread Count", "Threads");
-        this.peakThreadCount = new Snapshot(id, "Peak Thread Count", "Threads");
-        this.busyThread = new Snapshot(id, "Busy Thread Count", "Threads");
-        this.commitCount = new Snapshot(id, "TX Commit", "#");
-        this.rollbackCount = new Snapshot(id, "TX Rollback", "#");
-        this.totalErrors = new Snapshot(id, "Errors", "#");
-        this.queuedConnections = new Snapshot(id, "Queued Connections", "Connections");
-        this.activeSessions = new Snapshot(id, "HTTP Sessions", "#");
-        this.expiredSessions = new Snapshot(id, "Expired Sessions", "#");
-        this.grid = new Grid(this.dashboardPresenter.getSnapshots());
+    public void open() {
+        Scene scene = new Scene(this.vertical);
+        scene.getStylesheets().add(this.getClass().getResource("lightfish.css").toExternalForm());
+        stage.setFullScreen(false);
+        stage.setScene(scene);
+        stage.show();
     }
 
     private void createViews() {
@@ -97,6 +89,24 @@ public class Dashboard {
         this.vertical.getChildren().addAll(uriInputView, this.browser.view(), this.tabPane, this.grid.createTable());
     }
 
+    private void instantiateViews() {
+        this.uriInputView = createURIInputView();
+        this.browser = new Browser();
+        ReadOnlyLongProperty id = this.dashboardPresenter.getId();
+        this.heap = new Snapshot(id, "Heap Size", "Used Heap");
+        this.threadCount = new Snapshot(id, "Thread Count", "Threads");
+        this.peakThreadCount = new Snapshot(id, "Peak Thread Count", "Threads");
+        this.busyThread = new Snapshot(id, "Busy Thread Count", "Threads");
+        this.commitCount = new Snapshot(id, "TX Commit", "#");
+        this.rollbackCount = new Snapshot(id, "TX Rollback", "#");
+        this.totalErrors = new Snapshot(id, "Errors", "#");
+        this.queuedConnections = new Snapshot(id, "Queued Connections", "Connections");
+        this.activeSessions = new Snapshot(id, "HTTP Sessions", "#");
+        this.expiredSessions = new Snapshot(id, "Expired Sessions", "#");
+        this.grid = new Grid(this.dashboardPresenter.getSnapshots());
+    }
+
+
     private void bind() {
         this.dashboardPresenter.getUriProperty().bind(txtUri.textProperty());
         this.browser.getURI().bind(txtUri.textProperty());
@@ -122,7 +132,6 @@ public class Dashboard {
             }
         });
     }
-
 
     private Tab createTab(Node content, String caption) {
         Tab tab = new Tab();
@@ -152,7 +161,7 @@ public class Dashboard {
         this.txtUri = TextFieldBuilder.
                 create().
                 editable(true).
-                text("http://localhost:8080/lightfish/live").
+                text("http://localhost:8080/lightfish").
                 prefColumnCount(40).
                 minHeight(20).
                 build();
@@ -168,13 +177,5 @@ public class Dashboard {
         } else {
             button.setText("-");
         }
-    }
-
-    public void open() {
-        Scene scene = new Scene(this.vertical);
-        scene.getStylesheets().add(this.getClass().getResource("lightfish.css").toExternalForm());
-        stage.setFullScreen(false);
-        stage.setScene(scene);
-        stage.show();
     }
 }

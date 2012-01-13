@@ -33,8 +33,8 @@ public class Grid {
         columns.add(createColumn("rolledBackTX","Rollbacks"));
         columns.add(createColumn("queuedConnections","Queued Connections"));
         columns.add(createColumn("totalErrors","Total Errors"));
-        columns.add(createColumn("activeSessions","Active Sessions"));
-        columns.add(createColumn("expiredSessions","Expired Sessions"));
+        columns.add(createColumn("activeSessions", "Active Sessions"));
+        columns.add(createColumn("expiredSessions", "Expired Sessions"));
         tableView.setItems(this.snapshots);
         return tableView;
     }
