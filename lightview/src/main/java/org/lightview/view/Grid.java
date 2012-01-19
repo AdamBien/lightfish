@@ -35,6 +35,7 @@ public class Grid {
         columns.add(createColumn("totalErrors","Total Errors"));
         columns.add(createColumn("activeSessions", "Active Sessions"));
         columns.add(createColumn("expiredSessions", "Expired Sessions"));
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tableView.setItems(this.snapshots);
         return tableView;
     }
