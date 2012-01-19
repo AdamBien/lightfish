@@ -54,7 +54,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         this.initializeListeners();
     }
 
-    void initializeListeners() {
+    public void initializeListeners() {
         this.uri.addListener(new ChangeListener<String>() {
             public void changed(ObservableValue<? extends String> observableValue, String s, String newUri) {
                 restartService();

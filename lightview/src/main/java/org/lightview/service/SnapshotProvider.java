@@ -13,7 +13,14 @@ public class SnapshotProvider extends Service<Snapshot> {
     private final String liveDataURL;
 
     public SnapshotProvider(String liveDataURL) {
-        this.liveDataURL = liveDataURL;
+        this.liveDataURL = appendLive(liveDataURL);
+    }
+
+    String appendLive(String liveDataURL) {
+        if(!liveDataURL.endsWith("/live")){
+            return liveDataURL + "/live";
+        }
+        return liveDataURL;
     }
 
     @Override
