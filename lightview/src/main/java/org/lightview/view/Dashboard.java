@@ -52,7 +52,7 @@ public class Dashboard {
 
     public void open() {
         Scene scene = new Scene(this.vertical);
-        scene.getStylesheets().add(this.getClass().getResource("lightfish.css").toExternalForm());
+        scene.getStylesheets().add(this.getClass().getResource("lightview.css").toExternalForm());
         stage.setFullScreen(false);
         stage.setScene(scene);
         stage.show();
