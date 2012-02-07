@@ -57,6 +57,33 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin> <!-- not all tests will be deployed automatically, eg. -->
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.2.1</version>
+            <executions>
+                <execution>
+                    <id>unpack-dependencies</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>exec</goal>
+                    </goals>
+                </execution>
+            </executions>
+                <configuration>
+                    <executable>${fx.home}/bin/javafxpackager</executable>
+                    <arguments>
+                        <argument>-createjar</argument>
+                        <argument>-nocss2bin</argument>
+                        <argument>-appclass org.lightview.App</argument>
+                        <argument>-srcdir ./target/classes</argument>
+                        <argument>-outdir .</argument>
+                        <argument>-outfile</argument>
+                        <argument>lightview-app</argument>
+                    </arguments>
+                </configuration>
+              </plugin>
+
         </plugins>
     </build>
     <properties>
