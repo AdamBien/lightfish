@@ -6,7 +6,10 @@
     <description>Real Time GlassFish Monitoring Dashboard</description>
     <offline-allowed/>
   </information>
-  <resources os="Windows">
+    <security>
+        <all-permissions/>
+    </security>
+    <resources os="Windows">
     <jfx:javafx-runtime version="2.0+" href="http://javadl.sun.com/webapps/download/GetFile/javafx-latest/windows-i586/javafx2.jnlp"/>
   </resources>
   <resources>
