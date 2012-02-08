@@ -3,7 +3,18 @@
 <html>
 <head>
     <script type="text/javascript" src="http://java.com/js/dtjava.js"></script>
-    <script>
+        <script>
+        function launchApplication(jnlpfile) {
+            dtjava.launch(            {
+                        url : 'lightview-web.jnlp',
+                    },
+                    {
+                        javafx : '2.0+'
+                    },
+                         {}
+            );
+            return false;
+        }
         function deployIt() {
             dtjava.embed(
                     {   id: "lightview-web",
@@ -21,5 +32,7 @@
 </head>
 <body>
 <div id="place"></div>
+ <b>Webstart:</b> <a href='lightview-web.jnlp' onclick="return launchApplication('lightview-web.jnlp');">Launch LightView as an application</a>
+
 </body>
 </html>
