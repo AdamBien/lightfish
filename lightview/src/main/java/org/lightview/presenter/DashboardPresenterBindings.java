@@ -28,4 +28,5 @@ public interface DashboardPresenterBindings {
     ReadOnlyIntegerProperty getExpiredSessions();
     ObservableMap<String, ConnectionPoolBindings> getPools();
     ObservableList<Snapshot> getSnapshots();
+    String getBaseURI();
 }

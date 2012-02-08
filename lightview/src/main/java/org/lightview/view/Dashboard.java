@@ -176,13 +176,18 @@ public class Dashboard {
         this.txtUri = TextFieldBuilder.
                 create().
                 editable(true).
-                text("http://localhost:8080/lightfish").
+                text(getBaseURI()).
                 prefColumnCount(40).
                 minHeight(20).
                 build();
         Label uri = LabelBuilder.create().labelFor(txtUri).text("LightFish location:").build();
         hBox.getChildren().addAll(uri, txtUri, button);
         return hBox;
+    }
+
+    private String getBaseURI() {
+        String base = this.dashboardPresenter.getBaseURI();
+        return base + "/lightfish";
     }
 
     private void toggleBrowserSize(Button button) {

@@ -50,12 +50,13 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     private IntegerProperty activeSessions;
     private IntegerProperty expiredSessions;
     private LongProperty id;
+    private String baseURI;
 
     public DashboardPresenter(String baseURI) {
+        this.baseURI = baseURI;
         this.snapshots = FXCollections.observableArrayList();
         this.pools = FXCollections.observableHashMap();
         this.uri = new SimpleStringProperty();
-        this.uri.set(baseURI);
         this.usedHeapSizeInMB = new SimpleLongProperty();
         this.threadCount = new SimpleLongProperty();
         this.peakThreadCount = new SimpleIntegerProperty();
@@ -211,4 +212,12 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     public ObservableMap<String,ConnectionPoolBindings> getPools() {
         return pools;
     }
+    
+    public String getBaseURI(){
+        if(this.baseURI == null){
+            return "http://localhost:8080/";
+        }
+        return this.baseURI;
+    }
+
 }
