@@ -16,6 +16,7 @@ limitations under the License.
 package org.lightview;
 
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.stage.Stage;
 import org.lightview.presenter.DashboardPresenter;
 import org.lightview.view.Dashboard;
@@ -30,8 +31,24 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        DashboardPresenter dashboardPresenter = new DashboardPresenter();
+        String serverURI = getServerURI();
+        System.out.println("Base URI: " + serverURI);
+        DashboardPresenter dashboardPresenter = new DashboardPresenter(serverURI);
         new Dashboard(primaryStage,dashboardPresenter);
+    }
+    
+    String getServerURI(){
+        HostServices hostServices = getHostServices();
+        if(hostServices != null){
+            return extractHostWithPort(hostServices.getDocumentBase());
+        }
+        return null;
+    }
+    
+    String extractHostWithPort(String uri){
+        int fromIndex = "http://".length();
+        int index = uri.indexOf("/",fromIndex);
+        return uri.substring(0,index);
     }
 
     public static void main(String[] args) throws MalformedURLException {

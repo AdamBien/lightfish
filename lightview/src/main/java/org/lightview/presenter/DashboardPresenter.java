@@ -51,10 +51,11 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     private IntegerProperty expiredSessions;
     private LongProperty id;
 
-    public DashboardPresenter() {
+    public DashboardPresenter(String baseURI) {
         this.snapshots = FXCollections.observableArrayList();
         this.pools = FXCollections.observableHashMap();
         this.uri = new SimpleStringProperty();
+        this.uri.set(baseURI);
         this.usedHeapSizeInMB = new SimpleLongProperty();
         this.threadCount = new SimpleLongProperty();
         this.peakThreadCount = new SimpleIntegerProperty();
