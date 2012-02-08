@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <script type="text/javascript" src="http://java.com/js/dtjava.js"></script>
+    <script>
+        function deployIt() {
+            dtjava.embed(
+                    {   id: "lightview-web",
+                        url: "lightview-web.jnlp",
+                        width: 800,
+                        height: 600,
+                        placeholder: "place"
+                    },
+                    { javafx: "2.0+" },
+                    {}
+            );
+        }
+        dtjava.addOnloadCallback(deployIt);
+    </script>
+</head>
+<body>
+<div id="place"></div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="lightview-web.jnlp">
+  <information>
+    <title>LightView Real Time Monitoring</title>
+    <vendor>adam-bien.com</vendor>
+    <description>Real Time GlassFish Monitoring Dashboard</description>
+    <offline-allowed/>
+  </information>
+  <resources os="Windows">
+    <jfx:javafx-runtime version="2.0+" href="http://javadl.sun.com/webapps/download/GetFile/javafx-latest/windows-i586/javafx2.jnlp"/>
+  </resources>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="lightview-app.jar" size="80618" download="eager" />
+  </resources>
+  <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="LightView" />
+  <jfx:javafx-desc  width="800" height="600" main-class="org.lightview.App"  name="LightView" />
+  <update check="background"/>
+</jnlp>
