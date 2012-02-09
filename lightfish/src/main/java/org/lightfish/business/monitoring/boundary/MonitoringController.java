@@ -79,9 +79,18 @@ public class MonitoringController {
     public void gatherAndPersist(){
         Snapshot current = dataProvider.fetchSnapshot();
         em.persist(current);
-        heartBeat.fire(current);
-        if(current.isSuspicious())
-            escalationSink.fire(current);
+        try{
+            heartBeat.fire(current);
+        }catch(Exception e){
+            LOG.error("Cannot fire heartbeat",e);
+        }
+        if(current.isSuspicious()){
+            try{
+                escalationSink.fire(current);
+            }catch(Exception e){
+                LOG.error("Cannot fire suspicious element",e);
+            }   
+        }
         LOG.info(".");
     }
     

@@ -16,6 +16,7 @@ limitations under the License.
 package org.lightfish.business.heartbeat.boundary;
 
 import org.lightfish.business.heartbeat.control.Serializer;
+import org.lightfish.business.logging.Log;
 import org.lightfish.business.monitoring.boundary.Severity;
 import org.lightfish.business.monitoring.entity.Snapshot;
 import org.lightfish.presentation.publication.BrowserWindow;
@@ -39,6 +40,9 @@ public class Publisher {
     private ConcurrentLinkedQueue<BrowserWindow> browserWindows = new ConcurrentLinkedQueue<BrowserWindow>();
     
     @Inject
+    Log LOG;
+    
+    @Inject
     Serializer serializer;
     
     public void onBrowserRequest(@Observes BrowserWindow browserWindow){
@@ -46,6 +50,7 @@ public class Publisher {
     }
     
     public void onNewSnapshot(@Observes @Severity(Severity.Level.HEARTBEAT) Snapshot snapshot){
+        LOG.info("--- windows: " + browserWindows);
         for (BrowserWindow browserWindow : browserWindows) {
             try{
                 Writer writer = browserWindow.getWriter();
@@ -55,7 +60,6 @@ public class Publisher {
                 browserWindows.remove(browserWindow);
             }
         }
-        System.out.println("--- windows: " + browserWindows);
     }
     
 }

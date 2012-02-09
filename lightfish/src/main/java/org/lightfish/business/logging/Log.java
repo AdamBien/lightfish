@@ -23,7 +23,6 @@ package org.lightfish.business.logging;
 public class Log {
     public void error(String msg,Exception e){
         System.err.println(msg + " Exception: " +e);
-        
     }
 
     public void info(String msg) {
