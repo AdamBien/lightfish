@@ -88,6 +88,9 @@ public class Browser extends Collapsible {
     void postProcess(Document lightFishAdminPage) {
         System.out.println("Document: " + lightFishAdminPage);
         Element lightview = lightFishAdminPage.getElementById("lightview");
+        if(lightview == null){
+            return;
+        }
         System.out.println("Lightview element: " + lightview);
         System.out.println("Lightview clazz: " + lightview.getClass().getName());
         lightview.setAttribute("style","display: none");

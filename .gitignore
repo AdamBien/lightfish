@@ -4,3 +4,4 @@ target
 s101plugin.state
 /lightview/lightview.iml
 /lightfish/lightfish.iml
+lightfish/src/main/webapp/lightview-app.jar
