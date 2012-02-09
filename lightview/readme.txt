@@ -1,5 +1,5 @@
 To start the application from the command line use:
-java -cp ./target/lightview-1.0-SNAPSHOT.jar:[PATH_TO_JAVAFX]/javafx-sdk2.0.2-beta/rt/lib/jfxrt.jar  org.lightview.App
+java -Djavafx.runtime.path=[JAVAFX_SDK]/rt -jar ../lightfish/src/main/webapp/lightview-app.jar
 
 You will need a profile to set the fx.home variable:
 	    <profile>
