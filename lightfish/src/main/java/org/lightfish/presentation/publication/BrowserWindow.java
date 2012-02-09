@@ -37,7 +37,11 @@ public class BrowserWindow {
     
     
     public void send(){
+        try{
             this.asyncContext.complete();
+        }catch(Exception e){
+            System.err.println("Cannot complete context: " + e);
+        }
     }
     
     public Writer getWriter(){
