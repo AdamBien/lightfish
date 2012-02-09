@@ -5,3 +5,7 @@ s101plugin.state
 /lightview/lightview.iml
 /lightfish/lightfish.iml
 lightfish/src/main/webapp/lightview-app.jar
+lightview/generate-key.sh
+lightview/lightview-app.sh
+lightview/package-standalone.sh
+lightview/package-webstart.sh
