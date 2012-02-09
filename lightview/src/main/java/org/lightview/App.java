@@ -39,12 +39,16 @@ public class App extends Application {
     
     String getServerURI(){
         HostServices hostServices = getHostServices();
-        if(hostServices != null){
+        if(runsInBrowser(hostServices)){
             return extractHostWithPort(hostServices.getDocumentBase());
         }
         return null;
     }
-    
+
+    boolean runsInBrowser(HostServices hostServices) {
+        return (hostServices != null && hostServices.getWebContext() != null);
+    }
+
     String extractHostWithPort(String uri){
         int fromIndex = "http://".length();
         int index = uri.indexOf("/",fromIndex);

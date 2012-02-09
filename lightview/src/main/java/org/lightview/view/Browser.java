@@ -20,9 +20,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker;
 import javafx.scene.Node;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -67,6 +70,27 @@ public class Browser extends Collapsible {
                 }
             }
         });
+        registerWorkDoneListener(engine);
+    }
+
+    void registerWorkDoneListener(final WebEngine engine) {
+        final Worker<Void> loadWorker = engine.getLoadWorker();
+        loadWorker.progressProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> observableValue, Number old, Number current) {
+                System.out.println("Load progress: " + current);
+                if(current.doubleValue() == 1.0){
+                    postProcess(engine.getDocument());
+                }
+            }
+        });
+    }
+
+    void postProcess(Document lightFishAdminPage) {
+        System.out.println("Document: " + lightFishAdminPage);
+        Element lightview = lightFishAdminPage.getElementById("lightview");
+        System.out.println("Lightview element: " + lightview);
+        System.out.println("Lightview clazz: " + lightview.getClass().getName());
+        lightview.setAttribute("style","display: none");
     }
 
     boolean isValid(String newValue) {
