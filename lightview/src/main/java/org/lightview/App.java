@@ -46,7 +46,7 @@ public class App extends Application {
     }
 
     boolean runsInBrowser(HostServices hostServices) {
-        return (hostServices != null && hostServices.getWebContext() != null);
+         return (!hostServices.getDocumentBase().startsWith("file:"));
     }
 
     String extractHostWithPort(String uri){
