@@ -215,7 +215,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     
     public String getBaseURI(){
         if(this.baseURI == null){
-            return "http://localhost:8080/";
+            return "http://localhost:8080";
         }
         return this.baseURI;
     }
