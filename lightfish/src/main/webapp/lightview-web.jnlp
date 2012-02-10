@@ -12,7 +12,7 @@
         </shortcut>
     </information>
     <resources os="Windows">
-        <jfx:javafx-runtime version="2.0+"
+        <jfx:javafx-runtime version="2.1+"
                             href="http://javadl.sun.com/webapps/download/GetFile/javafx-latest/windows-i586/javafx2.jnlp"/>
     </resources>
     <resources>
