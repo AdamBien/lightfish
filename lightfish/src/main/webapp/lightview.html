@@ -6,7 +6,7 @@
         <script>
         function launchApplication(jnlpfile) {
             dtjava.launch(            {
-                        url : 'lightview-web.jnlp'
+                        url : jnlpfile
                     },
                     {
                         javafx : '2.1+'
@@ -21,7 +21,7 @@
                         url: "lightview-web.jnlp",
                         width: 800,
                         height: 600,
-                        placeholder: "place"
+                        placeholder: "lightviewExecution"
                     },
                     { javafx: "2.1+"
                     },
@@ -32,8 +32,7 @@
     </script>
 </head>
 <body>
-<div id="place"></div>
- <b>Webstart:</b> <a href='lightview-web.jnlp' onclick="return launchApplication('lightview-web.jnlp');">Launch LightView as an application</a>
-
+<div id="lightviewExecution"></div>
+<a href='lightview-web.jnlp' onclick="return launchApplication('lightview-web.jnlp');">Launch and install LightView</a>
 </body>
 </html>
