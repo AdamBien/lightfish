@@ -50,7 +50,7 @@ public class App extends Application {
     }
 
     String extractHostWithPort(String uri){
-        int fromIndex = "http://".length();
+        int fromIndex = "https://".length();
         int index = uri.indexOf("/",fromIndex);
         return uri.substring(0,index);
     }
@@ -58,5 +58,4 @@ public class App extends Application {
     public static void main(String[] args) throws MalformedURLException {
         launch(args);
     }
-
 }
