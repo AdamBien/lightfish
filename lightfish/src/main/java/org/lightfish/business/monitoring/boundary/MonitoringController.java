@@ -106,8 +106,13 @@ public class MonitoringController {
     @PreDestroy
     public void stopTimer(){
         if(timer != null){
-            this.timer.cancel();
-            this.timer  = null;
+            try{
+                this.timer.cancel();
+            }catch(Exception e){
+                LOG.error("Cannot cancel timer " + this.timer, e);
+            }finally{
+                this.timer  = null;
+            }
         }
     }
 
