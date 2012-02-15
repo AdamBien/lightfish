@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class OneShot {
 
     private String version;
+    private String uptime;
 
     public OneShot() {
     }
@@ -22,6 +23,11 @@ public class OneShot {
         return version;
     }
 
+    public String getUptime() {
+        return uptime;
+    }
+
+    
 
     public static class Builder{
         private OneShot oneShot;
@@ -32,6 +38,11 @@ public class OneShot {
         
         public Builder version(String version){
             this.oneShot.version = version;
+            return this;
+        }
+        
+        public Builder uptime(String uptime){
+            this.oneShot.uptime = uptime;
             return this;
         }
         public OneShot build(){

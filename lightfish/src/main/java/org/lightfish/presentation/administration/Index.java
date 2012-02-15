@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import org.lightfish.business.monitoring.boundary.ServerInformation;
+import org.lightfish.business.monitoring.entity.OneShot;
 
 /**
  *
@@ -72,9 +73,24 @@ public class Index {
     }
     
     public String getVersion(){
-        return this.information.getVersion();
+        OneShot info = this.information.fetch();
+        if(info != null){
+            return info.getVersion();
+        }else{
+            return "--";
+        }
+        
     }
 
+    public String getUptime(){
+        OneShot info = this.information.fetch();
+        if(info != null){
+            return info.getUptime();
+        }else{
+            return "--";
+        }
+    }
+    
     public void setLocation(String location) {
         this.configurator.setValue(LOCATION,location);
     

@@ -19,6 +19,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.lightfish.business.logging.Log;
 import org.lightfish.business.monitoring.control.OneShotProvider;
+import org.lightfish.business.monitoring.entity.OneShot;
 
 /**
  *
@@ -26,7 +27,6 @@ import org.lightfish.business.monitoring.control.OneShotProvider;
  */
 @Stateless
 public class ServerInformation {
-    private String NOT_AVAILABLE = "--";
     
     @Inject
     OneShotProvider provider;
@@ -34,12 +34,12 @@ public class ServerInformation {
     Log LOG;
     
     
-    public String getVersion(){
+    public OneShot fetch(){
         try{
-         return provider.fetchOneShot().getVersion();
+         return provider.fetchOneShot();
         }catch(Exception e){
             LOG.error("Cannot fetch static server information", e);
-            return NOT_AVAILABLE;
+            return null;
         }
          
     }

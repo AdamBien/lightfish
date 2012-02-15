@@ -1,6 +1,7 @@
 package org.lightfish.business.monitoring.control;
 
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -18,8 +19,6 @@ import javax.ws.rs.core.MediaType;
  */
 public class OneShotProvider {
     protected Client client;
-    protected String baseManagementUri;
-    protected String baseMonitoringUri;
 
     @Inject
     Instance<String> location;
@@ -33,22 +32,39 @@ public class OneShotProvider {
 
 
     String getVersion() throws JSONException {
-        this.baseMonitoringUri = "http://" + location.get() + "/monitoring/domain/server/";
-        this.baseManagementUri = "http://" + location.get() + "/management/domain/";
-        this.managementResource = this.client.resource(this.baseManagementUri);
-        JSONObject result = this.managementResource.path("version").accept(MediaType.APPLICATION_JSON).get(JSONObject.class);
+        this.managementResource = this.client.resource(getManagementURI());
+        JSONObject result = getJSONObject("version");
         return result.getString("message");
     }
 
+    String getUpTime() throws JSONException {
+        this.managementResource = this.client.resource(getManagementURI());
+        JSONObject result = getJSONObject("uptime");
+        return result.getString("message");
+    }
+
+    JSONObject getJSONObject(String name) throws UniformInterfaceException {
+        JSONObject result = this.managementResource.path(name).accept(MediaType.APPLICATION_JSON).get(JSONObject.class);
+        return result;
+    }
+    
+    String getMonitoringURI(){
+        return "http://" + location.get() + "/monitoring/domain/server/";
+    }
+    String getManagementURI(){
+        return "http://" + location.get() + "/management/domain/";
+    }
 
     public OneShot fetchOneShot(){
         String version = null;
+        String uptime = null;
         try {
             version = getVersion();
-        } catch (JSONException e) {
+            uptime = getUpTime();
+        } catch (Exception e) {
             throw new IllegalStateException("Cannot fetch static monitoring data because of: " + e);
         }
-        return new OneShot.Builder().version(version).build();
+        return new OneShot.Builder().version(version).uptime(uptime).build();
     }
 
 }
