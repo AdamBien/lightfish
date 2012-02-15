@@ -23,6 +23,7 @@ import javax.enterprise.inject.Model;
 import javax.inject.Inject;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
+import org.lightfish.business.monitoring.boundary.ServerInformation;
 
 /**
  *
@@ -42,6 +43,9 @@ public class Index {
 
     @Inject
     MonitoringAdmin monitoringAdmin;
+    
+    @Inject
+    ServerInformation information;
     
     @Min(1)
     public int getInterval() {
@@ -65,6 +69,10 @@ public class Index {
     @Size(min=5,max=30)
     public String getLocation() {
         return this.configurator.getValue(LOCATION);
+    }
+    
+    public String getVersion(){
+        return this.information.getVersion();
     }
 
     public void setLocation(String location) {

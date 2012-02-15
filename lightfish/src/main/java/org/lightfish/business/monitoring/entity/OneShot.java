@@ -18,6 +18,10 @@ public class OneShot {
     public OneShot() {
     }
 
+    public String getVersion() {
+        return version;
+    }
+
 
     public static class Builder{
         private OneShot oneShot;

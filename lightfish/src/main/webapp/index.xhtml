@@ -8,8 +8,9 @@
     <h:body>
         <h:form>
             <h:panelGrid columns="2">
-            Location:<h:inputText value="#{index.location}"/><br/>
-            Interval:<h:inputText value="#{index.interval}"/><br/>
+            Location:<h:inputText value="#{index.location}"/>
+            Interval:<h:inputText value="#{index.interval}"/>
+            Server version: <h:outputText value="#{index.version}"/>            
             </h:panelGrid>
             <h:commandButton value="Update" action="#{index.changeAdministration}"/>
         </h:form>

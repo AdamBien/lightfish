@@ -7,6 +7,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.lightfish.business.monitoring.entity.OneShot;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 
@@ -21,20 +22,20 @@ public class OneShotProvider {
     protected String baseMonitoringUri;
 
     @Inject
-    String location;
+    Instance<String> location;
 
     private WebResource managementResource;
 
     @PostConstruct
     public void initializeClient() {
         this.client = Client.create();
-        this.baseMonitoringUri = "http://" + location + "/monitoring/domain/server/";
-        this.baseManagementUri = "http://" + location + "/management/domain/";
-        this.managementResource = this.client.resource(this.baseManagementUri);
     }
 
 
     String getVersion() throws JSONException {
+        this.baseMonitoringUri = "http://" + location.get() + "/monitoring/domain/server/";
+        this.baseManagementUri = "http://" + location.get() + "/management/domain/";
+        this.managementResource = this.client.resource(this.baseManagementUri);
         JSONObject result = this.managementResource.path("version").accept(MediaType.APPLICATION_JSON).get(JSONObject.class);
         return result.getString("message");
     }
