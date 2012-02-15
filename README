@@ -15,9 +15,10 @@ limitations under the License.
 Installation:
 Open and "Run" the lightfish project with NetBeans - it will create the datasource for you and deploy the application and open the browser.
 Or:
-0. Install jdbc/sample manually
 1. mvn -Pjavafx clean install multi-light project
-2. Drop the lightfish/target/lightfish.war into /glassfish3.1.1/glassfish/domains/domain1/autodeploy
+2. Drop the lightfish/target/lightfish.war into /glassfish3.1.X/glassfish/domains/domain1/autodeploy
 3. Point your browser to: http://localhost:8080/lightfish
+
+LighFish should install the necessary connection pool and datasources on-the-fly. There is no setup needed. Tested with GlassFish 3.1.2.
 
 You can also download the lightfish.war from github.com/AdamBien
