@@ -26,6 +26,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 import java.util.Iterator;
+import javax.enterprise.inject.Instance;
 
 /**
  * @author Adam Bien, blog.adam-bien.com
@@ -42,21 +43,19 @@ public class SnapshotProvider {
     private static final String ROLLED_BACK_TX = "transaction-service/rolledbackcount";
     private static final String QUEUED_CONNS = "network/connection-queue/countqueued";
     private static final String CURRENT_SESSIONS = "web/session/activesessionscurrent";
-    private static final String EXPIRED_SESSIONS = "/web/session/expiredsessionstotal";
+    private static final String EXPIRED_SESSIONS = "web/session/expiredsessionstotal";
 
     static final String RESOURCES = "resources";
 
 
     private Client client;
-    private String baseUri;
 
     @Inject
-    String location;
+    Instance<String> location;
 
     @PostConstruct
     public void initializeClient() {
         this.client = Client.create();
-        this.baseUri = "http://" + location + "/monitoring/domain/server/";
     }
 
     public Snapshot fetchSnapshot() {
@@ -87,11 +86,15 @@ public class SnapshotProvider {
                 snapshot.add(fetchResource(jdbcPoolName));
             }
             return snapshot;
-        } catch (JSONException e) {
-            throw new IllegalStateException("Cannot fetch monitoring data because of: " + e);
+        } catch (Exception e) {
+            throw new IllegalStateException("Cannot fetch monitoring data for URI: " + this.getBaseURI(),e);
         }
     }
 
+    String getBaseURI(){
+        return "http://" + location.get() + "/monitoring/domain/server/";
+
+    }
 
     public ConnectionPool fetchResource(String jndiName) {
         try {
@@ -101,8 +104,8 @@ public class SnapshotProvider {
             int numpotentialconnleak = numpotentialconnleak(jndiName);
             int numconnused = numconnused(jndiName);
             return new ConnectionPool(jndiName, numconnfree, numconnused, waitqueuelength, numpotentialconnleak);
-        } catch (JSONException e) {
-            throw new IllegalStateException("Cannot fetch monitoring resource data for " + jndiName + " bacause: ", e);
+        } catch (Exception e) {
+            throw new IllegalStateException("Cannot fetch monitoring data for URI: " + this.getBaseURI(), e);
         }
     }
 
@@ -128,58 +131,58 @@ public class SnapshotProvider {
 
 
     String constructResourceString(String resourceName) {
-        return baseUri + RESOURCES + "/" + resourceName;
+        return getBaseURI() + RESOURCES + "/" + resourceName;
     }
 
     long usedHeapSize() throws JSONException {
-        final String uri = baseUri + HEAP_SIZE;
+        final String uri = getBaseURI() + HEAP_SIZE;
         return getLong(uri, "usedheapsize-count");
     }
 
     int threadCount() throws JSONException {
-        final String uri = baseUri + THREAD_COUNT;
+        final String uri = getBaseURI() + THREAD_COUNT;
         return getInt(uri, "threadcount");
     }
 
     int activeSessionsCurrent() throws JSONException {
-        final String uri = baseUri + CURRENT_SESSIONS;
+        final String uri = getBaseURI() + CURRENT_SESSIONS;
         return getInt(uri, "activesessionscurrent", "current");
     }
 
     int expiredSessions() throws JSONException {
-        final String uri = baseUri + EXPIRED_SESSIONS;
+        final String uri = getBaseURI() + EXPIRED_SESSIONS;
         return getInt(uri, "expiredsessionstotal", "count");
     }
 
 
     int peakThreadCount() throws JSONException {
-        final String uri = baseUri + PEAK_THREAD_COUNT;
+        final String uri = getBaseURI() + PEAK_THREAD_COUNT;
         return getInt(uri, "peakthreadcount");
     }
 
     int totalErrors() throws JSONException {
-        final String uri = baseUri + ERROR_COUNT;
+        final String uri = getBaseURI() + ERROR_COUNT;
         return getInt(uri, "errorcount");
     }
 
     int currentThreadBusy() throws JSONException {
-        final String uri = baseUri + HTTP_BUSY_THREADS;
+        final String uri = getBaseURI() + HTTP_BUSY_THREADS;
         return getInt(uri, "currentthreadsbusy");
     }
 
 
     int committedTX() throws JSONException {
-        final String uri = baseUri + COMMITTED_TX;
+        final String uri = getBaseURI() + COMMITTED_TX;
         return getInt(uri, "committedcount");
     }
 
     int rolledBackTX() throws JSONException {
-        final String uri = baseUri + ROLLED_BACK_TX;
+        final String uri = getBaseURI() + ROLLED_BACK_TX;
         return getInt(uri, "rolledbackcount");
     }
 
     int queuedConnections() throws JSONException {
-        final String uri = baseUri + QUEUED_CONNS;
+        final String uri = getBaseURI() + QUEUED_CONNS;
         return getInt(uri, "countqueued");
     }
 
@@ -209,7 +212,7 @@ public class SnapshotProvider {
     }
 
     String[] getStringArray(String name, String key) throws JSONException {
-        ClientResponse result = client.resource(this.baseUri + name).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+        ClientResponse result = client.resource(this.getBaseURI() + name).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
         JSONObject response = result.getEntity(JSONObject.class);
         response = response.getJSONObject("extraProperties").
                 getJSONObject("childResources");

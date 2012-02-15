@@ -1,11 +1,14 @@
 package org.lightfish.business.monitoring.control;
 
+import javax.enterprise.inject.Instance;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
+
 
 /**
  *
@@ -18,7 +21,8 @@ public class SnapshotProviderIT {
     @Before
     public void initialize(){
         this.dataProvider = new SnapshotProvider();
-        this.dataProvider.location = "localhost:4848";
+        this.dataProvider.location = mock(Instance.class);
+        when(this.dataProvider.location.get()).thenReturn("localhost:4848");
         this.dataProvider.initializeClient();
     }
 
@@ -54,7 +58,7 @@ public class SnapshotProviderIT {
     public void currentThreadsBusy() throws JSONException{
         int busyThreads = this.dataProvider.currentThreadBusy();
         System.out.println("# of busy threads: " + busyThreads);
-        assertTrue(busyThreads != 0);
+        assertTrue(busyThreads != -1);
     }
 
     @Test
