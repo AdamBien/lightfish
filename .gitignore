@@ -9,3 +9,5 @@ lightview/generate-key.sh
 lightview/lightview-app.sh
 lightview/package-standalone.sh
 lightview/package-webstart.sh
+lightfish/createDomainLighfish.sh
+lightfish/deploy.sh
