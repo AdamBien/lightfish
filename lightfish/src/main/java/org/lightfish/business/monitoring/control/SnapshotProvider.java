@@ -15,6 +15,7 @@ limitations under the License.
 */
 package org.lightfish.business.monitoring.control;
 
+import org.lightfish.business.monitoring.entity.Application;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import org.codehaus.jettison.json.JSONException;
@@ -88,6 +89,9 @@ public class SnapshotProvider {
             for (String jdbcPoolName : resources()) {
                 snapshot.add(fetchResource(jdbcPoolName));
             }
+            for (String application: applications()){
+                snapshot.add(fetchApplication(application));
+            }
             return snapshot;
         } catch (Exception e) {
             throw new IllegalStateException("Cannot fetch monitoring data for URI: " + this.getBaseURI(),e);
@@ -111,6 +115,11 @@ public class SnapshotProvider {
             throw new IllegalStateException("Cannot fetch monitoring data for URI: " + this.getBaseURI(), e);
         }
     }
+    
+   Application fetchApplication(String applicationName) {
+        return new Application(applicationName);
+    }
+
 
     int numconnfree(String jndiName) throws JSONException {
         String uri = constructResourceString(jndiName);
@@ -240,5 +249,6 @@ public class SnapshotProvider {
                 getJSONObject("entity").
                 getJSONObject(name);
     }
+
 
 }

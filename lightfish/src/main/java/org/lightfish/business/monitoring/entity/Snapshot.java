@@ -51,6 +51,9 @@ public class Snapshot {
     @OneToMany(cascade= CascadeType.PERSIST)
     private List<ConnectionPool> pools;
 
+    @OneToMany(cascade= CascadeType.PERSIST)
+    private List<Application> apps;
+
 
     
     public Snapshot() {
@@ -60,6 +63,10 @@ public class Snapshot {
 
     public void add(ConnectionPool connectionPool) {
         this.pools.add(connectionPool);
+    }
+
+    public void add(Application app) {
+        this.apps.add(app);
     }
 
     public static class Builder{
