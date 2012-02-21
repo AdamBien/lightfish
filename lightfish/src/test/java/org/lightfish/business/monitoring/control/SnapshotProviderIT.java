@@ -96,6 +96,20 @@ public class SnapshotProviderIT {
         assertTrue(expiredSessions != -1);
     }
 
+    @Test
+    public void applications() throws JSONException{
+        String[] applications = this.dataProvider.applications();
+        assertNotNull(applications);
+        System.out.println("# applications: " + toString(applications));
+        assertTrue(applications.length>0);
+    }
+    @Test
+    public void resources() throws JSONException{
+        String[] resources = this.dataProvider.resources();
+        assertNotNull(resources);
+        System.out.println("# resources: " + toString(resources));
+        assertTrue(resources.length>0);
+    }
 
 
     @Test
@@ -107,5 +121,13 @@ public class SnapshotProviderIT {
             System.out.println(slot);
         }
 
+    }
+
+    private String toString(String[] applications) {
+        String retVal ="";
+        for (String string : applications) {
+            retVal += string + " ";
+        }
+        return retVal;
     }
 }

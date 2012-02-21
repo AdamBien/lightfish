@@ -44,6 +44,9 @@ public class SnapshotProvider {
     private static final String QUEUED_CONNS = "network/connection-queue/countqueued";
     private static final String CURRENT_SESSIONS = "web/session/activesessionscurrent";
     private static final String EXPIRED_SESSIONS = "web/session/expiredsessionstotal";
+    
+    private static final String APPLICATIONS = "applications";
+    
 
     static final String RESOURCES = "resources";
 
@@ -190,6 +193,10 @@ public class SnapshotProvider {
         return getStringArray(RESOURCES, "childResources");
     }
 
+    
+    String[] applications() throws JSONException{
+        return getStringArray(APPLICATIONS, "childResources");
+    }
 
     long getLong(String uri, String name) throws JSONException {
         return getLong(uri, name, "count");
