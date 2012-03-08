@@ -58,7 +58,8 @@ public class Snapshot {
     
     public Snapshot() {
         this.monitoringTime = new Date();
-        this.pools = new ArrayList<ConnectionPool>();
+        this.pools = new ArrayList<>();
+        this.apps = new ArrayList<>();
     }
 
     public void add(ConnectionPool connectionPool) {
