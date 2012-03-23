@@ -28,11 +28,17 @@ public class BrowserWindow {
     
     private AsyncContext asyncContext;
     private final ServletResponse response;
-
+    private String channel;
+            
     public BrowserWindow(AsyncContext asyncContext) {
         this.asyncContext = asyncContext;
         this.response = this.asyncContext.getResponse();
         this.response.setContentType("application/xml");
+    }
+    
+    public BrowserWindow(AsyncContext asyncContext,String channel){
+        this(asyncContext);
+        this.channel = channel;
     }
     
     
@@ -52,6 +58,10 @@ public class BrowserWindow {
         }
     }
 
+    public String getChannel() {
+        return channel;
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -73,7 +83,9 @@ public class BrowserWindow {
         hash = 73 * hash + (this.asyncContext != null ? this.asyncContext.hashCode() : 0);
         return hash;
     }
-    
-    
-    
+
+    @Override
+    public String toString() {
+        return "BrowserWindow{" + "asyncContext=" + asyncContext + ", response=" + response + ", channel=" + channel + '}';
+    }    
 }

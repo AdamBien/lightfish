@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -47,6 +48,9 @@ public class Snapshot {
     private int queuedConnections;
     private int activeSessions;
     private int expiredSessions;
+    
+    @XmlTransient @Transient
+    private String escalationChannel;
     
     @OneToMany(cascade= CascadeType.PERSIST)
     private List<ConnectionPool> pools;
@@ -125,6 +129,16 @@ public class Snapshot {
     public List<Application> getApps() {
         return apps;
     }
+
+    public String getEscalationChannel() {
+        return escalationChannel;
+    }
+
+    public void setEscalationChannel(String escalationChannel) {
+        this.escalationChannel = escalationChannel;
+    }
+    
+    
 
     public static class Builder{
         private Snapshot snapshot;

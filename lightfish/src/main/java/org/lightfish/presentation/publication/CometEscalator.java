@@ -30,18 +30,25 @@ import java.util.logging.Logger;
  *
  * @author Adam Bien, blog.adam-bien.com
  */
-@WebServlet(name = "TunguskaGate", urlPatterns = {"/live"}, asyncSupported = true)
-public class TunguskaGate extends HttpServlet {
+@WebServlet(name = "CometEscalator", urlPatterns = {"/escalation/*"}, asyncSupported = true)
+public class CometEscalator extends HttpServlet {
 
     @Inject
     Event<BrowserWindow> events;
-    private final static Logger LOG = Logger.getLogger(TunguskaGate.class.getName());
+    private final static Logger LOG = Logger.getLogger(CometEscalator.class.getName());
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         AsyncContext startAsync = request.startAsync();
-        events.fire(new BrowserWindow(startAsync));
-        LOG.info("Event sent");
+        String channel = extractChannel(request.getRequestURI());
+        events.fire(new BrowserWindow(startAsync,channel));
+        LOG.info("Event sent for channel " + channel);
+    }
+    
+    
+    String extractChannel(String uri){
+        int lastIndexOf = uri.lastIndexOf("/");
+        return uri.substring(lastIndexOf+1);
     }
 }
