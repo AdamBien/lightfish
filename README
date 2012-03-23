@@ -19,6 +19,8 @@ Or:
 2. Drop the lightfish/target/lightfish.war into /glassfish3.1.X/glassfish/domains/domain1/autodeploy
 3. Point your browser to: http://localhost:8080/lightfish
 
-LighFish should install the necessary connection pool and datasources on-the-fly. There is no setup needed. Tested with GlassFish 3.1.2.
+LightFish requires JDK 1.7. It was compiled with Java 7 features.
+
+LightFish should install the necessary connection pool and datasources on-the-fly. There is no setup needed. Tested with GlassFish 3.1.2.
 
 You can also download the lightfish.war from github.com/AdamBien
