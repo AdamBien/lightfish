@@ -70,6 +70,62 @@ public class Snapshot {
         this.apps.add(app);
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public Date getMonitoringTime() {
+        return monitoringTime;
+    }
+
+    public long getUsedHeapSize() {
+        return usedHeapSize;
+    }
+
+    public int getThreadCount() {
+        return threadCount;
+    }
+
+    public int getPeakThreadCount() {
+        return peakThreadCount;
+    }
+
+    public int getTotalErrors() {
+        return totalErrors;
+    }
+
+    public int getCurrentThreadBusy() {
+        return currentThreadBusy;
+    }
+
+    public int getCommittedTX() {
+        return committedTX;
+    }
+
+    public int getRolledBackTX() {
+        return rolledBackTX;
+    }
+
+    public int getQueuedConnections() {
+        return queuedConnections;
+    }
+
+    public int getActiveSessions() {
+        return activeSessions;
+    }
+
+    public int getExpiredSessions() {
+        return expiredSessions;
+    }
+
+    public List<ConnectionPool> getPools() {
+        return pools;
+    }
+
+    public List<Application> getApps() {
+        return apps;
+    }
+
     public static class Builder{
         private Snapshot snapshot;
 
@@ -133,6 +189,8 @@ public class Snapshot {
     public boolean isSuspicious(){
         return (currentThreadBusy > 100);
     }
+    
+    
 
     @Override
     public String toString() {

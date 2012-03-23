@@ -41,6 +41,33 @@ public class SnapshotEscalatorTest {
     }
 
     @Test
+    public void escalation() throws ScriptException{
+        Snapshot snapshot = new Snapshot();
+        when(cut.scripting.activeScripts()).thenReturn(scripts("true"));
+        this.cut.escalate(snapshot);
+        this.cut.escalate(snapshot); //second invocation needed to enable evaluation
+        verify(this.cut.escalationSink).fire(snapshot);
+    }
+
+    @Test
+    public void noEscalation() throws ScriptException{
+        Snapshot snapshot = new Snapshot();
+        when(cut.scripting.activeScripts()).thenReturn(scripts("false"));
+        this.cut.escalate(snapshot);
+        this.cut.escalate(snapshot); //second invocation needed to enable evaluation
+        verify(this.cut.escalationSink,never()).fire(snapshot);
+    }
+
+    @Test
+    public void snapshotDependentEscalation() throws ScriptException{
+        Snapshot snapshot = new Snapshot.Builder().committedTX(1).build();
+        when(cut.scripting.activeScripts()).thenReturn(scripts("current.committedTX == 1"));
+        this.cut.escalate(snapshot);
+        this.cut.escalate(snapshot); //second invocation needed to enable evaluation
+        verify(this.cut.escalationSink).fire(snapshot);
+    }
+
+    @Test
     public void subequentEscalation() throws ScriptException{
         this.firstEscalation();
         when(this.cut.scriptEngine.createBindings()).thenReturn(mock(Bindings.class));
@@ -65,7 +92,7 @@ public class SnapshotEscalatorTest {
         Script script = new Script();
         script.setActive(true);
         script.setName("name " + scriptContent);
-        script.setName(scriptContent);
+        script.setContent(scriptContent);
         List<Script> scripts = new ArrayList<>();
         scripts.add(script);
         return scripts;
