@@ -68,7 +68,6 @@ public class Publisher {
     }
 
     public void onNewSnapshot(@Observes @Severity(Severity.Level.HEARTBEAT) Snapshot snapshot) {
-        LOG.info("--- windows: " + browserWindows);
         for (BrowserWindow browserWindow : browserWindows) {
             try {
                 send(browserWindow, snapshot);
@@ -79,7 +78,6 @@ public class Publisher {
     }
 
     public void onNewEscalation(@Observes @Severity(Severity.Level.ESCALATION) Snapshot escalated) {
-       LOG.info("--- escalation windows: " + this.escalations);
         this.escalations.put(escalated.getEscalationChannel(), escalated);
     }
 
@@ -87,11 +85,13 @@ public class Publisher {
     public void notifyEscalationListeners() {
         for (BrowserWindow browserWindow : browserWindows) {
             String channel = browserWindow.getChannel();
-            Snapshot snapshot = this.escalations.get(channel);
-            try {
-                send(browserWindow, snapshot);
-            } finally {
-                browserWindows.remove(browserWindow);
+            if (channel != null) {
+                Snapshot snapshot = this.escalations.get(channel);
+                try {
+                    send(browserWindow, snapshot);
+                } finally {
+                    browserWindows.remove(browserWindow);
+                }
             }
         }
     }

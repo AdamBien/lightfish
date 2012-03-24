@@ -39,4 +39,17 @@ public class PublisherTest {
         this.cut.notifyEscalationListeners();
         verify(window).send();
     }
+
+    @Test
+    public void separationOfNotificationsAndEscalations() {
+        final String escalationChannel = "duke";
+        BrowserWindow window = mock(BrowserWindow.class);
+        Snapshot snapshot = new Snapshot();
+        snapshot.setEscalationChannel(escalationChannel);
+        this.cut.onBrowserRequest(window);
+        this.cut.onNewEscalation(snapshot);
+        verify(window,never()).send();
+        this.cut.notifyEscalationListeners();
+        verify(window,never()).send();
+    }
 }
