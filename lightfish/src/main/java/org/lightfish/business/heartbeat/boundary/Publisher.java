@@ -27,6 +27,8 @@ import javax.ejb.Singleton;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.io.Writer;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.annotation.PostConstruct;
@@ -43,7 +45,6 @@ import javax.enterprise.inject.Instance;
 public class Publisher {
 
     private ConcurrentLinkedQueue<BrowserWindow> browserWindows = new ConcurrentLinkedQueue<>();
-    private ConcurrentHashMap<String, BrowserWindow> channelWindows = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, Snapshot> escalations = new ConcurrentHashMap<>();
     @Inject
     Log LOG;
@@ -70,9 +71,7 @@ public class Publisher {
         LOG.info("--- windows: " + browserWindows);
         for (BrowserWindow browserWindow : browserWindows) {
             try {
-                Writer writer = browserWindow.getWriter();
-                serializer.serialize(snapshot, writer);
-                browserWindow.send();
+                send(browserWindow, snapshot);
             } finally {
                 browserWindows.remove(browserWindow);
             }
@@ -80,11 +79,26 @@ public class Publisher {
     }
 
     public void onNewEscalation(@Observes @Severity(Severity.Level.ESCALATION) Snapshot escalated) {
+       LOG.info("--- escalation windows: " + this.escalations);
         this.escalations.put(escalated.getEscalationChannel(), escalated);
     }
-    
+
     @Timeout
-    public void notifyEscalationListeners(){
-        
+    public void notifyEscalationListeners() {
+        for (BrowserWindow browserWindow : browserWindows) {
+            String channel = browserWindow.getChannel();
+            Snapshot snapshot = this.escalations.get(channel);
+            try {
+                send(browserWindow, snapshot);
+            } finally {
+                browserWindows.remove(browserWindow);
+            }
+        }
+    }
+
+    void send(BrowserWindow browserWindow, Snapshot snapshot) {
+        Writer writer = browserWindow.getWriter();
+        serializer.serialize(snapshot, writer);
+        browserWindow.send();
     }
 }
