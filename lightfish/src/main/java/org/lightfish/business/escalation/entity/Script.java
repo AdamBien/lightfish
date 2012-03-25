@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @NamedQueries({
     @NamedQuery(name=Script.findAll,query="Select s from Script s"),
-    @NamedQuery(name=Script.findAll,query="Select s from Script s where s.active == true")
+    @NamedQuery(name=Script.findAllActive,query="Select s from Script s where s.active = true")
 })
 public class Script {
     public static final String PREFIX = "org.lightfish.business.scripting.entity.";
