@@ -8,6 +8,7 @@ import javax.ws.rs.client.Target;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ClientFactory;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
@@ -36,7 +37,7 @@ public class ScriptingResourceTest {
         
         //PUT
         Response response = this.target.request().put(entity(origin,MediaType.APPLICATION_XML));
-        assertThat(response.getStatus(),is(201));
+        assertThat(response.getStatus(),is(Status.CREATED.getStatusCode()));
         String location = response.getHeaders().getHeader("Location");
         System.out.println("Location: " + location);
         assertTrue(location.endsWith(scriptName));
@@ -52,11 +53,11 @@ public class ScriptingResourceTest {
         
         //DELETE
         response = this.target.path(scriptName).request().delete();
-        assertThat(response.getStatus(),is(200));
+        assertThat(response.getStatus(),is(Status.OK.getStatusCode()));
         
         //GET
-      ///  fetched = this.client.target(location).request(MediaType.APPLICATION_XML).get();
-      //  assertThat(fetched.getStatus(),is(204));
+        Response notExistingEntity = this.client.target(location).request(MediaType.APPLICATION_XML).get();
+        assertThat(notExistingEntity.getStatus(),is(Status.NO_CONTENT.getStatusCode()));
     }
     
 }
