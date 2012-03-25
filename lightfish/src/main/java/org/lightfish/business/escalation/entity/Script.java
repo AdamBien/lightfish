@@ -1,5 +1,6 @@
 package org.lightfish.business.escalation.entity;
 
+import java.util.Objects;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -58,6 +59,36 @@ public class Script {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.name);
+        hash = 97 * hash + Objects.hashCode(this.script);
+        hash = 97 * hash + (this.active ? 1 : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Script other = (Script) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.script, other.script)) {
+            return false;
+        }
+        if (this.active != other.active) {
+            return false;
+        }
+        return true;
     }
 
     
