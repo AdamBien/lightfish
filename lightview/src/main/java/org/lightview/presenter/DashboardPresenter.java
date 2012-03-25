@@ -27,6 +27,7 @@ import org.lightview.model.Snapshot;
 import org.lightview.service.SnapshotProvider;
 
 import java.util.List;
+import org.lightview.service.ScriptManager;
 
 /**
  * User: blog.adam-bien.com
@@ -102,7 +103,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
 
 
     void startFetching() {
-        this.service = new SnapshotProvider(getUri());
+        this.service = new SnapshotProvider(appendLive(getUri()));
         service.start();
         service.valueProperty().addListener(
                 new ChangeListener<Snapshot>() {
@@ -116,6 +117,13 @@ public class DashboardPresenter implements DashboardPresenterBindings {
 
                 });
         registerRestarting();
+    }
+    
+     String appendLive(String liveDataURL) {
+        if(!liveDataURL.endsWith("/live")){
+            return liveDataURL + "/live";
+        }
+        return liveDataURL;
     }
 
     void registerRestarting() {
