@@ -37,25 +37,25 @@ public class ScriptingResourceTest {
         Invocation put = this.target.request().buildPut(entity(script,MediaType.APPLICATION_XML));
         Response response = put.invoke();
         assertThat(response.getStatus(),is(201));
+        String location = response.getHeaders().getHeader("Location");
+        System.out.println("Location: " + location);
+        assertTrue(location.endsWith(scriptName));
         
         //GET
-        String location = response.getHeaders().getHeader("Location");
-        Script fetched = this.target.path(location).request(MediaType.APPLICATION_XML).get(Script.class);
-        System.out.println(fetched);
-        assertThat(fetched,is(script));
-        
-        //GET (ACTIVE)
+        Response fetched = this.client.target(location).request(MediaType.APPLICATION_XML).get();
+
+        //GET (ALL)
         GenericType<List<Script>> list = new GenericType<List<Script>>() {};
-        List<Script> result = this.target.path("active").request(MediaType.APPLICATION_XML).get(list);
+        List<Script> result = this.target.request(MediaType.APPLICATION_XML).get(list);
         assertFalse(result.isEmpty());
         
         //DELETE
-        response = this.target.path(scriptName).request().buildDelete().invoke();
-        assertThat(response.getStatus(),is(201));
+        response = this.target.path(scriptName).request().delete();
+        assertThat(response.getStatus(),is(200));
         
         //GET
-        fetched = this.target.path(location).request(MediaType.APPLICATION_XML).get(Script.class);
-        assertNull(fetched);
+        fetched = this.client.target(location).request(MediaType.APPLICATION_XML).get();
+        assertThat(fetched.getStatus(),is(204));
     }
     
 }
