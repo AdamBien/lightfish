@@ -12,18 +12,27 @@ import org.lightfish.business.escalation.entity.Script;
 public class Scripting {
     
     @PersistenceContext
-    EntityManager scriptStore;
+    EntityManager em;
 
     public List<Script> scripts() {
-        return scriptStore.createNamedQuery(Script.findAll).getResultList();
+        return em.createNamedQuery(Script.findAll).getResultList();
     }
 
     public List<Script> activeScripts() {
-        return scriptStore.createNamedQuery(Script.findAllActive).getResultList();
+        return em.createNamedQuery(Script.findAllActive).getResultList();
     }
     
     public Script save(Script script){
-        return this.scriptStore.merge(script);
+        return this.em.merge(script);
+    }
+
+    public void delete(String name) {
+      Script script = em.getReference(Script.class, name);
+      em.remove(script);
+    }
+
+    public Script getScript(String id) {
+        return em.find(Script.class, id);
     }
     
 }

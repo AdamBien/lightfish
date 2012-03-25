@@ -1,11 +1,14 @@
 package org.lightfish.business.escalation.boundary;
 
+import java.net.URI;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import org.lightfish.business.escalation.control.Scripting;
 import org.lightfish.business.escalation.entity.Script;
 
@@ -21,21 +24,31 @@ public class ScriptingResource {
     @Inject
     Scripting scripting;
     
+    @Context
+    UriInfo uri;
+    
     @GET
     public List<Script> scripts(){
         return scripting.scripts();
     }
 
     @GET
-    @Path("active")
-    public List<Script> activeScripts(){
-        return scripting.activeScripts();
+    @Path("{id}")
+    public Script script(@PathParam("id") String id){
+        return scripting.getScript(id);
     }
     
     @PUT
-    public Response save(){
-        
+    public Response save(Script script){
+        Script saved = scripting.save(script);
+        URI location = uri.getAbsolutePathBuilder().path(saved.getName()).build();
+        return Response.created(location).build();
+    }
+
+    @DELETE
+    @Path("{name}")
+    public Response delete(@PathParam("name") String name){
+        scripting.delete(name);
         return Response.ok().build();
     }
-    
 }
