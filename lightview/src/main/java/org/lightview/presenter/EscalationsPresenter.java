@@ -94,7 +94,10 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
 
     private void onSnapshotArrival(String scriptName, Snapshot newValue) {
         System.out.println("Arrived: " + scriptName + " " + newValue);
-        getSnapshots(scriptName).add(newValue);
+        ObservableList<Snapshot> snapshots = getSnapshots(scriptName);
+        if(!snapshots.contains(newValue)){
+            snapshots.add(newValue);
+        }
     }
 
     void registerRestarting(final SnapshotProvider provider) {
