@@ -25,6 +25,7 @@ public class Escalations {
     private final Node firstTab;
 
     public Escalations(Node firstTab,EscalationsPresenterBindings epb) {
+        this.pane = new TabPane();
         this.escalations = epb.getEscalations();
         this.firstTab = firstTab;
         this.initialSetup();
