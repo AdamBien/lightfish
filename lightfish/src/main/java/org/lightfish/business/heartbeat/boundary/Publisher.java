@@ -44,7 +44,7 @@ import javax.enterprise.inject.Instance;
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class Publisher {
 
-    private ConcurrentLinkedQueue<BrowserWindow> liveFeed = new ConcurrentLinkedQueue<>();
+    private ConcurrentLinkedQueue<BrowserWindow> browsers = new ConcurrentLinkedQueue<>();
     private ConcurrentHashMap<String, Snapshot> escalations = new ConcurrentHashMap<>();
     @Inject
     Log LOG;
@@ -64,16 +64,16 @@ public class Publisher {
     }
 
     public void onBrowserRequest(@Observes BrowserWindow browserWindow) {
-        liveFeed.add(browserWindow);
+        browsers.add(browserWindow);
     }
 
     public void onNewSnapshot(@Observes @Severity(Severity.Level.HEARTBEAT) Snapshot snapshot) {
-        for (BrowserWindow browserWindow : liveFeed) {
+        for (BrowserWindow browserWindow : browsers) {
             if (browserWindow.getChannel() == null) {
                 try {
                     send(browserWindow, snapshot);
                 } finally {
-                    liveFeed.remove(browserWindow);
+                    browsers.remove(browserWindow);
                 }
             }
         }
@@ -85,14 +85,14 @@ public class Publisher {
 
     @Timeout
     public void notifyEscalationListeners() {
-        for (BrowserWindow browserWindow : liveFeed) {
+        for (BrowserWindow browserWindow : browsers) {
             String channel = browserWindow.getChannel();
             if (channel != null) {
                 Snapshot snapshot = this.escalations.get(channel);
                 try {
                     send(browserWindow, snapshot);
                 } finally {
-                    liveFeed.remove(browserWindow);
+                    browsers.remove(browserWindow);
                 }
             }
         }
