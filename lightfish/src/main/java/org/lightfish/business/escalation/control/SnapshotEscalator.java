@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.script.Bindings;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import org.lightfish.business.escalation.entity.Script;
 import org.lightfish.business.logging.Log;
 import org.lightfish.business.monitoring.boundary.Severity;
@@ -51,10 +52,17 @@ public class SnapshotEscalator {
             try {
                 if (recent != null) {
                     for (Script script : scripts) {
-                        Object retVal = this.scriptEngine.eval(script.getContent(), binding);
+                        Object retVal = null;
+                        try {
+                            retVal = this.scriptEngine.eval(script.getContent(), binding);
+                        } catch (ScriptException scriptException) {
+                            LOG.error("Cannot evaluate script: " + script, scriptException);
+                        }
                         if (convert(retVal)) {
-                            escalationSink.fire(current);
                             current.setEscalated(true);
+                            current.setEscalationChannel(script.getName());
+                            escalationSink.fire(current);
+                            LOG.info("Escalated: " + script + " for snapshot: " + current + " and recent: " + recent);
                         }
                     }
                 }
