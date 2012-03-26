@@ -54,6 +54,7 @@ public class SnapshotEscalator {
                         Object retVal = this.scriptEngine.eval(script.getContent(), binding);
                         if (convert(retVal)) {
                             escalationSink.fire(current);
+                            current.setEscalated(true);
                         }
                     }
                 }

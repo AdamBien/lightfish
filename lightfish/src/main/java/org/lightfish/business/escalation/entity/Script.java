@@ -27,7 +27,7 @@ public class Script {
     private String script;
     
     private boolean active;
-
+    
     public Script() {
     }
 
