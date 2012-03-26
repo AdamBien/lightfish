@@ -11,3 +11,4 @@ lightview/package-standalone.sh
 lightview/package-webstart.sh
 lightfish/createDomainLighfish.sh
 lightfish/deploy.sh
+/lightfish/derby.log
