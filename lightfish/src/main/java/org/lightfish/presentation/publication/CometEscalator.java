@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  *
  * @author Adam Bien, blog.adam-bien.com
  */
-@WebServlet(name = "CometEscalator", urlPatterns = {"/escalation/*"}, asyncSupported = true)
+@WebServlet(name = "CometEscalator", urlPatterns = {"/escalations/*"}, asyncSupported = true)
 public class CometEscalator extends HttpServlet {
 
     @Inject
