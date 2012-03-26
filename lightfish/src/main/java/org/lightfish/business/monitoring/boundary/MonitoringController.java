@@ -84,13 +84,6 @@ public class MonitoringController {
         }catch(Exception e){
             LOG.error("Cannot fire heartbeat",e);
         }
-        if(current.isSuspicious()){
-            try{
-                escalationSink.fire(current);
-            }catch(Exception e){
-                LOG.error("Cannot fire suspicious element",e);
-            }   
-        }
         LOG.info(".");
     }
     

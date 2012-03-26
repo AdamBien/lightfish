@@ -206,12 +206,6 @@ public class Snapshot {
         }
     
     }
-    
-    public boolean isSuspicious(){
-        return (currentThreadBusy > 100);
-    }
-    
-    
 
     @Override
     public String toString() {
