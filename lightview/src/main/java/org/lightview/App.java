@@ -28,9 +28,12 @@ import java.net.MalformedURLException;
  * @author Adam Bien <blog.adam-bien.com>
  */
 public class App extends Application {
+    
+    private static final String VERSION = "scriptr";
 
     @Override
     public void start(Stage primaryStage) {
+        System.out.println("Launching LighView " + VERSION);
         String serverURI = getServerURI();
         System.out.println("Base URI: " + serverURI);
         DashboardPresenter dashboardPresenter = new DashboardPresenter(serverURI);

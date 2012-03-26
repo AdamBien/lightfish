@@ -16,7 +16,7 @@ public class ScriptManager {
     private final Client client;
 
     public ScriptManager(String baseURI) {
-        this.uri = baseURI;
+        this.uri = withResource(baseURI);
         this.client = Client.create();
     }
     
@@ -32,5 +32,9 @@ public class ScriptManager {
     
     public void removeScript(String scriptName){
         client.resource(this.uri).delete();
+    }
+
+    private String withResource(String baseURI) {
+        return baseURI + "/resources/scripts";
     }
 }
