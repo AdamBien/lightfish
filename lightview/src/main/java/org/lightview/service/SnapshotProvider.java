@@ -38,6 +38,7 @@ public class SnapshotProvider extends Service<Snapshot> {
             @Override
             protected Snapshot call() throws Exception {
                 SnapshotFetcher fetcher = new SnapshotFetcher(liveDataURL);
+                System.out.println("Fetching: " + liveDataURL);
                 return fetcher.getSnapshot();
             }
         };

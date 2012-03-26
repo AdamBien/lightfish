@@ -77,5 +77,9 @@ public class Script {
         }
         return true;
     }
- 
+
+    @Override
+    public String toString() {
+        return "Script{" + "name=" + name + ", script=" + script + ", active=" + active + '}';
+    }
 }

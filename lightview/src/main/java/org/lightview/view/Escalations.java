@@ -19,12 +19,12 @@ import org.lightview.view.Grid;
  * @author adam bien, adam-bien.com
  */
 public class Escalations {
-    
+
     private TabPane pane;
     private final ObservableMap<String, ObservableList<Snapshot>> escalations;
     private final Node firstTab;
 
-    public Escalations(Node firstTab,EscalationsPresenterBindings epb) {
+    public Escalations(Node firstTab, EscalationsPresenterBindings epb) {
         this.pane = new TabPane();
         this.escalations = epb.getEscalations();
         this.firstTab = firstTab;
@@ -33,18 +33,16 @@ public class Escalations {
     }
 
     private void initialSetup() {
-        pane.getTabs().add(createTab("Live Stream",firstTab));
+        pane.getTabs().add(createTab("Live Stream", firstTab));
         Set<Entry<String, ObservableList<Snapshot>>> entrySet = this.escalations.entrySet();
         for (Entry<String, ObservableList<Snapshot>> escalation : entrySet) {
             String title = escalation.getKey();
             ObservableList<Snapshot> snapshots = escalation.getValue();
-            Grid grid = new Grid(snapshots);
-            Tab escalationTab = createTab(title,grid.createTable());
-            pane.getTabs().add(escalationTab);
+            addGrid(title, snapshots);
         }
     }
 
-    private Tab createTab(String caption,Node content) {
+    private Tab createTab(String caption, Node content) {
         Tab tab = new Tab();
         tab.setContent(content);
         tab.setText(caption);
@@ -52,31 +50,36 @@ public class Escalations {
     }
 
     private void registerForChanges() {
-        this.escalations.addListener(new MapChangeListener<String, ObservableList<Snapshot>>(){
-
+        this.escalations.addListener(new MapChangeListener<String, ObservableList<Snapshot>>() {
             @Override
             public void onChanged(Change<? extends String, ? extends ObservableList<Snapshot>> change) {
                 String name = change.getKey();
-                if(change.wasRemoved()){
-                    remove(name,change.getValueRemoved());
+                if (change.wasRemoved()) {
+                    remove(name, change.getValueRemoved());
                 }
-                if(change.wasAdded()){
-                    add(name,change.getValueAdded());
+                if (change.wasAdded()) {
+                    add(name, change.getValueAdded());
                 }
             }
-        
         });
     }
-    
-    void remove(String name,ObservableList<Snapshot> change){
+
+    void remove(String name, ObservableList<Snapshot> change) {
         System.out.println("Sync: remove: " + name + change);
     }
 
-    void add(String name,ObservableList<Snapshot> change){
+    void add(String name, ObservableList<Snapshot> change) {
         System.out.println("Sync: add: " + name + change);
+        addGrid(name, change);
     }
-    
-    public Node view(){
+
+    public Node view() {
         return this.pane;
+    }
+
+    void addGrid(String title, ObservableList<Snapshot> snapshots) {
+        Grid grid = new Grid(snapshots);
+        Tab escalationTab = createTab(title, grid.createTable());
+        pane.getTabs().add(escalationTab);
     }
 }

@@ -20,6 +20,7 @@ import org.lightview.service.SnapshotProvider;
  * @author adam bien, adam-bien.com
  */
 public final class EscalationsPresenter implements EscalationsPresenterBindings {
+    public static final String ESCALATIONS_URI = "/escalations/";
 
     ScriptManager scriptManager;
     StringProperty uri;
@@ -32,6 +33,15 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
         this.runningServices = new ArrayList<>();
         registerURIListener();
     }
+    
+   void addAllActiveScripts(){
+      List<Script> scripts = this.scriptManager.getAllScripts();
+       for (Script script : scripts) {
+           final String name = script.getName();
+           this.escalationBindings.put(name, getSnapshots(name));
+       }
+
+   }
 
     void registerURIListener() {
         this.uri.addListener(new ChangeListener<String>() {
@@ -52,7 +62,7 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
         System.out.println("Scripts: " + scripts);
         for (Script script : scripts) {
             final String scriptName = script.getName();
-            SnapshotProvider provider = new SnapshotProvider(getUri() + "/" + scriptName);
+            SnapshotProvider provider = new SnapshotProvider(getUri() + ESCALATIONS_URI + scriptName);
             this.runningServices.add(provider);
             provider.start();
             provider.valueProperty().addListener(
@@ -120,5 +130,6 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
 
     void reinitializeScriptManager(String uri) {
         this.scriptManager = new ScriptManager(uri);
+        addAllActiveScripts();
     }
 }
