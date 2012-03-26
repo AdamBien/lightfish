@@ -28,6 +28,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.lightview.presenter.ConnectionPoolBindings;
 import org.lightview.presenter.DashboardPresenterBindings;
+import org.lightview.presenter.EscalationsPresenter;
 
 /**
  * User: blog.adam-bien.com
@@ -55,6 +56,7 @@ public class Dashboard {
     private TabPane tabPane;
 
     private Node uriInputView;
+    private Escalations escalations;
 
     public Dashboard(Stage stage, DashboardPresenterBindings dashboardPresenter) {
         this.dashboardPresenter = dashboardPresenter;
@@ -101,7 +103,7 @@ public class Dashboard {
         Tab webTab = createTab(web, "Web");
         this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab, webTab);
 
-        this.vertical.getChildren().addAll(uriInputView, this.browser.view(), this.tabPane, this.grid.createTable());
+        this.vertical.getChildren().addAll(uriInputView, this.browser.view(), this.tabPane, this.escalations.view());
     }
 
     private void instantiateViews() {
@@ -118,7 +120,8 @@ public class Dashboard {
         this.queuedConnections = new Snapshot(id, "Queued Connections", "Connections");
         this.activeSessions = new Snapshot(id, "HTTP Sessions", "#");
         this.expiredSessions = new Snapshot(id, "Expired Sessions", "#");
-        this.grid = new Grid(this.dashboardPresenter.getSnapshots());
+        final Node liveStream = new Grid(this.dashboardPresenter.getSnapshots()).createTable();
+        this.escalations = new Escalations(liveStream,this.dashboardPresenter.getEscalationsPresenterBindings());
     }
 
 

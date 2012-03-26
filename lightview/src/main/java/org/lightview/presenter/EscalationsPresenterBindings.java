@@ -2,7 +2,6 @@ package org.lightview.presenter;
 
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
-import javafx.util.Pair;
 import org.lightview.model.Snapshot;
 
 /**
@@ -11,6 +10,6 @@ import org.lightview.model.Snapshot;
  */
 public interface EscalationsPresenterBindings {
 
-    ObservableMap<Pair, ObservableList<Snapshot>> getEscalations();
+    ObservableMap<String, ObservableList<Snapshot>> getEscalations();
     
 }

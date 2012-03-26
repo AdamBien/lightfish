@@ -29,4 +29,5 @@ public interface DashboardPresenterBindings {
     ObservableMap<String, ConnectionPoolBindings> getPools();
     ObservableList<Snapshot> getSnapshots();
     String getBaseURI();
+    EscalationsPresenterBindings getEscalationsPresenterBindings();
 }

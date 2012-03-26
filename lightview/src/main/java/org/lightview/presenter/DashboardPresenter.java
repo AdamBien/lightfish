@@ -52,12 +52,14 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     private IntegerProperty expiredSessions;
     private LongProperty id;
     private String baseURI;
+    private EscalationsPresenter escalationsPresenter;
 
     public DashboardPresenter(String baseURI) {
         this.baseURI = baseURI;
         this.snapshots = FXCollections.observableArrayList();
         this.pools = FXCollections.observableHashMap();
         this.uri = new SimpleStringProperty();
+        this.escalationsPresenter = new EscalationsPresenter(uri);
         this.usedHeapSizeInMB = new SimpleLongProperty();
         this.threadCount = new SimpleLongProperty();
         this.peakThreadCount = new SimpleIntegerProperty();
@@ -168,6 +170,10 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         }
     }
 
+    @Override
+    public EscalationsPresenterBindings getEscalationsPresenterBindings() {
+        return this.escalationsPresenter;
+    }
 
     public LongProperty getUsedHeapSizeInMB() {
         return usedHeapSizeInMB;
@@ -227,5 +233,6 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         }
         return this.baseURI;
     }
+
 
 }

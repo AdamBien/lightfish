@@ -1,9 +1,7 @@
 package org.lightview.presenter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
+import java.util.*;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -25,11 +23,11 @@ public class EscalationsPresenter implements EscalationsPresenterBindings {
 
     ScriptManager scriptManager;
     StringProperty uri;
-    private Map<String,ObservableList<Snapshot>> escalations;
+    private ObservableMap<String, ObservableList<Snapshot>> escalationBindings;
 
     public EscalationsPresenter(StringProperty uri) {
         this.uri = uri;
-        this.escalations = new HashMap<>();
+        this.escalationBindings = FXCollections.observableHashMap();
     }
 
     void startFetching() {
@@ -37,7 +35,6 @@ public class EscalationsPresenter implements EscalationsPresenterBindings {
         for (Pair<String, String> script : scripts) {
             final String scriptName = script.getKey();
             SnapshotProvider provider = new SnapshotProvider(getUri()+"/"+scriptName);
-            final ObservableList<Snapshot> snapshots = FXCollections.observableArrayList();
             provider.start();
             provider.valueProperty().addListener(
                     new ChangeListener<Snapshot>() {
@@ -45,7 +42,6 @@ public class EscalationsPresenter implements EscalationsPresenterBindings {
                         @Override
                         public void changed(ObservableValue<? extends Snapshot> observable, Snapshot old, Snapshot newValue) {
                             if (newValue != null) {
-                                snapshots.add(newValue);
                                 onSnapshotArrival(scriptName, newValue);
                             }
                         }
@@ -76,7 +72,7 @@ public class EscalationsPresenter implements EscalationsPresenterBindings {
         List<Script> allScripts = this.scriptManager.getAllScripts();
         for (Script script : allScripts) {
             Pair pair = new Pair(script.getName(), script.getContent());
-            allScripts.add(script);
+            pairs.add(pair);
         }
         return pairs;
     }
@@ -86,18 +82,17 @@ public class EscalationsPresenter implements EscalationsPresenterBindings {
     }
 
     @Override
-    public ObservableMap<Pair, ObservableList<Snapshot>> getEscalations() {
-        ObservableMap<Pair, ObservableList<Snapshot>> escalations = FXCollections.observableHashMap();;
-
-        return escalations;
+    public ObservableMap<String, ObservableList<Snapshot>> getEscalations() {
+        return escalationBindings;
     }
 
     ObservableList<Snapshot> getSnapshots(String scriptName) {
-        ObservableList<Snapshot> escalationForScript = this.escalations.get(scriptName);
+        ObservableList<Snapshot> escalationForScript = this.escalationBindings.get(scriptName);
         if(escalationForScript == null){
             escalationForScript = FXCollections.observableArrayList();
-            this.escalations.put(scriptName, escalationForScript);
+            this.escalationBindings.put(scriptName, escalationForScript);
         }
         return escalationForScript;
     }
+
 }
