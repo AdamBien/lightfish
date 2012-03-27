@@ -24,16 +24,17 @@ public class Script {
     @Id
     private String name;
     @Lob
-    private String script;
+    private String content;
     
     private boolean active;
     
     public Script() {
+        this.content ="false";
     }
 
     public Script(String name, String script, boolean active) {
         this.name = name;
-        this.script = script;
+        this.content = script;
         this.active = active;
     }
 
@@ -46,11 +47,11 @@ public class Script {
     }
 
     public String getContent() {
-        return script;
+        return content;
     }
 
     public void setContent(String script) {
-        this.script = script;
+        this.content = script;
     }
 
     public boolean isActive() {
@@ -65,7 +66,7 @@ public class Script {
     public int hashCode() {
         int hash = 7;
         hash = 97 * hash + Objects.hashCode(this.name);
-        hash = 97 * hash + Objects.hashCode(this.script);
+        hash = 97 * hash + Objects.hashCode(this.content);
         hash = 97 * hash + (this.active ? 1 : 0);
         return hash;
     }
@@ -82,7 +83,7 @@ public class Script {
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
-        if (!Objects.equals(this.script, other.script)) {
+        if (!Objects.equals(this.content, other.content)) {
             return false;
         }
         if (this.active != other.active) {

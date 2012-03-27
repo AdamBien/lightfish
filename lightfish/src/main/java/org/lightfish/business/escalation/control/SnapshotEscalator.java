@@ -54,7 +54,10 @@ public class SnapshotEscalator {
                     for (Script script : scripts) {
                         Object retVal = null;
                         try {
-                            retVal = this.scriptEngine.eval(script.getContent(), binding);
+                            final String content = script.getContent();
+                            if(content == null)
+                                return;
+                            retVal = this.scriptEngine.eval(content, binding);
                         } catch (ScriptException scriptException) {
                             LOG.error("Cannot evaluate script: " + script, scriptException);
                         }
