@@ -8,7 +8,6 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -81,17 +80,12 @@ public class Escalations {
     }
 
     void remove(String name, ObservableList<Snapshot> change) {
-        ObservableList<Tab> tabs = this.pane.getTabs();
-        for (Tab tab : tabs) {
-            if(tab.getText().equalsIgnoreCase(name)){
-                tabs.remove(tab);
-            }
-        }
+        System.out.println("Sync: remove " + name  + change );
     }
 
     void add(String name, ObservableList<Snapshot> change) {
-        System.out.println("Sync: add: " + name + change);
-        addGrid(name, change);
+            System.out.println("Sync: add: " + name + change);
+            addGrid(name, change);
     }
 
     public Node view() {
@@ -128,6 +122,7 @@ public class Escalations {
             public void handle(ActionEvent e) {
                 String scriptName = tab.getText();
                 presenter.deleteScript(scriptName);
+                pane.getTabs().remove(tab);
             }
 
         });

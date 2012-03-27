@@ -23,12 +23,12 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
     ScriptManager scriptManager;
     StringProperty uri;
     private ObservableMap<String, ObservableList<Snapshot>> escalationBindings;
-    private List<SnapshotProvider> runningServices;
+    private Map<String, SnapshotProvider> runningServices;
 
     public EscalationsPresenter(StringProperty uri) {
         this.uri = uri;
         this.escalationBindings = FXCollections.observableHashMap();
-        this.runningServices = new ArrayList<>();
+        this.runningServices = new HashMap<>();
         registerURIListener();
     }
 
@@ -36,14 +36,19 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
         List<Script> scripts = this.scriptManager.getAllScripts();
         Set<String> keySet = this.escalationBindings.keySet();
         for (String scriptName : keySet) {
-          if(!scriptExists(scripts,scriptName)){
-           this.escalationBindings.remove(scriptName);
-          }
+            if (!scriptExists(scripts, scriptName)) {
+                //stop service
+                removeEscalation(scriptName);
+            }
         }
         for (Script script : scripts) {
             final String name = script.getName();
-            this.escalationBindings.put(name, getSnapshots(name));
+            if (!this.escalationBindings.containsKey(name)) {
+                this.escalationBindings.put(name, getSnapshots(name));
+                this.registerService(name);
+            }
         }
+
 
     }
 
@@ -67,31 +72,35 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
         System.out.println("Scripts: " + scripts);
         for (Script script : scripts) {
             final String scriptName = script.getName();
-            SnapshotProvider provider = new SnapshotProvider(getUri() + ESCALATIONS_URI + scriptName);
-            this.runningServices.add(provider);
-            provider.start();
-            provider.valueProperty().addListener(
-                    new ChangeListener<Snapshot>() {
-
-                        @Override
-                        public void changed(ObservableValue<? extends Snapshot> observable, Snapshot old, Snapshot newValue) {
-                            if (newValue != null) {
-                                onSnapshotArrival(scriptName, newValue);
-                            }
-                        }
-                    });
-            registerRestarting(provider);
+            registerService(scriptName);
         }
     }
 
+    void registerService(final String scriptName) {
+        SnapshotProvider provider = new SnapshotProvider(getUri() + ESCALATIONS_URI + scriptName);
+        this.runningServices.put(scriptName, provider);
+        provider.start();
+        provider.valueProperty().addListener(
+                new ChangeListener<Snapshot>() {
+
+                    @Override
+                    public void changed(ObservableValue<? extends Snapshot> observable, Snapshot old, Snapshot newValue) {
+                        if (newValue != null) {
+                            onSnapshotArrival(scriptName, newValue);
+                        }
+                    }
+                });
+        registerRestarting(provider);
+    }
+
     void restartServices() {
-        for (SnapshotProvider snapshotProvider : runningServices) {
-            restartService(snapshotProvider);
+        for (SnapshotProvider snapshotProvider : runningServices.values()) {
+            resetService(snapshotProvider);
         }
         this.startFetching();
     }
 
-    void restartService(SnapshotProvider service) {
+    void resetService(SnapshotProvider service) {
         if (service != null && service.isRunning()) {
             service.cancel();
             service.reset();
@@ -154,9 +163,14 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
 
     boolean scriptExists(List<Script> scripts, String scriptName) {
         for (Script script : scripts) {
-            if(script.getName().equalsIgnoreCase(scriptName))
+            if (script.getName().equalsIgnoreCase(scriptName)) {
                 return true;
+            }
         }
         return false;
+    }
+
+    void removeEscalation(String scriptName) {
+
     }
 }
