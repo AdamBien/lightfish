@@ -168,8 +168,9 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
     }
 
     void deactivateEscalationService(String scriptName) {
-        System.out.println("Remove escalation: " + scriptName);
         SnapshotProvider snapshot = this.runningServices.get(scriptName);
+        if(snapshot == null)
+            return;
         snapshot.cancel();
         this.runningServices.remove(scriptName);
     }

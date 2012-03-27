@@ -43,7 +43,7 @@ public class Escalations {
     private void initialSetup() {
         final Tab liveStream = createTab("Live Stream", firstTab);
         liveStream.setClosable(false);
-        liveStream.setContextMenu(liveScriptMenu());
+        registerNewScriptMenu(liveStream);
         pane.getTabs().add(liveStream);
         Set<Entry<String, ObservableList<Snapshot>>> entrySet = this.escalations.entrySet();
         for (Entry<String, ObservableList<Snapshot>> escalation : entrySet) {
@@ -80,12 +80,12 @@ public class Escalations {
     }
 
     void remove(String name, ObservableList<Snapshot> change) {
-        System.out.println("Sync: remove " + name  + change );
+        System.out.println("Sync: remove " + name + change);
     }
 
     void add(String name, ObservableList<Snapshot> change) {
-            System.out.println("Sync: add: " + name + change);
-            addGrid(name, change);
+        System.out.println("Sync: add: " + name + change);
+        addGrid(name, change);
     }
 
     public Node view() {
@@ -95,12 +95,16 @@ public class Escalations {
     void addGrid(String title, ObservableList<Snapshot> snapshots) {
         Grid grid = new Grid(snapshots);
         Tab escalationTab = createTab(title, grid.createTable());
-        registerScriptMenu(escalationTab);
+        registerNewScriptMenu(escalationTab);
+        registerDeleteScriptMenu(escalationTab);
         pane.getTabs().add(escalationTab);
     }
 
-    ContextMenu liveScriptMenu() {
-        ContextMenu contextMenu = new ContextMenu();
+    void registerNewScriptMenu(final Tab tab) {
+        ContextMenu contextMenu = tab.getContextMenu();
+        if (contextMenu == null) {
+            contextMenu = new ContextMenu();
+        }
         MenuItem newScript = new MenuItem("New Script");
         newScript.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -110,11 +114,14 @@ public class Escalations {
             }
         });
         contextMenu.getItems().addAll(newScript);
-        return contextMenu;
+        tab.setContextMenu(contextMenu);
     }
-    
-    void registerScriptMenu(final Tab tab){
-        ContextMenu contextMenu = new ContextMenu();
+
+    void registerDeleteScriptMenu(final Tab tab) {
+        ContextMenu contextMenu = tab.getContextMenu();
+        if (contextMenu == null) {
+            contextMenu = new ContextMenu();
+        }
         MenuItem newScript = new MenuItem("Delete");
         newScript.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -124,7 +131,6 @@ public class Escalations {
                 presenter.deleteScript(scriptName);
                 pane.getTabs().remove(tab);
             }
-
         });
         contextMenu.getItems().addAll(newScript);
         tab.setContextMenu(contextMenu);
@@ -135,12 +141,12 @@ public class Escalations {
         dialogStage.initModality(Modality.WINDOW_MODAL);
         HBox nameBox = new HBox();
         final TextField name = new TextField();
-        nameBox.getChildren().addAll(new Text("Script name:"),name);        
+        nameBox.getChildren().addAll(new Text("Script name:"), name);
 
         final TextArea content = new TextArea();
         Button save = new Button("Save");
         save.setDefaultButton(true);
-        save.setOnAction(new EventHandler<ActionEvent>(){
+        save.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent arg0) {
@@ -150,12 +156,10 @@ public class Escalations {
             }
         });
         final Scene scene = new Scene(VBoxBuilder.create().
-               children(nameBox,content,save).
-               alignment(Pos.CENTER).build());
+                children(nameBox, content, save).
+                alignment(Pos.CENTER).build());
         name.requestFocus();
         dialogStage.setScene(scene);
         dialogStage.show();
     }
-    
-
 }
