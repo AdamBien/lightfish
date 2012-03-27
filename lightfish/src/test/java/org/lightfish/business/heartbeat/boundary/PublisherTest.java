@@ -52,4 +52,15 @@ public class PublisherTest {
         this.cut.notifyEscalationListeners();
         verify(window,never()).send();
     }
+    
+    @Test
+    public void nothingToSay(){
+        BrowserWindow window = mock(BrowserWindow.class);
+        when(window.getChannel()).thenReturn("does-not-matter");
+        this.cut.onBrowserRequest(window);
+        verify(window,never()).send();
+        this.cut.notifyEscalationListeners();
+        verify(window).nothingToSay();
+        verify(window,never()).send();
+    }
 }
