@@ -9,7 +9,7 @@ import org.lightfish.business.escalation.entity.Script;
  *
  * @author adam bien, adam-bien.com
  */
-public class Scripting {
+public class ScriptStore {
     
     @PersistenceContext
     EntityManager em;

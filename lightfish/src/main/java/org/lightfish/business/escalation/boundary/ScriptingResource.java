@@ -9,7 +9,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import org.lightfish.business.escalation.control.Scripting;
+import org.lightfish.business.escalation.control.ScriptStore;
 import org.lightfish.business.escalation.entity.Script;
 
 /**
@@ -22,7 +22,7 @@ import org.lightfish.business.escalation.entity.Script;
 public class ScriptingResource {
  
     @Inject
-    Scripting scripting;
+    ScriptStore scripting;
     
     @Context
     UriInfo uri;

@@ -28,7 +28,7 @@ public class SnapshotEscalator {
     @Inject
     Log LOG;
     @Inject
-    Scripting scripting;
+    ScriptStore scripting;
     @Inject
     @Severity(Severity.Level.ESCALATION)
     Event<Snapshot> escalationSink;

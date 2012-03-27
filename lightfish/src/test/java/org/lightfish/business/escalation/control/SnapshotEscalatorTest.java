@@ -26,7 +26,7 @@ public class SnapshotEscalatorTest {
     public void init(){
         cut = new SnapshotEscalator();
         cut.escalationSink = mock(Event.class);
-        cut.scripting = mock(Scripting.class);
+        cut.scripting = mock(ScriptStore.class);
         cut.LOG = new Log();
         cut.initScripting();
     }
