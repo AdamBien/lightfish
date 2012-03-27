@@ -1,8 +1,10 @@
 package org.lightview.model;
 
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -12,15 +14,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Script {
     private String name;
-    private String script;
+    private String content;
+    
+    @XmlElement(defaultValue="true")
     private boolean active;
 
     public Script() {
     }
 
-    public Script(String name, String script, boolean active) {
+    public Script(String name, String content, boolean active) {
         this.name = name;
-        this.script = script;
+        this.content = content;
         this.active = active;
     }
 
@@ -33,11 +37,11 @@ public class Script {
     }
 
     public String getContent() {
-        return script;
+        return content;
     }
 
-    public void setContent(String script) {
-        this.script = script;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public boolean isActive() {
@@ -49,15 +53,6 @@ public class Script {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
-        hash = 53 * hash + (this.script != null ? this.script.hashCode() : 0);
-        hash = 53 * hash + (this.active ? 1 : 0);
-        return hash;
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -66,10 +61,10 @@ public class Script {
             return false;
         }
         final Script other = (Script) obj;
-        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+        if (!Objects.equals(this.name, other.name)) {
             return false;
         }
-        if ((this.script == null) ? (other.script != null) : !this.script.equals(other.script)) {
+        if (!Objects.equals(this.content, other.content)) {
             return false;
         }
         if (this.active != other.active) {
@@ -79,7 +74,18 @@ public class Script {
     }
 
     @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 89 * hash + Objects.hashCode(this.name);
+        hash = 89 * hash + Objects.hashCode(this.content);
+        hash = 89 * hash + (this.active ? 1 : 0);
+        return hash;
+    }
+
+    
+
+    @Override
     public String toString() {
-        return "Script{" + "name=" + name + ", script=" + script + ", active=" + active + '}';
+        return "Script{" + "name=" + name + ", script=" + content + ", active=" + active + '}';
     }
 }

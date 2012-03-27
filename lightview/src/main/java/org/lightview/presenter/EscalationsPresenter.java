@@ -34,7 +34,7 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
         registerURIListener();
     }
     
-   void addAllActiveScripts(){
+   void resyncActiveScripts(){
       List<Script> scripts = this.scriptManager.getAllScripts();
        for (Script script : scripts) {
            final String name = script.getName();
@@ -94,6 +94,7 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
 
     private void onSnapshotArrival(String scriptName, Snapshot newValue) {
         System.out.println("Arrived: " + scriptName + " " + newValue);
+        resyncActiveScripts();
         ObservableList<Snapshot> snapshots = getSnapshots(scriptName);
         if(!snapshots.contains(newValue)){
             snapshots.add(newValue);
@@ -133,6 +134,5 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
 
     void reinitializeScriptManager(String uri) {
         this.scriptManager = new ScriptManager(uri);
-        addAllActiveScripts();
     }
 }

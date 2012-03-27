@@ -12,7 +12,6 @@ import javafx.scene.control.TabPane;
 import org.lightview.model.Snapshot;
 import org.lightview.presenter.EscalationsPresenterBindings;
 import org.lightview.service.ScriptManager;
-import org.lightview.view.Grid;
 
 /**
  *
@@ -54,6 +53,9 @@ public class Escalations {
             @Override
             public void onChanged(Change<? extends String, ? extends ObservableList<Snapshot>> change) {
                 String name = change.getKey();
+                if(change.wasAdded() && change.wasRemoved()){
+                    return;
+                }
                 if (change.wasRemoved()) {
                     remove(name, change.getValueRemoved());
                 }
