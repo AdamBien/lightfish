@@ -81,7 +81,12 @@ public class Escalations {
     }
 
     void remove(String name, ObservableList<Snapshot> change) {
-        System.out.println("Sync: remove: " + name + change);
+        ObservableList<Tab> tabs = this.pane.getTabs();
+        for (Tab tab : tabs) {
+            if(tab.getText().equalsIgnoreCase(name)){
+                tabs.remove(tab);
+            }
+        }
     }
 
     void add(String name, ObservableList<Snapshot> change) {
@@ -152,6 +157,7 @@ public class Escalations {
         final Scene scene = new Scene(VBoxBuilder.create().
                children(nameBox,content,save).
                alignment(Pos.CENTER).build());
+        name.requestFocus();
         dialogStage.setScene(scene);
         dialogStage.show();
     }

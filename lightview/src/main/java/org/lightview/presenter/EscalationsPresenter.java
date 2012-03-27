@@ -18,35 +18,42 @@ import org.lightview.service.SnapshotProvider;
  * @author adam bien, adam-bien.com
  */
 public final class EscalationsPresenter implements EscalationsPresenterBindings {
-    public static final String ESCALATIONS_URI = "/escalations/";
 
+    public static final String ESCALATIONS_URI = "/escalations/";
     ScriptManager scriptManager;
     StringProperty uri;
     private ObservableMap<String, ObservableList<Snapshot>> escalationBindings;
     private List<SnapshotProvider> runningServices;
-    
+
     public EscalationsPresenter(StringProperty uri) {
         this.uri = uri;
         this.escalationBindings = FXCollections.observableHashMap();
         this.runningServices = new ArrayList<>();
         registerURIListener();
     }
-    
-   void resyncActiveScripts(){
-      List<Script> scripts = this.scriptManager.getAllScripts();
-       for (Script script : scripts) {
-           final String name = script.getName();
-           this.escalationBindings.put(name, getSnapshots(name));
-       }
 
-   }
+    void resyncActiveScripts() {
+        List<Script> scripts = this.scriptManager.getAllScripts();
+        Set<String> keySet = this.escalationBindings.keySet();
+        for (String scriptName : keySet) {
+          if(!scriptExists(scripts,scriptName)){
+           this.escalationBindings.remove(scriptName);
+          }
+        }
+        for (Script script : scripts) {
+            final String name = script.getName();
+            this.escalationBindings.put(name, getSnapshots(name));
+        }
+
+    }
 
     void registerURIListener() {
         this.uri.addListener(new ChangeListener<String>() {
+
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String uri) {
                 System.out.println("Uri changed to: " + uri);
-                if(uri != null){
+                if (uri != null) {
                     reinitializeScriptManager(uri);
                     restartServices();
                 }
@@ -65,6 +72,7 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
             provider.start();
             provider.valueProperty().addListener(
                     new ChangeListener<Snapshot>() {
+
                         @Override
                         public void changed(ObservableValue<? extends Snapshot> observable, Snapshot old, Snapshot newValue) {
                             if (newValue != null) {
@@ -75,32 +83,33 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
             registerRestarting(provider);
         }
     }
-    
-   void restartServices() {
-       for (SnapshotProvider snapshotProvider : runningServices) {
-           restartService(snapshotProvider);
-       }
+
+    void restartServices() {
+        for (SnapshotProvider snapshotProvider : runningServices) {
+            restartService(snapshotProvider);
+        }
         this.startFetching();
-   }
-   
-   void restartService(SnapshotProvider service){
+    }
+
+    void restartService(SnapshotProvider service) {
         if (service != null && service.isRunning()) {
             service.cancel();
             service.reset();
         }
-   }
+    }
 
     private void onSnapshotArrival(String scriptName, Snapshot newValue) {
         System.out.println("Arrived: " + scriptName + " " + newValue);
         resyncActiveScripts();
         ObservableList<Snapshot> snapshots = getSnapshots(scriptName);
-        if(!snapshots.contains(newValue)){
+        if (!snapshots.contains(newValue)) {
             snapshots.add(newValue);
         }
     }
 
     void registerRestarting(final SnapshotProvider provider) {
         provider.stateProperty().addListener(new ChangeListener<Worker.State>() {
+
             @Override
             public void changed(ObservableValue<? extends Worker.State> observable, Worker.State oldState, Worker.State newState) {
                 if (newState.equals(Worker.State.SUCCEEDED) || newState.equals(Worker.State.FAILED)) {
@@ -110,7 +119,7 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
             }
         });
     }
-    
+
     public String getUri() {
         return this.uri.getValue();
     }
@@ -129,7 +138,6 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
         return escalationForScript;
     }
 
-
     void reinitializeScriptManager(String uri) {
         this.scriptManager = new ScriptManager(uri);
     }
@@ -141,6 +149,14 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
 
     @Override
     public void newScript(String name, String content) {
-        this.scriptManager.registerNewScript(new Script(name,content,true));
+        this.scriptManager.registerNewScript(new Script(name, content, true));
+    }
+
+    boolean scriptExists(List<Script> scripts, String scriptName) {
+        for (Script script : scripts) {
+            if(script.getName().equalsIgnoreCase(scriptName))
+                return true;
+        }
+        return false;
     }
 }
