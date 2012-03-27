@@ -1,6 +1,5 @@
 package org.lightview.presenter;
 
-import java.util.Map.Entry;
 import java.util.*;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -9,7 +8,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.concurrent.Worker;
-import javafx.util.Pair;
 import org.lightview.model.Script;
 import org.lightview.model.Snapshot;
 import org.lightview.service.ScriptManager;
@@ -134,5 +132,15 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
 
     void reinitializeScriptManager(String uri) {
         this.scriptManager = new ScriptManager(uri);
+    }
+
+    @Override
+    public void deleteScript(String name) {
+        this.scriptManager.deleteScript(name);
+    }
+
+    @Override
+    public void newScript(String name, String content) {
+        this.scriptManager.registerNewScript(new Script(name,content,true));
     }
 }

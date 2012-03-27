@@ -20,6 +20,7 @@ public class Script {
     private boolean active;
 
     public Script() {
+        this.active = true;
     }
 
     public Script(String name, String content, boolean active) {

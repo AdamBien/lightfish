@@ -30,8 +30,8 @@ public class ScriptManager {
         client.resource(this.uri).accept(MediaType.APPLICATION_XML).put(script);
     }
     
-    public void removeScript(String scriptName){
-        client.resource(this.uri).delete();
+    public void deleteScript(String scriptName){
+        client.resource(this.uri).path(scriptName).delete();
     }
 
     private String withResource(String baseURI) {

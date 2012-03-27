@@ -11,5 +11,7 @@ import org.lightview.model.Snapshot;
 public interface EscalationsPresenterBindings {
 
     ObservableMap<String, ObservableList<Snapshot>> getEscalations();
+    void deleteScript(String name);
+    void newScript(String name,String content);
     
 }
