@@ -78,13 +78,13 @@ public class SnapshotEscalatorTest {
     
     @Test
     public void convert() {
-        assertFalse(this.cut.convert(null));
-        assertFalse(this.cut.convert(false));
-        assertFalse(this.cut.convert(Boolean.FALSE));
-        assertFalse(this.cut.convert("hugo"));
+        assertFalse(this.cut.canBeConvertedToTrue(null));
+        assertFalse(this.cut.canBeConvertedToTrue(false));
+        assertFalse(this.cut.canBeConvertedToTrue(Boolean.FALSE));
+        assertFalse(this.cut.canBeConvertedToTrue("hugo"));
         
-        assertTrue(this.cut.convert(true));
-        assertTrue(this.cut.convert(Boolean.TRUE));
+        assertTrue(this.cut.canBeConvertedToTrue(true));
+        assertTrue(this.cut.canBeConvertedToTrue(Boolean.TRUE));
     }
     
     

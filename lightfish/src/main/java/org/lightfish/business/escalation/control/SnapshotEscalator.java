@@ -61,7 +61,7 @@ public class SnapshotEscalator {
                         } catch (ScriptException scriptException) {
                             LOG.error("Cannot evaluate script: " + script, scriptException);
                         }
-                        if (convert(retVal)) {
+                        if (canBeConvertedToTrue(retVal)) {
                             current.setEscalated(true);
                             current.setEscalationChannel(script.getName());
                             escalationSink.fire(current);
@@ -79,7 +79,7 @@ public class SnapshotEscalator {
         }
     }
 
-    boolean convert(Object retVal) {
+    boolean canBeConvertedToTrue(Object retVal) {
         if (retVal == null) {
             return false;
         }
