@@ -8,11 +8,14 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.HBoxBuilder;
+import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -139,9 +142,11 @@ public class Escalations {
     private void openNewScriptDialog() {
         Stage dialogStage = new Stage();
         dialogStage.initModality(Modality.WINDOW_MODAL);
-        HBox nameBox = new HBox();
+        
+        HBox nameBox = new HBox(10);
         final TextField name = new TextField();
-        nameBox.getChildren().addAll(new Text("Script name:"), name);
+        nameBox.getChildren().addAll(new Text("Name:"), name);
+        
 
         final TextArea content = new TextArea();
         Button save = new Button("Save");
@@ -155,11 +160,13 @@ public class Escalations {
                 presenter.newScript(nameText, contentText);
             }
         });
-        final Scene scene = new Scene(VBoxBuilder.create().
-                children(nameBox, content, save).
-                alignment(Pos.CENTER).build());
+        VBox vbox = VBoxBuilder.create().
+                             children(nameBox, content, save).
+                             alignment(Pos.CENTER).spacing(10).padding(new Insets(10)).build();
+        final Scene scene = new Scene(vbox);
         name.requestFocus();
         dialogStage.setScene(scene);
+        dialogStage.setTitle("New Script");
         dialogStage.show();
     }
 }
