@@ -90,8 +90,11 @@ public class Publisher {
             if (channel != null) {
                 Snapshot snapshot = this.escalations.get(channel);
                 try {
-                    if(snapshot != null)
+                    if(snapshot != null){
                         send(browserWindow, snapshot);
+                    }else{
+                        browserWindow.nothingToSay();
+                    }
                 } finally {
                     browsers.remove(browserWindow);
                 }

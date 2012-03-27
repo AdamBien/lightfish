@@ -19,6 +19,7 @@ import javax.servlet.AsyncContext;
 import javax.servlet.ServletResponse;
 import java.io.IOException;
 import java.io.Writer;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -56,6 +57,12 @@ public class BrowserWindow {
         } catch (IOException ex) {
             throw new IllegalStateException("Cannot return writer: " + ex,ex);
         }
+    }
+    
+    public void nothingToSay(){
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        httpServletResponse.setStatus(204);
+        this.asyncContext.complete();
     }
 
     public String getChannel() {
