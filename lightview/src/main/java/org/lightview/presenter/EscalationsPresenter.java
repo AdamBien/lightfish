@@ -150,6 +150,7 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
     @Override
     public void deleteScript(String name) {
         this.scriptManager.deleteScript(name);
+        this.resyncActiveScripts();
     }
 
     @Override
