@@ -37,8 +37,7 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
         Set<String> keySet = this.escalationBindings.keySet();
         for (String scriptName : keySet) {
             if (!scriptExists(scripts, scriptName)) {
-                //stop service
-                removeEscalation(scriptName);
+                deactivateEscalationService(scriptName);
             }
         }
         for (Script script : scripts) {
@@ -48,13 +47,10 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
                 this.registerService(name);
             }
         }
-
-
     }
 
     void registerURIListener() {
         this.uri.addListener(new ChangeListener<String>() {
-
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String uri) {
                 System.out.println("Uri changed to: " + uri);
@@ -159,6 +155,7 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
     @Override
     public void newScript(String name, String content) {
         this.scriptManager.registerNewScript(new Script(name, content, true));
+        this.resyncActiveScripts();
     }
 
     boolean scriptExists(List<Script> scripts, String scriptName) {
@@ -170,7 +167,10 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
         return false;
     }
 
-    void removeEscalation(String scriptName) {
-
+    void deactivateEscalationService(String scriptName) {
+        System.out.println("Remove escalation: " + scriptName);
+        SnapshotProvider snapshot = this.runningServices.get(scriptName);
+        snapshot.cancel();
+        this.runningServices.remove(scriptName);
     }
 }
