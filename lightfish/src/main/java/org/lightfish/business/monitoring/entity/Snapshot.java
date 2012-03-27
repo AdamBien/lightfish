@@ -49,6 +49,7 @@ public class Snapshot {
     private int activeSessions;
     private int expiredSessions;
     private boolean escalated;
+    private String escalationReason;
 
     @XmlTransient @Transient
     private String escalationChannel;
@@ -145,6 +146,14 @@ public class Snapshot {
 
     public void setEscalated(boolean escalated) {
         this.escalated = escalated;
+    }
+
+    public String getEscalationReason() {
+        return escalationReason;
+    }
+
+    public void setEscalationReason(String escalationReason) {
+        this.escalationReason = escalationReason;
     }
 
     public static class Builder{
