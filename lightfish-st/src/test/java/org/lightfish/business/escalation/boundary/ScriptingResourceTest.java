@@ -2,8 +2,7 @@ package org.lightfish.business.escalation.boundary;
 
 import java.util.List;
 import javax.ws.rs.client.Client;
-import static javax.ws.rs.client.Entity.*;
-import javax.ws.rs.client.Invocation;
+import static javax.ws.rs.client.Entity.entity;
 import javax.ws.rs.client.Target;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
@@ -39,7 +38,6 @@ public class ScriptingResourceTest {
         Response response = this.target.request().put(entity(origin,MediaType.APPLICATION_XML));
         assertThat(response.getStatus(),is(Status.CREATED.getStatusCode()));
         String location = response.getHeaders().getHeader("Location");
-        System.out.println("Location: " + location);
         assertTrue(location.endsWith(scriptName));
         
         //GET
