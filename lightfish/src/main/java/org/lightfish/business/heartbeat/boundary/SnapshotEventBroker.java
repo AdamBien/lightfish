@@ -27,8 +27,6 @@ import javax.ejb.Singleton;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.io.Writer;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.annotation.PostConstruct;
@@ -42,7 +40,7 @@ import javax.enterprise.inject.Instance;
  */
 @Singleton
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
-public class Publisher {
+public class SnapshotEventBroker {
 
     private ConcurrentLinkedQueue<BrowserWindow> browsers = new ConcurrentLinkedQueue<>();
     private ConcurrentHashMap<String, Snapshot> escalations = new ConcurrentHashMap<>();

@@ -14,13 +14,13 @@ import static org.mockito.Mockito.*;
  *
  * @author adam bien, adam-bien.com
  */
-public class PublisherTest {
+public class SnapshotEventBrokerTest {
     
-    private Publisher cut;
+    private SnapshotEventBroker cut;
     
     @Before
     public void init(){
-        this.cut = new Publisher();
+        this.cut = new SnapshotEventBroker();
         this.cut.serializer = mock(Serializer.class);
         this.cut.LOG = new Log();
     }
