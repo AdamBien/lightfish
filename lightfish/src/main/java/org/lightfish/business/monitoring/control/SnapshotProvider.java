@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 import java.util.Iterator;
 import javax.enterprise.inject.Instance;
+import org.lightfish.business.authenticator.GlassfishAuthenticator;
 
 /**
  * @author Adam Bien, blog.adam-bien.com
@@ -56,7 +57,13 @@ public class SnapshotProvider {
 
     @Inject
     Instance<String> location;
-
+    @Inject
+    Instance<String> username;
+    @Inject
+    Instance<String> password;
+    @Inject
+    Instance<GlassfishAuthenticator> authenticator;
+    
     @PostConstruct
     public void initializeClient() {
         this.client = Client.create();
@@ -99,7 +106,7 @@ public class SnapshotProvider {
     }
 
     String getBaseURI(){
-        return "http://" + location.get() + "/monitoring/domain/server/";
+        return getProtocol() + location.get() + "/monitoring/domain/server/";
 
     }
 
@@ -249,6 +256,14 @@ public class SnapshotProvider {
                 getJSONObject("entity").
                 getJSONObject(name);
     }
-
-
+    
+    
+    private String getProtocol() {
+        String protocol = "http://";
+        if (username != null && username.get() != null && !username.get().isEmpty()) {
+            protocol = "https://";
+            authenticator.get().setAuthenticationForUser(username.get(), password.get());
+        }
+        return protocol;
+    }
 }
