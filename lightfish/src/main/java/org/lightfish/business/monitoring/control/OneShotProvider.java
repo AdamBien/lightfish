@@ -3,6 +3,9 @@ package org.lightfish.business.monitoring.control;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.lightfish.business.monitoring.entity.OneShot;
@@ -10,6 +13,7 @@ import org.lightfish.business.monitoring.entity.OneShot;
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.net.ssl.*;
 import javax.ws.rs.core.MediaType;
 import org.lightfish.business.authenticator.GlassfishAuthenticator;
 
@@ -27,14 +31,12 @@ public class OneShotProvider {
     Instance<String> password;
     @Inject
     Instance<GlassfishAuthenticator> authenticator;
-    
     private WebResource managementResource;
-    
+
     @PostConstruct
     public void initializeClient() {
         this.client = Client.create();
     }
-
 
     String getVersion() throws JSONException {
         this.managementResource = this.client.resource(getManagementURI());
@@ -62,6 +64,7 @@ public class OneShotProvider {
     }
 
     public OneShot fetchOneShot() {
+        authenticator.get().addAuthenticator(client, username.get(), password.get());
         String version = null;
         String uptime = null;
         try {
@@ -77,9 +80,7 @@ public class OneShotProvider {
         String protocol = "http://";
         if (username != null && username.get() != null && !username.get().isEmpty()) {
             protocol = "https://";
-            authenticator.get().setAuthenticationForUser(username.get(), password.get());
         }
         return protocol;
     }
-    
 }

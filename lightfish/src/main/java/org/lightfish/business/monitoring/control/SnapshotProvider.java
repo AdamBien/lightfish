@@ -70,6 +70,7 @@ public class SnapshotProvider {
     }
 
     public Snapshot fetchSnapshot() {
+        authenticator.get().addAuthenticator(client, username.get(), password.get());
         try {
             long usedHeapSize = usedHeapSize();
             int threadCount = threadCount();
@@ -262,7 +263,6 @@ public class SnapshotProvider {
         String protocol = "http://";
         if (username != null && username.get() != null && !username.get().isEmpty()) {
             protocol = "https://";
-            authenticator.get().setAuthenticationForUser(username.get(), password.get());
         }
         return protocol;
     }

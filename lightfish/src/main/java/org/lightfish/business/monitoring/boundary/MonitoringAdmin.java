@@ -49,7 +49,7 @@ public class MonitoringAdmin {
     String password;
     @Inject
     Instance<GlassfishAuthenticator> authenticator;
-
+    
     private Client client;
     private String baseUri;
     private String enableMonitoringURI_312 = "/management/domain/configs/config/server-config/monitoring-service/module-monitoring-levels/";
@@ -64,6 +64,7 @@ public class MonitoringAdmin {
 
     
     public boolean activateMonitoring() {
+        authenticator.get().addAuthenticator(client, username, password);
         MultivaluedMap formData = new MultivaluedMapImpl();
         for (String module : modules) {
             formData.add(module, ON);
@@ -88,11 +89,11 @@ public class MonitoringAdmin {
     }
     
     
+    
     private String getProtocol() {
         String protocol = "http://";
-        if (username != null && username != null && !username.isEmpty()) {
+        if (username != null && !username.isEmpty()) {
             protocol = "https://";
-            authenticator.get().setAuthenticationForUser(username, password);
         }
         return protocol;
     }

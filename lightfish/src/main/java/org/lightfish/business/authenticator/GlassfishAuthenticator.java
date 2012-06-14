@@ -4,17 +4,16 @@
  */
 package org.lightfish.business.authenticator;
 
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Singleton;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+import javax.ejb.LocalBean;
+import javax.enterprise.inject.Instance;
+import javax.net.ssl.*;
 import org.lightfish.business.monitoring.control.SnapshotProvider;
 
 /**
@@ -22,29 +21,34 @@ import org.lightfish.business.monitoring.control.SnapshotProvider;
  * @author cdelahunt
  */
 @Singleton
+@LocalBean
 public class GlassfishAuthenticator {
 
     private static TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
 
-    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-        return null;
-    }
+        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+            return null;
+        }
 
-    public void checkClientTrusted(
-            java.security.cert.X509Certificate[] certs, String authType) {
-    }
+        public void checkClientTrusted(
+                java.security.cert.X509Certificate[] certs, String authType) {
+        }
 
-    public void checkServerTrusted(
-            java.security.cert.X509Certificate[] certs, String authType) {
-    }
-}};
+        public void checkServerTrusted(
+                java.security.cert.X509Certificate[] certs, String authType) {
+        }
+    }};
 
-    public void setAuthenticationForUser(final String username, final String password) {
+    public void addAuthenticator(Client client, String username, String password) {
+        client.addFilter(new HTTPBasicAuthFilter(username, password));
+        /*
+         * Bypass certificates
+         */
+        HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
 
-        Authenticator.setDefault(new Authenticator() {
-
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, password.toCharArray());
+            @Override
+            public boolean verify(String string, SSLSession ssls) {
+                return true;
             }
         });
         try {
@@ -57,6 +61,5 @@ public class GlassfishAuthenticator {
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(SnapshotProvider.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 }
