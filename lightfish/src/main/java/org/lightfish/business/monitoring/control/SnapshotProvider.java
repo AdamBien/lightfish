@@ -236,10 +236,15 @@ public class SnapshotProvider {
     }
 
     String[] getStringArray(String name, String key) throws JSONException {
+        String[] empty = new String[0];
         ClientResponse result = client.resource(this.getBaseURI() + name).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
         JSONObject response = result.getEntity(JSONObject.class);
-        response = response.getJSONObject("extraProperties").
-                getJSONObject("childResources");
+        response = response.optJSONObject("extraProperties");
+        if(response == null)
+            return empty;
+        response = response.optJSONObject("childResources");        
+        if(response == null)
+            return empty;
         int length = response.length();
         String retVal[] = new String[length];
         Iterator keys = response.keys();
