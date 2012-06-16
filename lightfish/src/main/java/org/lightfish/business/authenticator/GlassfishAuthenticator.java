@@ -10,9 +10,8 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
-import javax.enterprise.inject.Instance;
+import javax.ejb.Singleton;
 import javax.net.ssl.*;
 import org.lightfish.business.monitoring.control.SnapshotProvider;
 
@@ -26,14 +25,17 @@ public class GlassfishAuthenticator {
 
     private static TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
 
+        @Override
         public java.security.cert.X509Certificate[] getAcceptedIssuers() {
             return null;
         }
 
+        @Override
         public void checkClientTrusted(
                 java.security.cert.X509Certificate[] certs, String authType) {
         }
 
+        @Override
         public void checkServerTrusted(
                 java.security.cert.X509Certificate[] certs, String authType) {
         }
@@ -56,9 +58,7 @@ public class GlassfishAuthenticator {
             sc.init(null, trustAllCerts, new java.security.SecureRandom());
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
-        } catch (KeyManagementException ex) {
-            Logger.getLogger(SnapshotProvider.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchAlgorithmException ex) {
+        } catch (KeyManagementException | NoSuchAlgorithmException ex) {
             Logger.getLogger(SnapshotProvider.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
