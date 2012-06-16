@@ -34,6 +34,8 @@ import org.lightfish.business.monitoring.entity.OneShot;
 public class Index {
     public static final String INTERVAL = "interval";
     public static final String LOCATION = "location";
+    public static final String USERNAME = "username";
+    public static final String PASSWORD = "password";
     
     
     @Inject
@@ -80,6 +82,22 @@ public class Index {
             return "--";
         }
         
+    }
+    
+    public String getUsername() {
+        return configurator.getValue(USERNAME);
+    }
+
+    public void setUsername(String username) {
+        this.configurator.setValue(USERNAME,username);
+    }
+    
+    public String getPassword() {
+        return configurator.getValue(PASSWORD);
+    }
+
+    public void setPassword(String password) {
+        this.configurator.setValue(PASSWORD,password);
     }
 
     public String getUptime(){

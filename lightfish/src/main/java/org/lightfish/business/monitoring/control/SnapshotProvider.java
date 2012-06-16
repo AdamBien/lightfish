@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 import java.util.Iterator;
 import javax.enterprise.inject.Instance;
+import org.lightfish.business.authenticator.GlassfishAuthenticator;
 
 /**
  * @author Adam Bien, blog.adam-bien.com
@@ -56,13 +57,20 @@ public class SnapshotProvider {
 
     @Inject
     Instance<String> location;
-
+    @Inject
+    Instance<String> username;
+    @Inject
+    Instance<String> password;
+    @Inject
+    Instance<GlassfishAuthenticator> authenticator;
+    
     @PostConstruct
     public void initializeClient() {
         this.client = Client.create();
     }
 
     public Snapshot fetchSnapshot() {
+        authenticator.get().addAuthenticator(client, username.get(), password.get());
         try {
             long usedHeapSize = usedHeapSize();
             int threadCount = threadCount();
@@ -99,7 +107,7 @@ public class SnapshotProvider {
     }
 
     String getBaseURI(){
-        return "http://" + location.get() + "/monitoring/domain/server/";
+        return getProtocol() + location.get() + "/monitoring/domain/server/";
 
     }
 
@@ -228,10 +236,15 @@ public class SnapshotProvider {
     }
 
     String[] getStringArray(String name, String key) throws JSONException {
+        String[] empty = new String[0];
         ClientResponse result = client.resource(this.getBaseURI() + name).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
         JSONObject response = result.getEntity(JSONObject.class);
-        response = response.getJSONObject("extraProperties").
-                getJSONObject("childResources");
+        response = response.optJSONObject("extraProperties");
+        if(response == null)
+            return empty;
+        response = response.optJSONObject("childResources");        
+        if(response == null)
+            return empty;
         int length = response.length();
         String retVal[] = new String[length];
         Iterator keys = response.keys();
@@ -249,6 +262,13 @@ public class SnapshotProvider {
                 getJSONObject("entity").
                 getJSONObject(name);
     }
-
-
+    
+    
+    private String getProtocol() {
+        String protocol = "http://";
+        if (username != null && username.get() != null && !username.get().isEmpty()) {
+            protocol = "https://";
+        }
+        return protocol;
+    }
 }

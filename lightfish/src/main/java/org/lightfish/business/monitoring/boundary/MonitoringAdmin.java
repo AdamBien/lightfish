@@ -18,17 +18,17 @@ package org.lightfish.business.monitoring.boundary;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.representation.Form;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import org.lightfish.business.authenticator.GlassfishAuthenticator;
 
 /**
  *
@@ -43,7 +43,13 @@ public class MonitoringAdmin {
     
     @Inject
     String location;
-
+    @Inject
+    String username;
+    @Inject
+    String password;
+    @Inject
+    Instance<GlassfishAuthenticator> authenticator;
+    
     private Client client;
     private String baseUri;
     private String enableMonitoringURI_312 = "/management/domain/configs/config/server-config/monitoring-service/module-monitoring-levels/";
@@ -53,11 +59,12 @@ public class MonitoringAdmin {
     @PostConstruct
     public void initializeClient() {
         this.client = Client.create();
-        this.baseUri = "http://"+location;
+        this.baseUri = getProtocol() + location;
     }
 
     
     public boolean activateMonitoring() {
+        authenticator.get().addAuthenticator(client, username, password);
         MultivaluedMap formData = new MultivaluedMapImpl();
         for (String module : modules) {
             formData.add(module, ON);
@@ -80,4 +87,15 @@ public class MonitoringAdmin {
             LOG.log(Level.INFO, "Got status: {0} for path: {1}  form: {2}", new Object[]{status, enableMonitoringURI_312,form});
             return (200 == response.getStatus());
     }
+    
+    
+    
+    private String getProtocol() {
+        String protocol = "http://";
+        if (username != null && !username.isEmpty()) {
+            protocol = "https://";
+        }
+        return protocol;
+    }
+
 }
