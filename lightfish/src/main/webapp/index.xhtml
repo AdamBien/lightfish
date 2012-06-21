@@ -9,15 +9,14 @@
     <h:body>
         <h:form>
             <h:panelGrid columns="2">
-            Location:<h:inputText value="#{index.location}"/>
+            <h:outputText value="#{authentication.protocol}"/><h:inputText value="#{index.location}"/>
             Interval:<h:inputText value="#{index.interval}"/>
-            User name:<h:inputText value="#{index.username}"/>
-            Password:<h:inputSecret value="#{index.password}" />
             Server version: <h:outputText value="#{index.version}"/>            
             Uptime: <h:outputText value="#{index.uptime}"/>            
             </h:panelGrid>
             <h:commandButton value="Update" action="#{index.changeAdministration}"/>
         </h:form>
+        <h:link value="Authentication &gt;&gt;" style="font-size: small" outcome="authentication"/>
         <h:form>
             <h:commandButton disabled="#{index.running}" value="Start" action="#{index.start}"/>
             <h:commandButton disabled="#{!index.running}" value="Stop" action="#{index.stop}"/>
