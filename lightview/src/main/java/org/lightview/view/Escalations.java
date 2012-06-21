@@ -145,12 +145,13 @@ public class Escalations {
         
         HBox nameBox = new HBox(10);
         final TextField name = new TextField();
+        name.setText("Errors");
         nameBox.getChildren().addAll(new Text("Name:"), name);
         
 
         final TextArea content = new TextArea();
         String msg = getDefaultScript();
-        content.setText(null);
+        content.setText(msg);
         Button save = new Button("Save");
         save.setDefaultButton(true);
         save.setOnAction(new EventHandler<ActionEvent>() {
