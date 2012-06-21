@@ -12,7 +12,8 @@
             User name:<h:inputText value="#{authentication.username}"/>
             Password:<h:inputSecret value="#{authentication.password}" />
             </h:panelGrid>
-            <h:commandButton value="Update" action="#{authentication.storeCredentials}"/>
+            <h:commandButton value="&lt;&lt;" action="#{authentication.storeCredentials}" immediate="true"/>
+            <h:commandButton value="Store" action="#{authentication.storeCredentials}"/>
         </h:form>
     </h:body>
 </html>
