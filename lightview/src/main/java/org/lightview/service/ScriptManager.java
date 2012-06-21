@@ -2,6 +2,7 @@ package org.lightview.service;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.GenericType;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.core.MediaType;
 import org.lightview.model.Script;
@@ -23,7 +24,11 @@ public class ScriptManager {
     
     public List<Script> getAllScripts(){
         GenericType<List<Script>> entities = new GenericType<List<Script>>(){};
-        return client.resource(this.uri).accept(MediaType.APPLICATION_XML).get(entities);
+        try{
+            return client.resource(this.uri).accept(MediaType.APPLICATION_XML).get(entities);
+        }catch(Exception e){
+            return new ArrayList<>();
+        }
     }
     
     public void registerNewScript(Script script){
