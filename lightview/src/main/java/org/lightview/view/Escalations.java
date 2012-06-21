@@ -149,6 +149,8 @@ public class Escalations {
         
 
         final TextArea content = new TextArea();
+        String msg = getDefaultScript();
+        content.setText(null);
         Button save = new Button("Save");
         save.setDefaultButton(true);
         save.setOnAction(new EventHandler<ActionEvent>() {
@@ -168,5 +170,9 @@ public class Escalations {
         dialogStage.setScene(scene);
         dialogStage.setTitle("New Script");
         dialogStage.show();
+    }
+
+    String getDefaultScript() {
+       return "(current.totalErrors - previous.totalErrors) == 0";
     }
 }
