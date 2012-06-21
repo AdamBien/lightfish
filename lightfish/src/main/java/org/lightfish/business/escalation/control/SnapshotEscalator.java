@@ -47,7 +47,7 @@ public class SnapshotEscalator {
         try {
             Bindings binding = this.scriptEngine.createBindings();
             binding.put("current", current);
-            binding.put("recent", recent);
+            binding.put("previous", recent);
             long start = System.currentTimeMillis();
             try {
                 if (recent != null) {
