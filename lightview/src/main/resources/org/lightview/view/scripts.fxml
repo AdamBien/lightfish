@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<AnchorPane id="AnchorPane" fx:id="view" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.lightview.presenter.ScriptsPresenter">
+  <children>
+    <BorderPane prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <bottom>
+        <HBox id="HBox" alignment="BASELINE_CENTER" prefHeight="32.0" prefWidth="600.0" spacing="10.0">
+          <children>
+            <Button fx:id="save" mnemonicParsing="false" onAction="#save" text="Save" />
+          </children>
+        </HBox>
+      </bottom>
+      <center>
+        <SplitPane dividerPositions="0.5016722408026756" focusTraversable="true" prefHeight="312.0" prefWidth="392.0">
+          <items>
+            <TextArea editable="false" prefWidth="200.0" text="    long id;&#10;    Date monitoringTime;&#10;    long usedHeapSize;&#10;    int threadCount;&#10;    int peakThreadCount;&#10;    int totalErrors;&#10;    int currentThreadBusy;&#10;    int committedTX;&#10;    int rolledBackTX;&#10;    int queuedConnections;&#10;    int activeSessions;&#10;    int expiredSessions;&#10;    boolean escalated;&#10;    String escalationReason;&#10;    String escalationChannel;" wrapText="true" />
+            <TextArea id="scriptContent" fx:id="content" prefHeight="355.0" prefWidth="338.0" text="//returning &quot;true&quot; from the script, escalates the snapshot, &quot;false&quot; doesn't&#10;if((current.totalErrors - previous.totalErrors) == 0){&#10;&#9;false&#10;}else{&#10;&#9;true&#10;}" wrapText="true" />
+          </items>
+        </SplitPane>
+      </center>
+      <top>
+        <HBox alignment="CENTER_LEFT" prefHeight="43.0" prefWidth="600.0" spacing="10.0">
+          <children>
+            <Label prefWidth="111.0" text="Script name:">
+              <HBox.margin>
+                <Insets left="10.0" />
+              </HBox.margin>
+            </Label>
+            <TextField id="scriptName" fx:id="name" prefWidth="200.0" text="errors" />
+          </children>
+        </HBox>
+      </top>
+    </BorderPane>
+  </children>
+</AnchorPane>

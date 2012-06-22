@@ -140,6 +140,11 @@ public class Escalations {
     }
 
     private void openNewScriptDialog() {
+        Scripts scripts = new Scripts(presenter);
+        scripts.createView();
+    }
+/*
+    private void openNewScriptDialog() {
         Stage dialogStage = new Stage();
         dialogStage.initModality(Modality.WINDOW_MODAL);
         
@@ -172,6 +177,7 @@ public class Escalations {
         dialogStage.setTitle("New Script");
         dialogStage.show();
     }
+    */
 
     String getDefaultScript() {
        return "(current.totalErrors - previous.totalErrors) == 0";
