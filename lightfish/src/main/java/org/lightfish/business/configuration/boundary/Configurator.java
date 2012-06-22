@@ -21,11 +21,13 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import java.util.HashMap;
 import java.util.Map;
+import javax.ejb.Startup;
 
 /**
  *
  * @author Adam Bien, blog.adam-bien.com
  */
+@Startup
 @Singleton
 public class Configurator {
     private int interval = 5;
@@ -34,7 +36,7 @@ public class Configurator {
     
     @PostConstruct
     public void initialize(){
-        this.configuration = new HashMap<String, String>();
+        this.configuration = new HashMap<>();
         this.configuration.put("location", "localhost:4848");
         this.configuration.put("jdbcPoolNames","SamplePool");
         this.configuration.put("interval","2");
