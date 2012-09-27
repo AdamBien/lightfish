@@ -12,3 +12,4 @@ lightview/package-webstart.sh
 lightfish/createDomainLighfish.sh
 lightfish/deploy.sh
 /lightfish/derby.log
+*.bak
