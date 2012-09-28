@@ -30,7 +30,6 @@ import org.lightview.service.SnapshotProvider;
 import java.util.List;
 import javafx.collections.ObservableSet;
 import org.lightview.model.Application;
-import org.lightview.service.ScriptManager;
 
 /**
  * User: blog.adam-bien.com
@@ -81,6 +80,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
 
     public void initializeListeners() {
         this.uri.addListener(new ChangeListener<String>() {
+            @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String newUri) {
                 restartService();
             }
@@ -104,6 +104,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         return this.uri.getValue();
     }
 
+    @Override
     public StringProperty getUriProperty() {
         return this.uri;
     }
@@ -115,6 +116,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         service.valueProperty().addListener(
                 new ChangeListener<Snapshot>() {
 
+                    @Override
                     public void changed(ObservableValue<? extends Snapshot> observable, Snapshot old, Snapshot newValue) {
                         if (newValue != null) {
                             snapshots.add(newValue);
@@ -135,6 +137,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
 
     void registerRestarting() {
         service.stateProperty().addListener(new ChangeListener<Worker.State>() {
+            @Override
             public void changed(ObservableValue<? extends Worker.State> observable, Worker.State oldState, Worker.State newState) {
                 if (newState.equals(Worker.State.SUCCEEDED) || newState.equals(Worker.State.FAILED)) {
                     service.reset();
@@ -182,58 +185,72 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         return this.escalationsPresenter;
     }
 
+    @Override
     public LongProperty getUsedHeapSizeInMB() {
         return usedHeapSizeInMB;
     }
 
+    @Override
     public LongProperty getThreadCount() {
         return threadCount;
     }
 
+    @Override
     public IntegerProperty getPeakThreadCount() {
         return peakThreadCount;
     }
 
+    @Override
     public IntegerProperty getBusyThreads() {
         return busyThreads;
     }
 
+    @Override
     public IntegerProperty getQueuedConnections() {
         return queuedConnections;
     }
 
+    @Override
     public IntegerProperty getCommitCount() {
         return commitCount;
     }
 
+    @Override
     public IntegerProperty getRollbackCount() {
         return rollbackCount;
     }
 
+    @Override
     public IntegerProperty getTotalErrors() {
         return totalErrors;
     }
 
+    @Override
     public IntegerProperty getActiveSessions() {
         return activeSessions;
     }
 
+    @Override
     public IntegerProperty getExpiredSessions() {
         return expiredSessions;
     }
 
+    @Override
     public LongProperty getId() {
         return id;
     }
 
+    @Override
     public ObservableList<Snapshot> getSnapshots() {
         return snapshots;
     }
 
+    @Override
     public ObservableMap<String,ConnectionPoolBindings> getPools() {
         return pools;
     }
     
+    @Override
     public String getBaseURI(){
         if(this.baseURI == null){
             return "http://localhost:8080";
