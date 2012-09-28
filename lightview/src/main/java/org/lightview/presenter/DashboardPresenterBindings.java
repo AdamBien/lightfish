@@ -17,6 +17,7 @@ import org.lightview.model.Snapshot;
  */
 public interface DashboardPresenterBindings {
     StringProperty getUriProperty();
+    StringProperty getDeadlockedThreads();
     ReadOnlyLongProperty getId();
     ReadOnlyLongProperty getUsedHeapSizeInMB();
     ReadOnlyLongProperty getThreadCount();
@@ -33,4 +34,5 @@ public interface DashboardPresenterBindings {
     ObservableSet<Application> getApplications();
     String getBaseURI();
     EscalationsPresenterBindings getEscalationsPresenterBindings();
+
 }

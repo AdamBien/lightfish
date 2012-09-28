@@ -55,6 +55,7 @@ public class Dashboard {
     private SnapshotTable snapshotsGrid;
     private ApplicationList applicationList;
     private TabPane tabPane;
+    private Status status;
 
     private Node uriInputView;
     private Escalations escalations;
@@ -79,7 +80,8 @@ public class Dashboard {
     private void createViews() {
         this.vertical = new VBox();
         HBox threadsAndMemory = new HBox();
-        HBox paranormal = new HBox();
+        VBox paranormal = new VBox();
+        HBox paranormalContent = new HBox();
         HBox transactions = new HBox();
         HBox web = new HBox();
         HBox applications = new HBox();
@@ -87,7 +89,7 @@ public class Dashboard {
         String hBoxClass = "boxSpacing";
         this.vertical.getStyleClass().add(hBoxClass);
         threadsAndMemory.getStyleClass().add(hBoxClass);
-        paranormal.getStyleClass().add(hBoxClass);
+        paranormalContent.getStyleClass().add(hBoxClass);
         transactions.getStyleClass().add(hBoxClass);
         web.getStyleClass().add(hBoxClass);
 
@@ -95,7 +97,8 @@ public class Dashboard {
 
         threadsAndMemory.getChildren().addAll(this.heap.view(), this.threadCount.view(), this.peakThreadCount.view());
         transactions.getChildren().addAll(this.commitCount.view(), this.rollbackCount.view());
-        paranormal.getChildren().addAll(this.queuedConnections.view(), this.totalErrors.view(), this.busyThread.view());
+        paranormalContent.getChildren().addAll(this.queuedConnections.view(), this.totalErrors.view(), this.busyThread.view());
+        paranormal.getChildren().addAll(paranormalContent,this.status.view());
         web.getChildren().addAll(this.activeSessions.view());
         web.getChildren().addAll(this.expiredSessions.view());
         applications.getChildren().add(this.applicationList.view());
@@ -127,6 +130,7 @@ public class Dashboard {
         final Node liveStream = new SnapshotTable(this.dashboardPresenter.getSnapshots()).createTable();
         this.escalations = new Escalations(liveStream,this.dashboardPresenter.getEscalationsPresenterBindings());
         this.applicationList = new ApplicationList(this.dashboardPresenter.getApplications());
+        this.status = new Status(this.dashboardPresenter.getDeadlockedThreads());
     }
 
 

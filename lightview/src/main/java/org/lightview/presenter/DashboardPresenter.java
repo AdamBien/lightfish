@@ -55,6 +55,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     private IntegerProperty expiredSessions;
     private LongProperty id;
     private String baseURI;
+    private StringProperty deadlockedThreads;
     private EscalationsPresenter escalationsPresenter;
 
     public DashboardPresenter(String baseURI) {
@@ -75,6 +76,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         this.activeSessions = new SimpleIntegerProperty();
         this.expiredSessions = new SimpleIntegerProperty();
         this.id = new SimpleLongProperty();
+        this.deadlockedThreads = new SimpleStringProperty();
         this.initializeListeners();
     }
 
@@ -159,6 +161,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         this.totalErrors.set(snapshot.getTotalErrors());
         this.activeSessions.set(snapshot.getActiveSessions());
         this.expiredSessions.set(snapshot.getExpiredSessions());
+        this.deadlockedThreads.set(snapshot.getDeadlockedThreads());
         this.id.set(snapshot.getId());
         this.updatePools(snapshot);
         this.apps.addAll(snapshot.getApps());
@@ -248,6 +251,11 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     @Override
     public ObservableMap<String,ConnectionPoolBindings> getPools() {
         return pools;
+    }
+
+    @Override
+    public StringProperty getDeadlockedThreads() {
+        return this.deadlockedThreads;
     }
     
     @Override

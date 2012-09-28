@@ -27,6 +27,7 @@ public class Snapshot {
     private int queuedConnections;
     private int activeSessions;
     private int expiredSessions;
+    private String deadlockedThreads;
     private List<ConnectionPool> pools;
     private List<Application> apps;
 
@@ -86,6 +87,10 @@ public class Snapshot {
 
     public int getActiveSessions() {
         return activeSessions;
+    }
+
+    public String getDeadlockedThreads() {
+        return deadlockedThreads;
     }
 
     public List<ConnectionPool> getPools() {
