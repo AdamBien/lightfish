@@ -53,10 +53,13 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     private IntegerProperty totalErrors;
     private IntegerProperty activeSessions;
     private IntegerProperty expiredSessions;
+    private DoubleProperty tps;
     private LongProperty id;
     private String baseURI;
     private StringProperty deadlockedThreads;
     private EscalationsPresenter escalationsPresenter;
+    private Snapshot old;
+    private long lastTimeStamp;
 
     public DashboardPresenter(String baseURI) {
         this.baseURI = baseURI;
@@ -76,6 +79,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         this.activeSessions = new SimpleIntegerProperty();
         this.expiredSessions = new SimpleIntegerProperty();
         this.id = new SimpleLongProperty();
+        this.tps = new SimpleDoubleProperty();
         this.deadlockedThreads = new SimpleStringProperty();
         this.initializeListeners();
     }
@@ -165,8 +169,16 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         this.id.set(snapshot.getId());
         this.updatePools(snapshot);
         this.apps.addAll(snapshot.getApps());
+        long current = System.currentTimeMillis();
+        long delta = current - lastTimeStamp;
+        this.tps.set(getTPSValue(delta,snapshot.getCommittedTX()));
+        lastTimeStamp = current;
+        this.old = snapshot;
     }
 
+    public double getTPSValue(long delta,long tx){
+        return tx / ((delta / 100));
+    }
 
     void updatePools(Snapshot snapshot) {
         List<ConnectionPool> connectionPools = snapshot.getPools();
@@ -256,6 +268,11 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     @Override
     public StringProperty getDeadlockedThreads() {
         return this.deadlockedThreads;
+    }
+
+    @Override
+    public DoubleProperty getTransactionsPerSecond() {
+        return tps;
     }
     
     @Override

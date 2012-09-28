@@ -51,6 +51,7 @@ public class Dashboard {
     private Snapshot activeSessions;
     private Snapshot expiredSessions;
     private Snapshot peakThreadCount;
+    private Snapshot successfulTXPerf;
     private VBox vertical;
     private SnapshotTable snapshotsGrid;
     private ApplicationList applicationList;
@@ -84,6 +85,7 @@ public class Dashboard {
         HBox paranormalContent = new HBox();
         HBox transactions = new HBox();
         HBox web = new HBox();
+        HBox performance = new HBox();
         HBox applications = new HBox();
 
         String hBoxClass = "boxSpacing";
@@ -99,6 +101,7 @@ public class Dashboard {
         transactions.getChildren().addAll(this.commitCount.view(), this.rollbackCount.view());
         paranormalContent.getChildren().addAll(this.queuedConnections.view(), this.totalErrors.view(), this.busyThread.view());
         paranormal.getChildren().addAll(paranormalContent,this.status.view());
+        performance.getChildren().addAll(this.successfulTXPerf.view());
         web.getChildren().addAll(this.activeSessions.view());
         web.getChildren().addAll(this.expiredSessions.view());
         applications.getChildren().add(this.applicationList.view());
@@ -106,9 +109,10 @@ public class Dashboard {
         Tab threadsAndMemoryTab = createTab(threadsAndMemory, "Threads And Memory");
         Tab transactionsTab = createTab(transactions, "Transactions");
         Tab paranormalTab = createTab(paranormal, "Paranormal Activity");
+        Tab performanceTab = createTab(performance, "Performance");
         Tab webTab = createTab(web, "Web");
         Tab applicationsTab = createTab(applications, "Applications");
-        this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab, webTab,applicationsTab);
+        this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab,performanceTab, webTab,applicationsTab);
 
         this.vertical.getChildren().addAll(uriInputView, this.browser.view(), this.tabPane, this.escalations.view());
     }
@@ -127,6 +131,7 @@ public class Dashboard {
         this.queuedConnections = new Snapshot(id, "Queued Connections", "Connections");
         this.activeSessions = new Snapshot(id, "HTTP Sessions", "#");
         this.expiredSessions = new Snapshot(id, "Expired Sessions", "#");
+        this.successfulTXPerf = new Snapshot(id, "Commits Per Second", "#");
         final Node liveStream = new SnapshotTable(this.dashboardPresenter.getSnapshots()).createTable();
         this.escalations = new Escalations(liveStream,this.dashboardPresenter.getEscalationsPresenterBindings());
         this.applicationList = new ApplicationList(this.dashboardPresenter.getApplications());
@@ -150,6 +155,7 @@ public class Dashboard {
         this.totalErrors.value().bind(this.dashboardPresenter.getTotalErrors());
         this.activeSessions.value().bind(this.dashboardPresenter.getActiveSessions());
         this.expiredSessions.value().bind(this.dashboardPresenter.getExpiredSessions());
+        this.successfulTXPerf.value().bind(this.dashboardPresenter.getTransactionsPerSecond());
 
         this.dashboardPresenter.getPools().addListener(new MapChangeListener<String, ConnectionPoolBindings>() {
             public void onChanged(Change<? extends String, ? extends ConnectionPoolBindings> change) {

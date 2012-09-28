@@ -1,6 +1,7 @@
 
 package org.lightview.presenter;
 
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.beans.property.StringProperty;
@@ -29,6 +30,7 @@ public interface DashboardPresenterBindings {
     ReadOnlyIntegerProperty getTotalErrors();
     ReadOnlyIntegerProperty getActiveSessions();
     ReadOnlyIntegerProperty getExpiredSessions();
+    ReadOnlyDoubleProperty getTransactionsPerSecond();
     ObservableMap<String, ConnectionPoolBindings> getPools();
     ObservableList<Snapshot> getSnapshots();
     ObservableSet<Application> getApplications();
