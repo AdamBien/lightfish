@@ -18,6 +18,9 @@ package org.lightfish.business.monitoring.control;
 import org.lightfish.business.monitoring.entity.Application;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.lightfish.business.monitoring.entity.ConnectionPool;
@@ -27,6 +30,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 import java.util.Iterator;
+import java.util.List;
 import javax.enterprise.inject.Instance;
 import org.lightfish.business.authenticator.GlassfishAuthenticator;
 
@@ -124,9 +128,13 @@ public class SnapshotProvider {
         }
     }
     
-   Application fetchApplication(String applicationName) {
-        return new Application(applicationName);
+   Application fetchApplication(String applicationName) throws JSONException {
+        return new Application(applicationName,fetchComponents(applicationName));
     }
+   
+   List<String> fetchComponents(String applicationName) throws JSONException{
+       return Arrays.asList(components(applicationName));
+   }
 
 
     int numconnfree(String jndiName) throws JSONException {
@@ -213,6 +221,10 @@ public class SnapshotProvider {
     
     String[] applications() throws JSONException{
         return getStringArray(APPLICATIONS, "childResources");
+    }
+    
+    String[] components(String applicationName) throws JSONException{
+        return getStringArray(APPLICATIONS+"/"+applicationName, "childResources");
     }
 
     long getLong(String uri, String name) throws JSONException {

@@ -15,6 +15,7 @@ limitations under the License.
 */
 package org.lightfish.business.monitoring.entity;
 
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -36,9 +37,11 @@ public class Application {
     private long id;
     
     private String applicationName;
+    private List<String> components;
 
-    public Application(String applicationName) {
+    public Application(String applicationName,List<String> components) {
         this.applicationName = applicationName;
+        this.components = components;
     }
     
     
