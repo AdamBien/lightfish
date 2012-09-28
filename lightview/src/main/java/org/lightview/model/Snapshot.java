@@ -14,7 +14,7 @@ import java.util.List;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Snapshot {
-    
+
     private long id;
     private Date monitoringTime;
     private long usedHeapSize;
@@ -27,12 +27,13 @@ public class Snapshot {
     private int queuedConnections;
     private int activeSessions;
     private int expiredSessions;
-
     private List<ConnectionPool> pools;
+    private List<Application> apps;
 
     public Snapshot() {
         this.monitoringTime = new Date();
-        this.pools = new ArrayList<ConnectionPool>();
+        this.pools = new ArrayList<>();
+        this.apps = new ArrayList<>();
     }
 
     public long getId() {
@@ -91,31 +92,22 @@ public class Snapshot {
         return pools;
     }
 
+    public List<Application> getApps() {
+        return apps;
+    }
+
     public ConnectionPool getPool(String jndiName) {
         for (ConnectionPool pool : pools) {
-            if(jndiName.equals(pool.getJndiName()))
+            if (jndiName.equals(pool.getJndiName())) {
                 return pool;
+            }
         }
         return null;
     }
 
     @Override
     public String toString() {
-        return "Snapshot{" +
-                "id=" + id +
-                ", monitoringTime=" + monitoringTime +
-                ", usedHeapSize=" + usedHeapSize +
-                ", threadCount=" + threadCount +
-                ", peakThreadCount=" + peakThreadCount +
-                ", totalErrors=" + totalErrors +
-                ", currentThreadBusy=" + currentThreadBusy +
-                ", committedTX=" + committedTX +
-                ", rolledBackTX=" + rolledBackTX +
-                ", queuedConnections=" + queuedConnections +
-                ", activeSessions=" + activeSessions +
-                ", expiredSessions=" + expiredSessions +
-                ", pools=" + pools +
-                '}';
+        return "Snapshot{" + "id=" + id + ", monitoringTime=" + monitoringTime + ", usedHeapSize=" + usedHeapSize + ", threadCount=" + threadCount + ", peakThreadCount=" + peakThreadCount + ", totalErrors=" + totalErrors + ", currentThreadBusy=" + currentThreadBusy + ", committedTX=" + committedTX + ", rolledBackTX=" + rolledBackTX + ", queuedConnections=" + queuedConnections + ", activeSessions=" + activeSessions + ", expiredSessions=" + expiredSessions + ", pools=" + pools + ", apps=" + apps + '}';
     }
 
     @Override
@@ -139,6 +131,4 @@ public class Snapshot {
         }
         return true;
     }
-    
-    
 }
