@@ -15,6 +15,7 @@ limitations under the License.
 */
 package org.lightview.model;
 
+import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -31,12 +32,8 @@ public class Application {
     private long id;
     
     private String applicationName;
+    private List<String> components;
 
-    public Application(String applicationName) {
-        this.applicationName = applicationName;
-    }
-    
-    
     protected Application() {}
 
     public long getId() {
@@ -45,6 +42,10 @@ public class Application {
 
     public String getApplicationName() {
         return applicationName;
+    }
+
+    public List<String> getComponents() {
+        return components;
     }
 
     @Override
