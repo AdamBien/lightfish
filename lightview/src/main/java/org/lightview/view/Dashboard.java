@@ -52,6 +52,7 @@ public class Dashboard {
     private Snapshot expiredSessions;
     private Snapshot peakThreadCount;
     private Snapshot successfulTXPerf;
+    private Snapshot failedTXPerf;
     private VBox vertical;
     private SnapshotTable snapshotsGrid;
     private ApplicationList applicationList;
@@ -102,6 +103,7 @@ public class Dashboard {
         paranormalContent.getChildren().addAll(this.queuedConnections.view(), this.totalErrors.view(), this.busyThread.view());
         paranormal.getChildren().addAll(paranormalContent,this.status.view());
         performance.getChildren().addAll(this.successfulTXPerf.view());
+        performance.getChildren().addAll(this.failedTXPerf.view());
         web.getChildren().addAll(this.activeSessions.view());
         web.getChildren().addAll(this.expiredSessions.view());
         applications.getChildren().add(this.applicationList.view());
@@ -132,6 +134,7 @@ public class Dashboard {
         this.activeSessions = new Snapshot(id, "HTTP Sessions", "#");
         this.expiredSessions = new Snapshot(id, "Expired Sessions", "#");
         this.successfulTXPerf = new Snapshot(id, "Commits Per Second", "#");
+        this.failedTXPerf = new Snapshot(id, "Rollbacks Per Second", "#");
         final Node liveStream = new SnapshotTable(this.dashboardPresenter.getSnapshots()).createTable();
         this.escalations = new Escalations(liveStream,this.dashboardPresenter.getEscalationsPresenterBindings());
         this.applicationList = new ApplicationList(this.dashboardPresenter.getApplications());
@@ -155,7 +158,8 @@ public class Dashboard {
         this.totalErrors.value().bind(this.dashboardPresenter.getTotalErrors());
         this.activeSessions.value().bind(this.dashboardPresenter.getActiveSessions());
         this.expiredSessions.value().bind(this.dashboardPresenter.getExpiredSessions());
-        this.successfulTXPerf.value().bind(this.dashboardPresenter.getTransactionsPerSecond());
+        this.successfulTXPerf.value().bind(this.dashboardPresenter.getCommitsPerSecond());
+        this.failedTXPerf.value().bind(this.dashboardPresenter.getRollbacksPerSecond());
 
         this.dashboardPresenter.getPools().addListener(new MapChangeListener<String, ConnectionPoolBindings>() {
             public void onChanged(Change<? extends String, ? extends ConnectionPoolBindings> change) {

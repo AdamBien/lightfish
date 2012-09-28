@@ -53,7 +53,8 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     private IntegerProperty totalErrors;
     private IntegerProperty activeSessions;
     private IntegerProperty expiredSessions;
-    private DoubleProperty tps;
+    private DoubleProperty commitsPerSecond;
+    private DoubleProperty rollbacksPerSecond;
     private LongProperty id;
     private String baseURI;
     private StringProperty deadlockedThreads;
@@ -79,7 +80,8 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         this.activeSessions = new SimpleIntegerProperty();
         this.expiredSessions = new SimpleIntegerProperty();
         this.id = new SimpleLongProperty();
-        this.tps = new SimpleDoubleProperty();
+        this.commitsPerSecond = new SimpleDoubleProperty();
+        this.rollbacksPerSecond = new SimpleDoubleProperty();
         this.deadlockedThreads = new SimpleStringProperty();
         this.initializeListeners();
     }
@@ -171,13 +173,17 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         this.apps.addAll(snapshot.getApps());
         long current = System.currentTimeMillis();
         long delta = current - lastTimeStamp;
-        this.tps.set(getTPSValue(delta,snapshot.getCommittedTX()));
+        if(old == null){
+            old = snapshot;
+        }
+        this.commitsPerSecond.set(getTPSValue(delta,old.getCommittedTX(),snapshot.getCommittedTX()));
+        this.rollbacksPerSecond.set(getTPSValue(delta,old.getRolledBackTX(),snapshot.getRolledBackTX()));
         lastTimeStamp = current;
         this.old = snapshot;
     }
 
-    public double getTPSValue(long delta,long tx){
-        return tx / ((delta / 100));
+    public double getTPSValue(long delta,long oldValue,long newValue){
+        return (newValue - oldValue) / ((delta / 100));
     }
 
     void updatePools(Snapshot snapshot) {
@@ -271,9 +277,15 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     }
 
     @Override
-    public DoubleProperty getTransactionsPerSecond() {
-        return tps;
+    public DoubleProperty getCommitsPerSecond() {
+        return commitsPerSecond;
     }
+
+    @Override
+    public ReadOnlyDoubleProperty getRollbacksPerSecond() {
+        return rollbacksPerSecond;
+    }
+    
     
     @Override
     public String getBaseURI(){

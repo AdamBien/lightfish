@@ -30,7 +30,8 @@ public interface DashboardPresenterBindings {
     ReadOnlyIntegerProperty getTotalErrors();
     ReadOnlyIntegerProperty getActiveSessions();
     ReadOnlyIntegerProperty getExpiredSessions();
-    ReadOnlyDoubleProperty getTransactionsPerSecond();
+    ReadOnlyDoubleProperty getCommitsPerSecond();
+    ReadOnlyDoubleProperty getRollbacksPerSecond();
     ObservableMap<String, ConnectionPoolBindings> getPools();
     ObservableList<Snapshot> getSnapshots();
     ObservableSet<Application> getApplications();
