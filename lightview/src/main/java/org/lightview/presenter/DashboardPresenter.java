@@ -15,6 +15,7 @@ limitations under the License.
 */
 package org.lightview.presenter;
 
+import java.util.HashSet;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -27,6 +28,8 @@ import org.lightview.model.Snapshot;
 import org.lightview.service.SnapshotProvider;
 
 import java.util.List;
+import javafx.collections.ObservableSet;
+import org.lightview.model.Application;
 import org.lightview.service.ScriptManager;
 
 /**
@@ -39,6 +42,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     private StringProperty uri;
     private ObservableList<Snapshot> snapshots;
     private ObservableMap<String, ConnectionPoolBindings> pools;
+    private ObservableSet<Application> apps;
     SnapshotProvider service;
     private LongProperty usedHeapSizeInMB;
     private LongProperty threadCount;
@@ -57,6 +61,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     public DashboardPresenter(String baseURI) {
         this.baseURI = baseURI;
         this.snapshots = FXCollections.observableArrayList();
+        this.apps = FXCollections.observableSet(new HashSet<Application>());
         this.pools = FXCollections.observableHashMap();
         this.uri = new SimpleStringProperty();
         this.escalationsPresenter = new EscalationsPresenter(uri);
@@ -153,6 +158,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         this.expiredSessions.set(snapshot.getExpiredSessions());
         this.id.set(snapshot.getId());
         this.updatePools(snapshot);
+        this.apps.addAll(snapshot.getApps());
     }
 
 
@@ -169,6 +175,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
             }
         }
     }
+    
 
     @Override
     public EscalationsPresenterBindings getEscalationsPresenterBindings() {
@@ -234,5 +241,9 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         return this.baseURI;
     }
 
+    @Override
+    public ObservableSet<Application> getApplications() {
+        return this.apps;
+    }
 
 }

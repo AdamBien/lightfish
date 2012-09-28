@@ -52,7 +52,8 @@ public class Dashboard {
     private Snapshot expiredSessions;
     private Snapshot peakThreadCount;
     private VBox vertical;
-    private Grid grid;
+    private SnapshotTable snapshotsGrid;
+    private ApplicationList applicationList;
     private TabPane tabPane;
 
     private Node uriInputView;
@@ -81,6 +82,7 @@ public class Dashboard {
         HBox paranormal = new HBox();
         HBox transactions = new HBox();
         HBox web = new HBox();
+        HBox applications = new HBox();
 
         String hBoxClass = "boxSpacing";
         this.vertical.getStyleClass().add(hBoxClass);
@@ -96,12 +98,14 @@ public class Dashboard {
         paranormal.getChildren().addAll(this.queuedConnections.view(), this.totalErrors.view(), this.busyThread.view());
         web.getChildren().addAll(this.activeSessions.view());
         web.getChildren().addAll(this.expiredSessions.view());
+        applications.getChildren().add(this.applicationList.view());
 
         Tab threadsAndMemoryTab = createTab(threadsAndMemory, "Threads And Memory");
         Tab transactionsTab = createTab(transactions, "Transactions");
         Tab paranormalTab = createTab(paranormal, "Paranormal Activity");
         Tab webTab = createTab(web, "Web");
-        this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab, webTab);
+        Tab applicationsTab = createTab(applications, "Applications");
+        this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab, webTab,applicationsTab);
 
         this.vertical.getChildren().addAll(uriInputView, this.browser.view(), this.tabPane, this.escalations.view());
     }
@@ -120,8 +124,9 @@ public class Dashboard {
         this.queuedConnections = new Snapshot(id, "Queued Connections", "Connections");
         this.activeSessions = new Snapshot(id, "HTTP Sessions", "#");
         this.expiredSessions = new Snapshot(id, "Expired Sessions", "#");
-        final Node liveStream = new Grid(this.dashboardPresenter.getSnapshots()).createTable();
+        final Node liveStream = new SnapshotTable(this.dashboardPresenter.getSnapshots()).createTable();
         this.escalations = new Escalations(liveStream,this.dashboardPresenter.getEscalationsPresenterBindings());
+        this.applicationList = new ApplicationList(this.dashboardPresenter.getApplications());
     }
 
 

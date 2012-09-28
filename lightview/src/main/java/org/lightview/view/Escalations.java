@@ -96,7 +96,7 @@ public class Escalations {
     }
 
     void addGrid(String title, ObservableList<Snapshot> snapshots) {
-        Grid grid = new Grid(snapshots);
+        SnapshotTable grid = new SnapshotTable(snapshots);
         Tab escalationTab = createTab(title, grid.createTable());
         registerNewScriptMenu(escalationTab);
         registerDeleteScriptMenu(escalationTab);

@@ -6,6 +6,8 @@ import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
+import javafx.collections.ObservableSet;
+import org.lightview.model.Application;
 import org.lightview.model.Snapshot;
 
 /**
@@ -28,6 +30,7 @@ public interface DashboardPresenterBindings {
     ReadOnlyIntegerProperty getExpiredSessions();
     ObservableMap<String, ConnectionPoolBindings> getPools();
     ObservableList<Snapshot> getSnapshots();
+    ObservableSet<Application> getApplications();
     String getBaseURI();
     EscalationsPresenterBindings getEscalationsPresenterBindings();
 }

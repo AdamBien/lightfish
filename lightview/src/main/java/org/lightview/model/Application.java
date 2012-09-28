@@ -15,6 +15,7 @@ limitations under the License.
 */
 package org.lightview.model;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -44,6 +45,26 @@ public class Application {
 
     public String getApplicationName() {
         return applicationName;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.applicationName);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Application other = (Application) obj;
+        if (!this.applicationName.equals(other.applicationName)) {
+            return false;
+        }
+        return true;
     }
 
     

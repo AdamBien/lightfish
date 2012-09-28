@@ -12,11 +12,11 @@ import org.lightview.model.Snapshot;
  * Date: 23.11.11
  * Time: 20:02
  */
-public class Grid {
+public class SnapshotTable {
 
     private ObservableList<Snapshot> snapshots;
 
-    public Grid(ObservableList<Snapshot> snapshots) {
+    public SnapshotTable(ObservableList<Snapshot> snapshots) {
         this.snapshots = snapshots;
     }
 

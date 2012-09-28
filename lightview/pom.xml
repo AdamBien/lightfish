@@ -106,7 +106,7 @@
                             </execution>
                             <execution>
                                 <id>package-native</id>
-                                <phase>install</phase>
+                                <!--<phase>install</phase>-->
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
