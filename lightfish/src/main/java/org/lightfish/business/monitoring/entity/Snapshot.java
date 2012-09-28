@@ -50,6 +50,7 @@ public class Snapshot {
     private int expiredSessions;
     private boolean escalated;
     private String escalationReason;
+    private String deadlockedThreads;
 
     @XmlTransient @Transient
     private String escalationChannel;
@@ -123,6 +124,12 @@ public class Snapshot {
     public int getExpiredSessions() {
         return expiredSessions;
     }
+
+    public String getDeadlockedThreads() {
+        return deadlockedThreads;
+    }
+    
+    
 
     public List<ConnectionPool> getPools() {
         return pools;
@@ -209,6 +216,11 @@ public class Snapshot {
             return this;
         }
     
+        public Builder deadlockedThreads(String deadlockedThreads){
+            snapshot.deadlockedThreads = deadlockedThreads;
+            return this;
+        }
+
         
         public Snapshot build(){
             return this.snapshot;

@@ -18,6 +18,7 @@ package org.lightfish.business.monitoring.control;
 import org.lightfish.business.monitoring.entity.Application;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.UniformInterfaceException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,6 +43,7 @@ public class SnapshotProvider {
     public static final String HEAP_SIZE = "jvm/memory/usedheapsize-count";
     private static final String THREAD_COUNT = "jvm/thread-system/threadcount";
     private static final String PEAK_THREAD_COUNT = "jvm/thread-system/peakthreadcount";
+    private static final String DEADLOCKED_THREADS = "jvm/thread-system/deadlockedthreads";
     private static final String ERROR_COUNT = "http-service/server/request/errorcount";
     private static final String AVG_PROCESSING_TIME = "http-service/server/request/processingtime";
     private static final String HTTP_BUSY_THREADS = "network/thread-pool/currentthreadsbusy";
@@ -86,6 +88,7 @@ public class SnapshotProvider {
             int queuedConnections = queuedConnections();
             int activeSessionsCurrent = activeSessionsCurrent();
             int expiredSessions = expiredSessions();
+            String deadlockedThreads = deadlockedThreads();
             Snapshot snapshot = new Snapshot.Builder().
                     usedHeapSize(usedHeapSize).
                     threadCount(threadCount).
@@ -97,6 +100,7 @@ public class SnapshotProvider {
                     queuedConnections(queuedConnections).
                     activeSessions(activeSessionsCurrent).
                     expiredSessions(expiredSessions).
+                    deadlockedThreads(deadlockedThreads).
                     build();
             for (String jdbcPoolName : resources()) {
                 snapshot.add(fetchResource(jdbcPoolName));
@@ -134,6 +138,11 @@ public class SnapshotProvider {
    
    List<String> fetchComponents(String applicationName) throws JSONException{
        return Arrays.asList(components(applicationName));
+   }
+   
+   String deadlockedThreads() throws JSONException{
+        final String uri = getBaseURI() + DEADLOCKED_THREADS;
+        return getString(uri, "deadlockedthreads","current");
    }
 
 
@@ -237,19 +246,24 @@ public class SnapshotProvider {
     }
 
     long getLong(String uri, String name, String key) throws JSONException {
-        ClientResponse result = client.resource(uri).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+        ClientResponse result = getClientResponse(uri);
         return getJSONObject(result, name).getLong(key);
 
     }
 
     int getInt(String uri, String name, String key) throws JSONException {
-        ClientResponse result = client.resource(uri).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+        ClientResponse result = getClientResponse(uri);
         return getJSONObject(result, name).getInt(key);
+    }
+    
+    String getString(String uri, String name, String key) throws JSONException {
+        ClientResponse result = getClientResponse(uri);
+        return getJSONObject(result, name).getString(key);
     }
 
     String[] getStringArray(String name, String key) throws JSONException {
         String[] empty = new String[0];
-        ClientResponse result = client.resource(this.getBaseURI() + name).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+        ClientResponse result = getClientResponse(this.getBaseURI() + name);
         JSONObject response = result.getEntity(JSONObject.class);
         response = response.optJSONObject("extraProperties");
         if(response == null)
@@ -282,5 +296,9 @@ public class SnapshotProvider {
             protocol = "https://";
         }
         return protocol;
+    }
+
+    ClientResponse getClientResponse(String uri) throws UniformInterfaceException {
+        return client.resource(uri).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
     }
 }
