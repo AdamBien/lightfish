@@ -15,7 +15,8 @@ limitations under the License.
 Installation:
 Open and "Run" the lightfish project with NetBeans - it will create the datasource for you and deploy the application and open the browser.
 Or:
-1. mvn -Pjavafx clean install multi-light project
+0. Setup JAVA_HOME to point to JDK installation
+1. mvn clean install multi-light project
 2. Drop the lightfish/target/lightfish.war into /glassfish3.1.X/glassfish/domains/domain1/autodeploy
 3. Point your browser to: http://localhost:8080/lightfish
 
