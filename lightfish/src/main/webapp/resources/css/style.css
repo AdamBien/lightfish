@@ -1,0 +1,21 @@
+/* 
+    Document   : style
+    Created on : Jan 15, 2013, 6:16:21 PM
+    Author     : Fabian Mettler <mettler.fabian@gmail.com>
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+.text-label {
+    padding-top: 5px;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 20px;
+    display: block;
+    margin-bottom: 5px;
+    cursor: inherit;
+}
+
+.form-btn-toolbar {
+    margin-top: 0;
+}
