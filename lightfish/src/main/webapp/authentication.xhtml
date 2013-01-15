@@ -4,17 +4,43 @@
       xmlns:h="http://java.sun.com/jsf/html">
     <h:head>
         <title>Authentication</title>
-       <link rel="shortcut icon" href="./favicon.ico" />
+        <link rel="shortcut icon" href="./favicon.ico" />
+        <h:outputStylesheet library="css" name="bootstrap.css"  />
+        <h:outputStylesheet library="css" name="style.css"  />           
     </h:head>
     <h:body>
-        <h:form>
-            <h:panelGrid columns="2">
-            User name:<h:inputText value="#{authentication.username}"/>
-            Password:<h:inputSecret value="#{authentication.password}" />
-            </h:panelGrid>
-            <h:commandButton value="&lt;&lt;" action="#{authentication.storeCredentials}" immediate="true"/>
-            <h:commandButton value="Store" action="#{authentication.storeCredentials}"/>
-        </h:form>
+        <div class="container">
+            <div class="row">
+                <div class="page-header">
+                    <h1>LightFish <small>Stress Test Result Capturing</small></h1>
+                </div>
+            </div>
+
+            <div class="row">
+                <h:form class="form-horizontal">
+                    <legend>Authentication</legend>
+
+                    <div class="control-group">
+                        <label class="control-label">Username</label>
+                        <div class="controls">
+                            <h:inputText value="#{authentication.username}"/>
+                        </div>
+                    </div> 
+
+                    <div class="control-group">
+                        <label class="control-label">Password</label>
+                        <div class="controls">
+                            <h:inputSecret value="#{authentication.password}"/>
+                        </div>
+                    </div> 
+
+                    <div class="form-actions">
+                        <h:commandButton value="Store" action="#{authentication.storeCredentials}" class="btn btn-primary" />                   
+                        <h:commandButton value="Cancel" action="#{authentication.storeCredentials}" immediate="true" class="btn"/>
+                    </div>
+                </h:form>
+            </div>
+        </div>
     </h:body>
 </html>
 
