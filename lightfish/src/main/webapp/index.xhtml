@@ -4,29 +4,100 @@
       xmlns:h="http://java.sun.com/jsf/html">
     <h:head>
         <title>LightFish Stress Test Result Capturing</title>
-		<link rel="shortcut icon" href="./favicon.ico" />
+        <link rel="shortcut icon" href="./favicon.ico" />
+        <h:outputStylesheet library="css" name="bootstrap.css"  />
+        <h:outputStylesheet library="css" name="style.css"  />     
     </h:head>
     <h:body>
-        <h:form>
-            <h:panelGrid columns="2">
-            <h:outputText value="#{authentication.protocol}"/><h:inputText value="#{index.location}"/>
-            Interval:<h:inputText value="#{index.interval}"/>
-            Server version: <h:outputText value="#{index.version}"/>            
-            Uptime: <h:outputText value="#{index.uptime}"/>            
-            </h:panelGrid>
-            <h:commandButton value="Update" action="#{index.changeAdministration}"/>
-        </h:form>
-        <h:link value="Authentication &gt;&gt;" style="font-size: small" outcome="authentication"/>
-        <h:form>
-            <h:commandButton disabled="#{index.running}" value="Start" action="#{index.start}"/>
-            <h:commandButton disabled="#{!index.running}" value="Stop" action="#{index.stop}"/>
-            <h:commandButton value="Activate Monitoring" action="#{index.activateMonitoring}"/>
-            <h:commandButton value="Deactivate Monitoring" action="#{index.deactivateMonitoring}"/>
-        </h:form>
-        <br/>
-        <a href="/lightfish/live" target="_blank">Live Data</a><br/>
-        <a href="./lightview.html" target="_blank" id="lightview">LightView</a>
+        <div class="container">
+            <div class="row">
+                <div class="page-header">
+                    <h1>LightFish <small>Stress Test Result Capturing</small></h1>
+                </div>
+            </div>
 
+            <div class="row">
+                <h:form class="form-horizontal">
+                    <legend>Configuration</legend>
+
+                    <div class="control-group">
+                        <label class="control-label"><h:outputText value="#{authentication.protocol}"/></label>
+                        <div class="controls">
+                            <h:inputText value="#{index.location}"/>
+                        </div>
+                    </div> 
+                    <div class="control-group">
+                        <label class="control-label">Interval</label>
+                        <div class="controls">
+                            <h:inputText value="#{index.interval}"/>
+                            <span class="help-block">Interval is specified in seconds</span>
+                        </div>
+                    </div>                        
+                    <div class="control-group">
+                        <label class="control-label">Server version</label>
+                        <div class="controls">                            
+                            <label class="text-label"><h:outputText value="#{index.version}"/>   </label>
+                        </div>
+                    </div>        
+                    <div class="control-group">
+                        <label class="control-label">Uptime:</label>
+                        <div class="controls">
+                            <label class="text-label"><h:outputText value="#{index.uptime}"/>  </label>                              
+                        </div>
+                    </div>         
+
+                    <div class="control-group">
+                        <div class="controls">
+                            <h:commandButton value="Update" action="#{index.changeAdministration}" class="btn btn-primary"/> 
+                        </div>
+                    </div>                        
+
+                </h:form>
+            </div>
+
+            <div class="row">
+                <div class="span2"></div>
+                <div class="span10">
+
+                    <h:link value="Authentication &gt;&gt;" class="btn btn-small" outcome="authentication"/>
+                </div>
+            </div>
+
+            <div class="row">
+                <h:form class="form-horizontal">
+                    <legend>Actions</legend>
+
+                    <div class="control-group">
+                        <label class="control-label">Monitoring</label>
+                        <div class="controls">
+                            <div class="btn-toolbar form-btn-toolbar">
+                                <div class="btn-group">
+                                    <h:commandButton value="Activate" action="#{index.activateMonitoring}" class="btn"/>
+                                    <h:commandButton value="Deactivate" action="#{index.deactivateMonitoring}" class="btn"/>      
+                                </div>
+                            </div>
+                        </div>         
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">Timer</label>
+                        <div class="controls">
+                            <div class="btn-toolbar form-btn-toolbar">
+                                <div class="btn-group">
+                            <h:commandButton disabled="#{index.running}" value="Start" action="#{index.start}" class="btn btn-primary"/>
+                            <h:commandButton disabled="#{!index.running}" value="Stop" action="#{index.stop}" class="btn"/>  
+                                </div>
+                            </div>
+                        </div>         
+                    </div>
+                </h:form>                
+            </div>
+
+            <div class="row">
+                <legend>References</legend>
+                <a href="/lightfish/live" target="_blank">Live Data</a><br/>
+                <a href="./lightview.html" target="_blank" id="lightview">LightView</a>
+            </div>
+        </div>
     </h:body>
 </html>
-
