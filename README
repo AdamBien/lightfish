@@ -13,6 +13,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 Installation:
+Before attempting to run the application you must create a key store to sign the Ligthview JAR. The following instructions should work on Linux and Apple computers:
+1. Make the directory
+      mkdir -p ~/work/devprogs/tools/keystore
+2. Create the keystore and add the key
+      keytool -genkey -alias lightview -keyalg RSA -keystore samples -keysize 2048
+
 Open and "Run" the lightfish project with NetBeans - it will create the datasource for you and deploy the application and open the browser.
 Or:
 0. Setup JAVA_HOME to point to JDK installation
