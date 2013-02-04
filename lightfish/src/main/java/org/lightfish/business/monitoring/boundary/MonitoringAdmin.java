@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import org.lightfish.business.authenticator.GlassfishAuthenticator;
+import org.lightfish.business.monitoring.control.ServerInstanceProvider;
 
 /**
  *
@@ -47,12 +48,15 @@ public class MonitoringAdmin {
     String username;
     @Inject
     String password;
+    @Inject 
+    Instance<String> serverInstance;
     @Inject
     Instance<GlassfishAuthenticator> authenticator;
+    @Inject
+    ServerInstanceProvider instancePorvider;
     
     private Client client;
     private String baseUri;
-    private String enableMonitoringURI_312 = "/management/domain/configs/config/server-config/monitoring-service/module-monitoring-levels/";
     private String modules[] = new String[]{"connectorConnectionPool","connectorService","deployment","ejbContainer","httpService","jdbcConnectionPool","jersey","jmsService","jpa","jvm","orb","security","threadPool","transactionService","webContainer","webServicesContainer"};
     
     
@@ -64,27 +68,27 @@ public class MonitoringAdmin {
 
     
     public boolean activateMonitoring() {
-        authenticator.get().addAuthenticator(client, username, password);
-        MultivaluedMap formData = new MultivaluedMapImpl();
-        for (String module : modules) {
-            formData.add(module, ON);
-        }
-        return postForm(formData);
+        return changeMonitoringState(ON);
     }
 
 
     public boolean deactivateMonitoring() {
+        return changeMonitoringState(OFF);
+    }
+
+    private boolean changeMonitoringState(String state){
+        authenticator.get().addAuthenticator(client, username, password);
         MultivaluedMap formData = new MultivaluedMapImpl();
         for (String module : modules) {
-            formData.add(module,OFF);
+            formData.add(module, state);
         }
         return postForm(formData);
     }
-
+    
     boolean postForm(MultivaluedMap form) throws UniformInterfaceException {
-            ClientResponse response = this.client.resource(this.baseUri).path(enableMonitoringURI_312).header("X-Requested-By","LightFish").type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(ClientResponse.class, form);
+            ClientResponse response = this.client.resource(this.baseUri).path(getEnableMonitoringURI_312()).header("X-Requested-By","LightFish").type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(ClientResponse.class, form);
             int status = response.getStatus();
-            LOG.log(Level.INFO, "Got status: {0} for path: {1}  form: {2}", new Object[]{status, enableMonitoringURI_312,form});
+            LOG.log(Level.INFO, "Got status: {0} for path: {1}  form: {2}", new Object[]{status, getEnableMonitoringURI_312(),form});
             return (200 == response.getStatus());
     }
     
@@ -96,6 +100,14 @@ public class MonitoringAdmin {
             protocol = "https://";
         }
         return protocol;
+    }
+    
+    private String getEnableMonitoringURI_312(){
+        
+        String uri = "/management/domain/configs/config/"+
+                instancePorvider.fetchServerInstanceInfo().getConfigRef()
+                +"/monitoring-service/module-monitoring-levels/";
+        return uri;
     }
 
 }
