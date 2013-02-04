@@ -42,6 +42,7 @@ public class Configurator {
         this.configuration.put("interval","2");
         this.configuration.put("username", "");
         this.configuration.put("password", "");
+        this.configuration.put("serverInstance", "server");
     }
 
     @Produces

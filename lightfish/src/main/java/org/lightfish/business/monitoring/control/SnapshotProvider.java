@@ -1,18 +1,18 @@
 /*
-Copyright 2012 Adam Bien, adam-bien.com
+ Copyright 2012 Adam Bien, adam-bien.com
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 package org.lightfish.business.monitoring.control;
 
 import org.lightfish.business.monitoring.entity.Application;
@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.enterprise.inject.Instance;
 import org.lightfish.business.authenticator.GlassfishAuthenticator;
+import java.util.logging.Logger;
 
 /**
  * @author Adam Bien, blog.adam-bien.com
@@ -52,15 +53,10 @@ public class SnapshotProvider {
     private static final String QUEUED_CONNS = "network/connection-queue/countqueued";
     private static final String CURRENT_SESSIONS = "web/session/activesessionscurrent";
     private static final String EXPIRED_SESSIONS = "web/session/expiredsessionstotal";
-    
     private static final String APPLICATIONS = "applications";
-    
-
+    private static final Logger LOG = Logger.getLogger(SnapshotProvider.class.getName());
     static final String RESOURCES = "resources";
-
-
     private Client client;
-
     @Inject
     Instance<String> location;
     @Inject
@@ -68,8 +64,10 @@ public class SnapshotProvider {
     @Inject
     Instance<String> password;
     @Inject
+    Instance<String> serverInstance;
+    @Inject
     Instance<GlassfishAuthenticator> authenticator;
-    
+
     @PostConstruct
     public void initializeClient() {
         this.client = Client.create();
@@ -105,18 +103,17 @@ public class SnapshotProvider {
             for (String jdbcPoolName : resources()) {
                 snapshot.add(fetchResource(jdbcPoolName));
             }
-            for (String application: applications()){
+            for (String application : applications()) {
                 snapshot.add(fetchApplication(application));
             }
             return snapshot;
         } catch (Exception e) {
-            throw new IllegalStateException("Cannot fetch monitoring data for URI: " + this.getBaseURI(),e);
+            throw new IllegalStateException("Cannot fetch monitoring data for URI: " + this.getBaseURI(), e);
         }
     }
 
-    String getBaseURI(){
-        return getProtocol() + location.get() + "/monitoring/domain/server/";
-
+    String getBaseURI() {
+        return getProtocol() + location.get() + "/monitoring/domain/" + serverInstance.get() + "/";
     }
 
     public ConnectionPool fetchResource(String jndiName) {
@@ -131,20 +128,19 @@ public class SnapshotProvider {
             throw new IllegalStateException("Cannot fetch monitoring data for URI: " + this.getBaseURI(), e);
         }
     }
-    
-   Application fetchApplication(String applicationName) throws JSONException {
-        return new Application(applicationName,fetchComponents(applicationName));
-    }
-   
-   List<String> fetchComponents(String applicationName) throws JSONException{
-       return Arrays.asList(components(applicationName));
-   }
-   
-   String deadlockedThreads() throws JSONException{
-        final String uri = getBaseURI() + DEADLOCKED_THREADS;
-        return getString(uri, "deadlockedthreads","current");
-   }
 
+    Application fetchApplication(String applicationName) throws JSONException {
+        return new Application(applicationName, fetchComponents(applicationName));
+    }
+
+    List<String> fetchComponents(String applicationName) throws JSONException {
+        return Arrays.asList(components(applicationName));
+    }
+
+    String deadlockedThreads() throws JSONException {
+        final String uri = getBaseURI() + DEADLOCKED_THREADS;
+        return getString(uri, "deadlockedthreads", "current");
+    }
 
     int numconnfree(String jndiName) throws JSONException {
         String uri = constructResourceString(jndiName);
@@ -165,7 +161,6 @@ public class SnapshotProvider {
         String uri = constructResourceString(jndiName);
         return getInt(uri, "numpotentialconnleak");
     }
-
 
     String constructResourceString(String resourceName) {
         return getBaseURI() + RESOURCES + "/" + resourceName;
@@ -191,7 +186,6 @@ public class SnapshotProvider {
         return getInt(uri, "expiredsessionstotal", "count");
     }
 
-
     int peakThreadCount() throws JSONException {
         final String uri = getBaseURI() + PEAK_THREAD_COUNT;
         return getInt(uri, "peakthreadcount");
@@ -206,7 +200,6 @@ public class SnapshotProvider {
         final String uri = getBaseURI() + HTTP_BUSY_THREADS;
         return getInt(uri, "currentthreadsbusy");
     }
-
 
     int committedTX() throws JSONException {
         final String uri = getBaseURI() + COMMITTED_TX;
@@ -227,13 +220,12 @@ public class SnapshotProvider {
         return getStringArray(RESOURCES, "childResources");
     }
 
-    
-    String[] applications() throws JSONException{
+    String[] applications() throws JSONException {
         return getStringArray(APPLICATIONS, "childResources");
     }
-    
-    String[] components(String applicationName) throws JSONException{
-        return getStringArray(APPLICATIONS+"/"+applicationName, "childResources");
+
+    String[] components(String applicationName) throws JSONException {
+        return getStringArray(APPLICATIONS + "/" + applicationName, "childResources");
     }
 
     long getLong(String uri, String name) throws JSONException {
@@ -255,7 +247,7 @@ public class SnapshotProvider {
         ClientResponse result = getClientResponse(uri);
         return getJSONObject(result, name).getInt(key);
     }
-    
+
     String getString(String uri, String name, String key) throws JSONException {
         ClientResponse result = getClientResponse(uri);
         return getJSONObject(result, name).getString(key);
@@ -266,11 +258,13 @@ public class SnapshotProvider {
         ClientResponse result = getClientResponse(this.getBaseURI() + name);
         JSONObject response = result.getEntity(JSONObject.class);
         response = response.optJSONObject("extraProperties");
-        if(response == null)
+        if (response == null) {
             return empty;
-        response = response.optJSONObject("childResources");        
-        if(response == null)
+        }
+        response = response.optJSONObject("childResources");
+        if (response == null) {
             return empty;
+        }
         int length = response.length();
         String retVal[] = new String[length];
         Iterator keys = response.keys();
@@ -281,15 +275,13 @@ public class SnapshotProvider {
         return retVal;
     }
 
-
     JSONObject getJSONObject(ClientResponse result, String name) throws JSONException {
         JSONObject response = result.getEntity(JSONObject.class);
         return response.getJSONObject("extraProperties").
                 getJSONObject("entity").
                 getJSONObject(name);
     }
-    
-    
+
     private String getProtocol() {
         String protocol = "http://";
         if (username != null && username.get() != null && !username.get().isEmpty()) {

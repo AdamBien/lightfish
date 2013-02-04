@@ -15,6 +15,7 @@
  */
 package org.lightfish.business.heartbeat.boundary;
 
+import java.io.IOException;
 import org.lightfish.business.heartbeat.control.Serializer;
 import org.lightfish.business.logging.Log;
 import org.lightfish.business.monitoring.boundary.Severity;
@@ -29,6 +30,8 @@ import javax.inject.Inject;
 import java.io.Writer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.*;

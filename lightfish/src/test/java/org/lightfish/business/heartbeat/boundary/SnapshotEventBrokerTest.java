@@ -1,5 +1,6 @@
 package org.lightfish.business.heartbeat.boundary;
 
+import java.io.Writer;
 import org.junit.AfterClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -30,9 +31,14 @@ public class SnapshotEventBrokerTest {
     public void singleChannelNofified() {
         final String escalationChannel = "duke";
         BrowserWindow window = mock(BrowserWindow.class);
+        
+        Writer writer = mock(Writer.class);
+        when(window.getWriter()).thenReturn(writer);
+        
         Snapshot snapshot = new Snapshot();
         snapshot.setEscalationChannel(escalationChannel);
         when(window.getChannel()).thenReturn(escalationChannel);
+        
         this.cut.onBrowserRequest(window);
         this.cut.onNewEscalation(snapshot);
         verify(window,never()).send();
