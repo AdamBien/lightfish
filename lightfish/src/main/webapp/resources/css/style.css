@@ -19,3 +19,40 @@
 .form-btn-toolbar {
     margin-top: 0;
 }
+
+.chart{
+    width:410px;
+    height:200px;
+}
+
+.chart-group{
+    clear: both;
+}
+
+.chart-group h1{
+    font-size:1.4em;
+    margin-top:1em;
+    margin-bottom:0;
+}
+
+.chart-subsection{
+    clear: both;
+}
+
+.chart-subsection h1{
+    font-size:1.2em;
+}
+
+.chart-container{
+    float:left;
+    display:block;
+    margin:1em;
+    
+}
+
+.chart-container h1{
+    font-size:1.1em;
+    border-bottom: 1px solid #eeeeee;
+    margin-top:0;
+    margin-bottom:0.5em;
+}

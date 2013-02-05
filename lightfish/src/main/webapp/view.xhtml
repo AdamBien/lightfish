@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head>
+        <title>LightFish - LightVew</title>
+        <link rel="shortcut icon" href="./favicon.ico" />
+        <h:outputStylesheet library="css" name="bootstrap.css"  />
+        <h:outputStylesheet library="css" name="style.css"  />     
+        <h:outputStylesheet library="css" name="jquery-ui.css"  />     
+        <!--[if lte IE 8]><h:outputScript library="js" name="third-party/excanvas.min.js"  /><![endif]-->
+        <h:outputScript library="js" name="third-party/jquery.js"  />
+        <h:outputScript library="js" name="third-party/jquery-ui.js"  />
+        <h:outputScript library="js" name="third-party/jquery.flot.js"  />
+        <h:outputScript library="js" name="third-party/jquery.flot.stack.js"  />
+        <h:outputScript library="js" name="view.js"  />
+    </h:head>
+    <h:body>
+        <div class="container">
+            <div class="row">
+                <div class="page-header">
+                    <h1>LightFish <small>LightVew</small></h1>
+                </div>
+            </div>
+            <h:link outcome="index?faces-redirect=true" value="Back to Main"  style="float:right"/>
+            <div style="clear:both" />
+            <div id="tabs">
+                <ul id="tabIndex">
+                    <li><a href="#system"><span>Threads and Memory</span></a></li>
+                    <li><a href="#transactions"><span>Transactions</span></a></li>
+                    <li><a href="#paranormal"><span>Paranormal Activity</span></a></li>
+                    <li><a href="#performance"><span>Performance</span></a></li>
+                    <li><a href="#sessions"><span>Sessions</span></a></li>
+                    <li><a href="#applications"><span>Applications</span></a></li>
+                </ul>
+                <div class="chart-group" id="system">
+                    <h1>Threads and Memory</h1>
+                    <div class="chart-container">
+                        <h1>Used Heap (mb)</h1>
+                        <div id="heapChart" class="chart"></div>
+                    </div>
+                    <div class="chart-container">
+                        <h1>Thread Count</h1>
+                        <div id="threadChart" class="chart"></div>
+                    </div>
+                    <div style="clear:both" />
+                </div>
+                <div class="chart-group" id="transactions">
+                    <h1>Transactions</h1>
+                    <div class="chart-container">
+                        <h1>TX Commit (Cumulative)</h1>
+                        <div id="txCommitChart" class="chart"></div>
+                    </div>
+                    <div class="chart-container">
+                        <h1>TX Rollback (Cumulative)</h1>
+                        <div id="txRollbackChart" class="chart"></div>
+                    </div>
+                    <div style="clear:both" />
+                </div>
+                <div class="chart-group" id="paranormal">
+                    <h1>Paranormal Activity</h1>
+                    <div class="chart-container">
+                        <h1>Errors (Cumulative)</h1>
+                        <div id="errorChart" class="chart"></div>
+                    </div>
+                    <div class="chart-container">
+                        <h1>Errors Per Second</h1>
+                        <div id="errorPerSecondChart" class="chart"></div>
+                    </div>
+                    <div class="chart-container">
+                        <h1>Queued Connections</h1>
+                        <div id="queuedConnectionChart" class="chart"></div>
+                    </div>
+                    <div class="chart-container">
+                        <h1>Busy Threads</h1>
+                        <div id="busyThreadChart" class="chart"></div>
+                    </div>
+                    <div style="clear:both" />
+                </div>
+                <div class="chart-group" id="performance">
+                    <h1>Performance</h1>
+                    <div class="chart-container">
+                        <h1>Commits Per Second</h1>
+                        <div id="commitsPerSecondChart" class="chart"></div>
+                    </div>
+                    <div class="chart-container">
+                        <h1>Rollbacks Per Second</h1>
+                        <div id="rollbacksPerSecondChart" class="chart"></div>
+                    </div>
+                    <div style="clear:both" />
+                </div>
+                <div class="chart-group" id="sessions">
+                    <h1>Sessions</h1>
+                    <div class="chart-container">
+                        <h1>HTTP Sessions</h1>
+                        <div id="sessionsChart" class="chart"></div>
+                    </div>
+                    <div class="chart-container">
+                        <h1>Expired Sessions</h1>
+                        <div id="expiredSessionsChart" class="chart"></div>
+                    </div>
+                    <div style="clear:both" />
+                </div>
+                <div id="applications">
+                    <div id="applicationsContainer">
+                        <ui:repeat value="${lightView.snapshot.apps}" var="app">
+                            <h3>${app.applicationName}</h3>
+                            <div>
+                                <h4>Components</h4>
+                                <ul>
+                                    <ui:repeat value="${app.components}" var="comp">
+                                        <li>${comp}</li>
+                                    </ui:repeat>
+                                </ul>
+                            </div>
+                        </ui:repeat>
+                    </div>
+                    <small class="help-block" style="margin-top:1em;">This information is loaded when the page loads and is only refreshed if you refresh the page.</small>
+                    <div style="clear:both" />
+                </div>
+            </div>
+
+        </div>
+        <script type="text/javascript">
+            $(function(){
+                lightfish.view.config.baseUri = '${facesContext.externalContext.getRequestContextPath()}';
+                
+            });
+            _Chart.chartOptions.xaxis.tickSize = [${lightView.interval} * 8, 'second'];
+        </script>
+    </h:body>
+</html>
