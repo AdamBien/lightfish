@@ -193,15 +193,24 @@ lightfish.view = {
     
         lightfish.view._charts.threads = new Chart({
             element: '#threadChart',
+            labels:['thread count', 'peak thread count'],
             chartOptions: {
                 lines: {
                     fill:null
+                },
+                legend: {
+                    position: "nw"
                 }
             }
         });
         
         lightfish.view._charts.txCommit = new Chart({
-            element: '#txCommitChart'
+            element: '#txCommitChart',
+            chartOptions: {
+                yaxis: {
+                    min:null
+                }
+            }
         });
         
         lightfish.view._charts.txRollback = new Chart({
@@ -320,7 +329,9 @@ var _Chart = {
         if(this._chart!=null){
             var labeledData = [];
             for(var index in this._data){
-                var dataSet = {data:this._data[index]};
+                var dataSet = {
+                    data:this._data[index]
+                    };
                 if(typeof this.labels[index] != "undefined"){
                     dataSet.label = this.labels[index];
                 }
