@@ -8,8 +8,7 @@ lightfish.view = {
     },
     _charts: {},
     _poolChartNames: {
-        freeConnections: 'Free Connections',
-        usedConnections: 'Used Connections',
+        connections: 'Connections Free/Used',
         waitQueueLength: 'Wait Queue Length',
         potentialLeak: 'Potential Connection Leak #'
     },
@@ -98,7 +97,14 @@ lightfish.view = {
             }
             
             for(var chartKey in lightfish.view._poolChartNames){
-                lightfish.view._charts.pool[poolKey][chartKey].appendData([[data.time,data.pools[poolKey][chartKey]]]);
+                if(chartKey!= "connections"){
+                    lightfish.view._charts.pool[poolKey][chartKey].appendData([[data.time,data.pools[poolKey][chartKey]]]);
+                }else{
+                    lightfish.view._charts.pool[poolKey][chartKey].appendData([
+                        [data.time,data.pools[poolKey].usedConnections],
+                        [data.time,data.pools[poolKey].freeConnections]
+                        ]);
+                }
             }
         }
     },
@@ -106,7 +112,7 @@ lightfish.view = {
         lightfish.view._charts.pool[poolKey] = {};
         
         $('<li><a href="#' + poolKey + '"><span>Resource: ' + poolKey + '</span></a></li>')
-            .appendTo("#tabIndex");
+        .appendTo("#tabIndex");
         
         var poolChartsElement = $('<div id="' + poolKey + '" />')
         .addClass('chart-subsection').appendTo('#tabs');
@@ -119,10 +125,30 @@ lightfish.view = {
             var currentChartElement = $('<div id="' + poolKey + '_' + chartKey + 'Chart" class="chart" />')
             .appendTo(currentChartContainer);
             
+            if(chartKey != "connections"){
+                lightfish.view._charts.pool[poolKey][chartKey] = new Chart({
+                    element: currentChartElement,
+                    chartOptions: {
+                        yaxis:{
+                            min:0
+                        }
+                    }
+                })
+            }else{
+                lightfish.view._charts.pool[poolKey][chartKey] = new Chart({
+                    element: currentChartElement,
+                    labels:['used', 'free'],
+                    chartOptions: {
+                        series:{
+                            stack:true
+                        },
+                        legend: {
+                            position: "se"
+                        }
+                    }
+                })
+            }
             
-            lightfish.view._charts.pool[poolKey][chartKey] = new Chart({
-                element: currentChartElement
-            })
         }
         
         poolChartsElement.append($('<div style="clear:both" />'));
@@ -168,8 +194,8 @@ lightfish.view = {
         lightfish.view._charts.threads = new Chart({
             element: '#threadChart',
             chartOptions: {
-                yaxis: {
-                    min: 0
+                lines: {
+                    fill:null
                 }
             }
         });
@@ -183,20 +209,31 @@ lightfish.view = {
         });
         
         lightfish.view._charts.queuedConnections = new Chart({
-            element: '#queuedConnectionChart'
+            element: '#queuedConnectionChart',
+            chartOptions: {
+                yaxis: {
+                    min:0
+                }
+            }
         });
         
         lightfish.view._charts.errors = new Chart({
             element: '#errorChart',
             chartOptions: {
                 yaxis: {
-                    minTickSize:5
+                    minTickSize:1
                 }
             }
         });
         
         lightfish.view._charts.errorsPerSecond = new Chart({
-            element: '#errorPerSecondChart'
+            element: '#errorPerSecondChart',
+            chartOptions: {
+                yaxis: {
+                    minTickSize:null,
+                    min:0
+                }
+            }
         });
         
         lightfish.view._charts.busyThreads = new Chart({
@@ -207,7 +244,8 @@ lightfish.view = {
             element: '#commitsPerSecondChart',
             chartOptions: {
                 yaxis: {
-                    minTickSize:null
+                    minTickSize:null,
+                    min:0
                 }
             }
         });
@@ -216,7 +254,8 @@ lightfish.view = {
             element: '#rollbacksPerSecondChart',
             chartOptions: {
                 yaxis: {
-                    minTickSize:null
+                    minTickSize:null,
+                    min:0
                 }
             }
         });
@@ -241,20 +280,35 @@ $(function(){
         activate: lightfish.view.redrawVisibleCharts
     });
     
-    $("#applicationsContainer").accordion({heightStyle:"content"});
+    $("#applicationsContainer").accordion({
+        heightStyle:"content"
+    });
 });
 
 
 var _Chart = {
     element: null,
     maxDataLength: 15,
+    labels: [],
     chartOptions: {
+        lines: {
+            show: true, 
+            fill:true
+        },
         yaxis: {
-            minTickSize: 1
+            minTickSize: 1,
+            tickFormatter: function(val,axis){
+                if(val<10){
+                    return val.toFixed(2);
+                }else if(val<100){
+                    return val.toFixed(3);
+                }else{
+                    return val.toFixed(0);
+                }
+            }
         },
         xaxis: {
-            mode:"time", 
-            minTickSize:[15,"second"]
+            mode:"time"
         }
     },
     _data: null,
@@ -264,7 +318,15 @@ var _Chart = {
     },
     updateChart: function(){
         if(this._chart!=null){
-            this._chart.setData(this._data);
+            var labeledData = [];
+            for(var index in this._data){
+                var dataSet = {data:this._data[index]};
+                if(typeof this.labels[index] != "undefined"){
+                    dataSet.label = this.labels[index];
+                }
+                labeledData.push(dataSet);
+            }
+            this._chart.setData(labeledData);
             this._chart.setupGrid();
             this._chart.draw();
         }

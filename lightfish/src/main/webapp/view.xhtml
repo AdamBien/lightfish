@@ -13,6 +13,7 @@
         <h:outputScript library="js" name="third-party/jquery.js"  />
         <h:outputScript library="js" name="third-party/jquery-ui.js"  />
         <h:outputScript library="js" name="third-party/jquery.flot.js"  />
+        <h:outputScript library="js" name="third-party/jquery.flot.stack.js"  />
         <h:outputScript library="js" name="view.js"  />
     </h:head>
     <h:body>
@@ -37,43 +38,43 @@
                     <h1>Threads and Memory</h1>
                     <div class="chart-container">
                         <h1>Used Heap (mb)</h1>
-                        <div id="heapChart" class="chart" style="width:300px;height:150px;"></div>
+                        <div id="heapChart" class="chart"></div>
                     </div>
                     <div class="chart-container">
                         <h1>Thread Count</h1>
-                        <div id="threadChart" class="chart" style="width:300px;height:150px;"></div>
+                        <div id="threadChart" class="chart"></div>
                     </div>
                     <div style="clear:both" />
                 </div>
                 <div class="chart-group" id="transactions">
                     <h1>Transactions</h1>
                     <div class="chart-container">
-                        <h1>TX Commit</h1>
-                        <div id="txCommitChart" class="chart" style="width:300px;height:150px;"></div>
+                        <h1>TX Commit (Cumulative)</h1>
+                        <div id="txCommitChart" class="chart"></div>
                     </div>
                     <div class="chart-container">
-                        <h1>TX Rollback</h1>
-                        <div id="txRollbackChart" class="chart" style="width:300px;height:150px;"></div>
+                        <h1>TX Rollback (Cumulative)</h1>
+                        <div id="txRollbackChart" class="chart"></div>
                     </div>
                     <div style="clear:both" />
                 </div>
                 <div class="chart-group" id="paranormal">
                     <h1>Paranormal Activity</h1>
                     <div class="chart-container">
-                        <h1>Errors</h1>
-                        <div id="errorChart" class="chart" style="width:300px;height:150px;"></div>
+                        <h1>Errors (Cumulative)</h1>
+                        <div id="errorChart" class="chart"></div>
                     </div>
                     <div class="chart-container">
                         <h1>Errors Per Second</h1>
-                        <div id="errorPerSecondChart" class="chart" style="width:300px;height:150px;"></div>
+                        <div id="errorPerSecondChart" class="chart"></div>
                     </div>
                     <div class="chart-container">
                         <h1>Queued Connections</h1>
-                        <div id="queuedConnectionChart" class="chart" style="width:300px;height:150px;"></div>
+                        <div id="queuedConnectionChart" class="chart"></div>
                     </div>
                     <div class="chart-container">
                         <h1>Busy Threads</h1>
-                        <div id="busyThreadChart" class="chart" style="width:300px;height:150px;"></div>
+                        <div id="busyThreadChart" class="chart"></div>
                     </div>
                     <div style="clear:both" />
                 </div>
@@ -81,11 +82,11 @@
                     <h1>Performance</h1>
                     <div class="chart-container">
                         <h1>Commits Per Second</h1>
-                        <div id="commitsPerSecondChart" class="chart" style="width:300px;height:150px;"></div>
+                        <div id="commitsPerSecondChart" class="chart"></div>
                     </div>
                     <div class="chart-container">
                         <h1>Rollbacks Per Second</h1>
-                        <div id="rollbacksPerSecondChart" class="chart" style="width:300px;height:150px;"></div>
+                        <div id="rollbacksPerSecondChart" class="chart"></div>
                     </div>
                     <div style="clear:both" />
                 </div>
@@ -93,11 +94,11 @@
                     <h1>Sessions</h1>
                     <div class="chart-container">
                         <h1>HTTP Sessions</h1>
-                        <div id="sessionsChart" class="chart" style="width:300px;height:150px;"></div>
+                        <div id="sessionsChart" class="chart"></div>
                     </div>
                     <div class="chart-container">
                         <h1>Expired Sessions</h1>
-                        <div id="expiredSessionsChart" class="chart" style="width:300px;height:150px;"></div>
+                        <div id="expiredSessionsChart" class="chart"></div>
                     </div>
                     <div style="clear:both" />
                 </div>
@@ -126,7 +127,7 @@
                 lightfish.view.config.baseUri = '${facesContext.externalContext.getRequestContextPath()}';
                 
             });
-            _Chart.chartOptions.xaxis.minTickSize = [${lightView.interval} * 5, 'second'];
+            _Chart.chartOptions.xaxis.tickSize = [${lightView.interval} * 5, 'second'];
         </script>
     </h:body>
 </html>
