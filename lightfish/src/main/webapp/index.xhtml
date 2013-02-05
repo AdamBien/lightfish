@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
     <h:head>
         <title>LightFish Stress Test Result Capturing</title>
         <link rel="shortcut icon" href="./favicon.ico" />
@@ -58,8 +59,16 @@
             <div class="row">
                 <div class="span2"></div>
                 <div class="span10">
-
-                    <h:link value="Authentication &gt;&gt;" class="btn btn-small" outcome="authentication"/>
+                    <div class="control-group">
+                        <div class="controls">
+                            <div class="btn-toolbar form-btn-toolbar">
+                                <div class="btn-group">
+                                    <h:link value="Authentication &gt;&gt;" class="btn btn-small" outcome="authentication"/>
+                                    <h:link value="Advanced Configuration &gt;&gt;" class="btn btn-small" outcome="advancedconfig"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -76,6 +85,7 @@
                                     <h:commandButton value="Deactivate" action="#{index.deactivateMonitoring}" class="btn"/>      
                                 </div>
                             </div>
+                            <span class="help-block">Enable or disable the monitoring configuration on the server.</span>
                         </div>         
                     </div>
 
@@ -84,10 +94,11 @@
                         <div class="controls">
                             <div class="btn-toolbar form-btn-toolbar">
                                 <div class="btn-group">
-                            <h:commandButton disabled="#{index.running}" value="Start" action="#{index.start}" class="btn btn-primary"/>
-                            <h:commandButton disabled="#{!index.running}" value="Stop" action="#{index.stop}" class="btn"/>  
+                                    <h:commandButton disabled="#{index.running}" value="Start" action="#{index.start}" class="btn btn-primary"/>
+                                    <h:commandButton disabled="#{!index.running}" value="Stop" action="#{index.stop}" class="btn"/>  
                                 </div>
                             </div>
+                            <span class="help-block">Start or stop polling the server for monitoring information.</span>
                         </div>         
                     </div>
                 </h:form>                

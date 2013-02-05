@@ -3,20 +3,23 @@ package org.lightfish.business.monitoring.control;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
+import java.util.ArrayList;
+import java.util.List;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.lightfish.business.monitoring.entity.OneShot;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
+import org.codehaus.jettison.json.JSONArray;
 import org.lightfish.business.authenticator.GlassfishAuthenticator;
+import org.lightfish.business.monitoring.entity.Domain;
 
 /**
- * User: blog.adam-bien.com Date: 30.01.12 Time: 19:40
+ * User: Rob Veldpaus
  */
-public class OneShotProvider {
+public class DomainProvider {
 
     protected Client client;
     @Inject
@@ -34,16 +37,17 @@ public class OneShotProvider {
         this.client = Client.create();
     }
 
-    String getVersion() throws JSONException {
-        this.managementResource = this.client.resource(getManagementURI());
-        JSONObject result = getJSONObject("version");
-        return result.getString("message");
-    }
-
-    String getUpTime() throws JSONException {
-        this.managementResource = this.client.resource(getManagementURI());
-        JSONObject result = getJSONObject("uptime");
-        return result.getString("message");
+    List<String> getInstances() throws JSONException {
+        this.managementResource = this.client.resource(getInstancesUri());
+        JSONObject serverResult = getJSONObject("server");
+        JSONObject extraProperties = serverResult.getJSONObject("extraProperties");
+        JSONObject result = extraProperties.getJSONObject("childResources");
+        JSONArray names = result.names();
+        List<String> instanceNames = new ArrayList<>();
+        for (int i = 0; i < names.length(); i++) {
+            instanceNames.add(names.getString(i));
+        }
+        return instanceNames;
     }
 
     JSONObject getJSONObject(String name) throws UniformInterfaceException {
@@ -51,21 +55,20 @@ public class OneShotProvider {
         return result;
     }
 
-    String getManagementURI() {
-        return getProtocol() + location.get() + "/management/domain/";
+    String getInstancesUri() {
+        return getProtocol() + location.get() + "/management/domain/servers";
     }
 
-    public OneShot fetchOneShot() {
+    public Domain fetchDomainInfo() {
         authenticator.get().addAuthenticator(client, username.get(), password.get());
-        String version = null;
-        String uptime = null;
+        List<String> servers = null;
         try {
-            version = getVersion();
-            uptime = getUpTime();
+            servers = getInstances();
+
         } catch (Exception e) {
-            throw new IllegalStateException("Cannot fetch static monitoring data because of: " + e);
+            throw new IllegalStateException("Cannot fetch domain information because of: " + e);
         }
-        return new OneShot.Builder().version(version).uptime(uptime).build();
+        return new Domain.Builder().instances(servers).build();
     }
 
     private String getProtocol() {
