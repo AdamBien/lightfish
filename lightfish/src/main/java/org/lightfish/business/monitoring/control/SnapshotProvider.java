@@ -59,6 +59,8 @@ public class SnapshotProvider {
     Instance<DataCollector> dataCollectors;
     @Inject
     DataPointToSnapshotMapper mapper;
+    @Inject
+    ForkJoinPool forkPool;
 
     @PostConstruct
     public void initializeClient() {
@@ -100,12 +102,12 @@ public class SnapshotProvider {
             dataCollectorList.add(collector);
         }
         
-        ForkJoinPool forkPool = new ForkJoinPool();
         ParallelDataCollectionAction dataCollectionAction = 
                 new ParallelDataCollectionAction(
                     dataCollectorList, new DataCollectionBehaviour(mapper, snapshot)
                 );
         forkPool.invoke(dataCollectionAction);
+        LOG.info("Active Threads: " + forkPool.getActiveThreadCount());
         
         if(dataCollectionAction.getThrownException()!=null){
             throw dataCollectionAction.getThrownException();

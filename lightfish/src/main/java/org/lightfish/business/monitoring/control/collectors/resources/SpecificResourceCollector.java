@@ -36,9 +36,9 @@ public class SpecificResourceCollector extends AbstractRestDataCollector<Connect
                 getJSONObject("entity");
         
         int numconnfree = getIntVal(entity,"numconnfree","current");
-        int waitqueuelength = getIntVal(entity, "numconnused", "current");
-        int numpotentialconnleak = getIntVal(entity, "waitqueuelength", "count");
-        int numconnused = getIntVal(entity, "numpotentialconnleak", "count");
+        int numconnused = getIntVal(entity, "numconnused", "current");
+        int waitqueuelength = getIntVal(entity, "waitqueuelength", "count");
+        int numpotentialconnleak = getIntVal(entity, "numpotentialconnleak", "count");
         
         return new DataPoint<>(resourceName,new ConnectionPool(resourceName, numconnfree, numconnused, waitqueuelength, numpotentialconnleak));
     }

@@ -30,6 +30,8 @@ public class ApplicationCollector extends AbstractRestDataCollector<List<Applica
     Instance<SpecificApplicationCollector> specificCollector;
     @Inject
     Instance<Boolean> parallelDataCollection;
+    @Inject
+    ForkJoinPool forkPool;
 
     @Override
     public DataPoint<List<Application>> collect() throws Exception {
@@ -42,15 +44,15 @@ public class ApplicationCollector extends AbstractRestDataCollector<List<Applica
             collector.setApplicationName(appName);
             collectors.add(collector);
         }
-        
+
         List<Application> applications = null;
-        
-        if(parallelDataCollection.get()){
+
+        if (parallelDataCollection.get()) {
             applications = parallelRetrieveApplications(collectors);
-        }else{
+        } else {
             applications = serialRetrieveApplications(collectors);
         }
-        
+
         return new DataPoint<>("applications", applications);
     }
 
@@ -73,7 +75,6 @@ public class ApplicationCollector extends AbstractRestDataCollector<List<Applica
 
         List<Application> applications = new ArrayList<>(collectors.size());
 
-        ForkJoinPool forkPool = new ForkJoinPool();
         ParallelDataCollectionAction dataCollectionAction =
                 new ParallelDataCollectionAction(
                 collectors, new DataCollectionBehaviour(applications));

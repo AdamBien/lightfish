@@ -27,6 +27,8 @@ public class ResourceCollector extends AbstractRestDataCollector<List<Connection
     Instance<SpecificResourceCollector> specificCollector;
     @Inject
     Instance<Boolean> parallelDataCollection;
+    @Inject
+    ForkJoinPool forkPool;
 
     @Override
     public DataPoint<List<ConnectionPool>> collect() throws Exception {
@@ -65,7 +67,6 @@ public class ResourceCollector extends AbstractRestDataCollector<List<Connection
         
         List<ConnectionPool> resources = new ArrayList<>(collectors.size());
 
-        ForkJoinPool forkPool = new ForkJoinPool();
         ParallelDataCollectionAction dataCollectionAction =
                 new ParallelDataCollectionAction(
                 collectors, new DataCollectionBehaviour(resources));
