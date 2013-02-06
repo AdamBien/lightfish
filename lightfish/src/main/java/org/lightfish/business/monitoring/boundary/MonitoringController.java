@@ -81,7 +81,6 @@ public class MonitoringController {
         try {
             current = dataProvider.fetchSnapshot();
         } catch (Exception ex) {
-            ex.printStackTrace();
             LOG.error("Could not retrieve snapshot",ex);
             return;
         }
