@@ -139,6 +139,60 @@ public class Snapshot {
         return apps;
     }
 
+    public void setUsedHeapSize(long usedHeapSize) {
+        this.usedHeapSize = usedHeapSize;
+    }
+
+    public void setThreadCount(int threadCount) {
+        this.threadCount = threadCount;
+    }
+
+    public void setPeakThreadCount(int peakThreadCount) {
+        this.peakThreadCount = peakThreadCount;
+    }
+
+    public void setTotalErrors(int totalErrors) {
+        this.totalErrors = totalErrors;
+    }
+
+    public void setCurrentThreadBusy(int currentThreadBusy) {
+        this.currentThreadBusy = currentThreadBusy;
+    }
+
+    public void setCommittedTX(int committedTX) {
+        this.committedTX = committedTX;
+    }
+
+    public void setRolledBackTX(int rolledBackTX) {
+        this.rolledBackTX = rolledBackTX;
+    }
+
+    public void setQueuedConnections(int queuedConnections) {
+        this.queuedConnections = queuedConnections;
+    }
+
+    public void setActiveSessions(int activeSessions) {
+        this.activeSessions = activeSessions;
+    }
+
+    public void setExpiredSessions(int expiredSessions) {
+        this.expiredSessions = expiredSessions;
+    }
+
+    public void setDeadlockedThreads(String deadlockedThreads) {
+        this.deadlockedThreads = deadlockedThreads;
+    }
+
+    public void setPools(List<ConnectionPool> pools) {
+        this.pools = pools;
+    }
+
+    public void setApps(List<Application> apps) {
+        this.apps = apps;
+    }
+    
+    
+
     public String getEscalationChannel() {
         return escalationChannel;
     }
