@@ -17,30 +17,24 @@ package org.lightfish.business.monitoring.control;
 
 import org.lightfish.business.monitoring.entity.Application;
 import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.UniformInterfaceException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.lightfish.business.monitoring.entity.ConnectionPool;
 import org.lightfish.business.monitoring.entity.Snapshot;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.ws.rs.core.MediaType;
-import java.util.Iterator;
 import java.util.List;
 import javax.enterprise.inject.Instance;
 import org.lightfish.business.authenticator.GlassfishAuthenticator;
 import java.util.logging.Logger;
+import javax.enterprise.inject.Any;
+import org.lightfish.business.monitoring.control.collectors.DataCollector;
+import org.lightfish.business.monitoring.control.collectors.DataPoint;
 
 /**
  * @author Adam Bien, blog.adam-bien.com
  */
 public class SnapshotProvider {
-
+    
     public static final String HEAP_SIZE = "jvm/memory/usedheapsize-count";
     private static final String THREAD_COUNT = "jvm/thread-system/threadcount";
     private static final String PEAK_THREAD_COUNT = "jvm/thread-system/peakthreadcount";
@@ -67,230 +61,73 @@ public class SnapshotProvider {
     Instance<String> serverInstance;
     @Inject
     Instance<GlassfishAuthenticator> authenticator;
-
+    @Inject
+    @Any
+    Instance<DataCollector> dataCollectors;
+    
     @PostConstruct
     public void initializeClient() {
         this.client = Client.create();
     }
-
-    public Snapshot fetchSnapshot() {
+    
+    public Snapshot fetchSnapshot() throws Exception {
         authenticator.get().addAuthenticator(client, username.get(), password.get());
-        try {
-            long usedHeapSize = usedHeapSize();
-            int threadCount = threadCount();
-            int peakThreadCount = peakThreadCount();
-            int totalErrors = totalErrors();
-            int currentThreadBusy = currentThreadBusy();
-            int committedTX = committedTX();
-            int rolledBackTX = rolledBackTX();
-            int queuedConnections = queuedConnections();
-            int activeSessionsCurrent = activeSessionsCurrent();
-            int expiredSessions = expiredSessions();
-            String deadlockedThreads = deadlockedThreads();
-            Snapshot snapshot = new Snapshot.Builder().
-                    usedHeapSize(usedHeapSize).
-                    threadCount(threadCount).
-                    peakThreadCount(peakThreadCount).
-                    totalErrors(totalErrors).
-                    currentThreadBusy(currentThreadBusy).
-                    committedTX(committedTX).
-                    rolledBackTX(rolledBackTX).
-                    queuedConnections(queuedConnections).
-                    activeSessions(activeSessionsCurrent).
-                    expiredSessions(expiredSessions).
-                    deadlockedThreads(deadlockedThreads).
-                    build();
-            for (String jdbcPoolName : resources()) {
-                snapshot.add(fetchResource(jdbcPoolName));
-            }
-            for (String application : applications()) {
-                snapshot.add(fetchApplication(application));
-            }
-            return snapshot;
-        } catch (Exception e) {
-            throw new IllegalStateException("Cannot fetch monitoring data for URI: " + this.getBaseURI(), e);
+        
+        Snapshot snapshot = new Snapshot.Builder().build();
+        for (DataCollector collector : dataCollectors) {
+            DataPoint dataPoint = collector.collect();
+            mapDataPointToSnapshot(dataPoint, snapshot);
         }
+        
+        return snapshot;
+        
     }
-
-    String getBaseURI() {
-        return getProtocol() + location.get() + "/monitoring/domain/" + serverInstance.get() + "/";
-    }
-
-    public ConnectionPool fetchResource(String jndiName) {
-        try {
-
-            int numconnfree = numconnfree(jndiName);
-            int waitqueuelength = waitqueuelength(jndiName);
-            int numpotentialconnleak = numpotentialconnleak(jndiName);
-            int numconnused = numconnused(jndiName);
-            return new ConnectionPool(jndiName, numconnfree, numconnused, waitqueuelength, numpotentialconnleak);
-        } catch (Exception e) {
-            throw new IllegalStateException("Cannot fetch monitoring data for URI: " + this.getBaseURI(), e);
+    
+    private void mapDataPointToSnapshot(DataPoint dataPoint, Snapshot snapshot) {
+        switch (dataPoint.getName()) {
+            case "applications":
+                LOG.finest("Applications mapped to snapshot");
+                snapshot.setApps((List<Application>) dataPoint.getValue());
+                break;
+            case "busyThreadCount":
+                snapshot.setCurrentThreadBusy((Integer) dataPoint.getValue());
+                break;
+            case "commitedTransactions":
+                snapshot.setCommittedTX((Integer) dataPoint.getValue());
+                break;
+            case "expiredSessionCount":
+                snapshot.setExpiredSessions((Integer) dataPoint.getValue());
+                break;
+            case "sessionCount":
+                snapshot.setActiveSessions((Integer) dataPoint.getValue());
+                break;
+            case "rolledBackTransactions":
+                snapshot.setRolledBackTX((Integer) dataPoint.getValue());
+                break;
+            case "resources":
+                snapshot.setPools((List<ConnectionPool>) dataPoint.getValue());
+                break;
+            case "queuedConnectionCount":
+                snapshot.setQueuedConnections((Integer) dataPoint.getValue());
+                break;
+            case "errorCount":
+                snapshot.setTotalErrors((Integer) dataPoint.getValue());
+                break;
+            case "deadLockedThreads":
+                snapshot.setDeadlockedThreads((String) dataPoint.getValue());
+                break;
+            case "usedHeap":
+                snapshot.setUsedHeapSize((Long) dataPoint.getValue());
+                break;
+            case "threadCount":
+                snapshot.setThreadCount((Integer) dataPoint.getValue());
+                break;
+            case "peakThreadCount":
+                snapshot.setPeakThreadCount((Integer) dataPoint.getValue());
+                break;
+            default:
+                LOG.info("Data Point " + dataPoint.getName() + " could not be mapped to Snapshot");
+                break;
         }
-    }
-
-    Application fetchApplication(String applicationName) throws JSONException {
-        return new Application(applicationName, fetchComponents(applicationName));
-    }
-
-    List<String> fetchComponents(String applicationName) throws JSONException {
-        return Arrays.asList(components(applicationName));
-    }
-
-    String deadlockedThreads() throws JSONException {
-        final String uri = getBaseURI() + DEADLOCKED_THREADS;
-        return getString(uri, "deadlockedthreads", "current");
-    }
-
-    int numconnfree(String jndiName) throws JSONException {
-        String uri = constructResourceString(jndiName);
-        return getInt(uri, "numconnfree", "current");
-    }
-
-    int numconnused(String jndiName) throws JSONException {
-        String uri = constructResourceString(jndiName);
-        return getInt(uri, "numconnused", "current");
-    }
-
-    int waitqueuelength(String jndiName) throws JSONException {
-        String uri = constructResourceString(jndiName);
-        return getInt(uri, "waitqueuelength");
-    }
-
-    int numpotentialconnleak(String jndiName) throws JSONException {
-        String uri = constructResourceString(jndiName);
-        return getInt(uri, "numpotentialconnleak");
-    }
-
-    String constructResourceString(String resourceName) {
-        return getBaseURI() + RESOURCES + "/" + resourceName;
-    }
-
-    long usedHeapSize() throws JSONException {
-        final String uri = getBaseURI() + HEAP_SIZE;
-        return getLong(uri, "usedheapsize-count");
-    }
-
-    int threadCount() throws JSONException {
-        final String uri = getBaseURI() + THREAD_COUNT;
-        return getInt(uri, "threadcount");
-    }
-
-    int activeSessionsCurrent() throws JSONException {
-        final String uri = getBaseURI() + CURRENT_SESSIONS;
-        return getInt(uri, "activesessionscurrent", "current");
-    }
-
-    int expiredSessions() throws JSONException {
-        final String uri = getBaseURI() + EXPIRED_SESSIONS;
-        return getInt(uri, "expiredsessionstotal", "count");
-    }
-
-    int peakThreadCount() throws JSONException {
-        final String uri = getBaseURI() + PEAK_THREAD_COUNT;
-        return getInt(uri, "peakthreadcount");
-    }
-
-    int totalErrors() throws JSONException {
-        final String uri = getBaseURI() + ERROR_COUNT;
-        return getInt(uri, "errorcount");
-    }
-
-    int currentThreadBusy() throws JSONException {
-        final String uri = getBaseURI() + HTTP_BUSY_THREADS;
-        return getInt(uri, "currentthreadsbusy");
-    }
-
-    int committedTX() throws JSONException {
-        final String uri = getBaseURI() + COMMITTED_TX;
-        return getInt(uri, "committedcount");
-    }
-
-    int rolledBackTX() throws JSONException {
-        final String uri = getBaseURI() + ROLLED_BACK_TX;
-        return getInt(uri, "rolledbackcount");
-    }
-
-    int queuedConnections() throws JSONException {
-        final String uri = getBaseURI() + QUEUED_CONNS;
-        return getInt(uri, "countqueued");
-    }
-
-    String[] resources() throws JSONException {
-        return getStringArray(RESOURCES, "childResources");
-    }
-
-    String[] applications() throws JSONException {
-        return getStringArray(APPLICATIONS, "childResources");
-    }
-
-    String[] components(String applicationName) throws JSONException {
-        return getStringArray(APPLICATIONS + "/" + applicationName, "childResources");
-    }
-
-    long getLong(String uri, String name) throws JSONException {
-        return getLong(uri, name, "count");
-
-    }
-
-    int getInt(String uri, String name) throws JSONException {
-        return getInt(uri, name, "count");
-    }
-
-    long getLong(String uri, String name, String key) throws JSONException {
-        ClientResponse result = getClientResponse(uri);
-        return getJSONObject(result, name).getLong(key);
-
-    }
-
-    int getInt(String uri, String name, String key) throws JSONException {
-        ClientResponse result = getClientResponse(uri);
-        return getJSONObject(result, name).getInt(key);
-    }
-
-    String getString(String uri, String name, String key) throws JSONException {
-        ClientResponse result = getClientResponse(uri);
-        return getJSONObject(result, name).getString(key);
-    }
-
-    String[] getStringArray(String name, String key) throws JSONException {
-        String[] empty = new String[0];
-        ClientResponse result = getClientResponse(this.getBaseURI() + name);
-        JSONObject response = result.getEntity(JSONObject.class);
-        response = response.optJSONObject("extraProperties");
-        if (response == null) {
-            return empty;
-        }
-        response = response.optJSONObject("childResources");
-        if (response == null) {
-            return empty;
-        }
-        int length = response.length();
-        String retVal[] = new String[length];
-        Iterator keys = response.keys();
-        int counter = 0;
-        while (keys.hasNext()) {
-            retVal[counter++] = (String) keys.next();
-        }
-        return retVal;
-    }
-
-    JSONObject getJSONObject(ClientResponse result, String name) throws JSONException {
-        JSONObject response = result.getEntity(JSONObject.class);
-        return response.getJSONObject("extraProperties").
-                getJSONObject("entity").
-                getJSONObject(name);
-    }
-
-    private String getProtocol() {
-        String protocol = "http://";
-        if (username != null && username.get() != null && !username.get().isEmpty()) {
-            protocol = "https://";
-        }
-        return protocol;
-    }
-
-    ClientResponse getClientResponse(String uri) throws UniformInterfaceException {
-        return client.resource(uri).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
     }
 }
