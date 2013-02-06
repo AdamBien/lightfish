@@ -14,7 +14,7 @@ import org.lightfish.business.authenticator.GlassfishAuthenticator;
 
 /**
  *
- * @author rveldpau
+ * @author Rob Veldpaus
  */
 public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<TYPE> {
 
@@ -52,7 +52,7 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
         ClientResponse result = getClientResponse(uri);
         return getJSONObject(result, name).getInt(key);
     }
-
+    
     protected String getString(String uri, String name, String key) throws JSONException {
         ClientResponse result = getClientResponse(uri);
         return getJSONObject(result, name).getString(key);
@@ -99,7 +99,7 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
         return protocol;
     }
 
-    private ClientResponse getClientResponse(String uri) throws UniformInterfaceException {
+    protected ClientResponse getClientResponse(String uri) throws UniformInterfaceException {
         authenticator.get().addAuthenticator(client, username.get(), password.get());
         String fullUri = getBaseURI() + uri;
         return client.resource(fullUri).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);

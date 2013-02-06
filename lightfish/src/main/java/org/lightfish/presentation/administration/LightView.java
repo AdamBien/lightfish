@@ -39,7 +39,7 @@ public class LightView {
         return configurator.getValueAsInt(INTERVAL);
     }
     
-    public Snapshot getSnapshot(){
+    public Snapshot getSnapshot() throws Exception{
         return snapshotProvider.fetchSnapshot();
     }
     

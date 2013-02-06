@@ -3,11 +3,13 @@ package org.lightfish.business.monitoring.control.collectors.paranormal;
 import org.lightfish.business.monitoring.control.collectors.jvm.*;
 import org.lightfish.business.monitoring.control.collectors.AbstractRestDataCollector;
 import org.lightfish.business.monitoring.control.collectors.DataPoint;
+import org.lightfish.business.monitoring.control.collectors.SnapshotDataCollector;
 
 /**
  *
- * @author rveldpau
+ * @author Rob Veldpaus
  */
+@SnapshotDataCollector
 public class BusyThreadCollector extends AbstractRestDataCollector<Integer> {
     
     public static final String BUSY_THREAD_URI = "network/thread-pool/currentthreadsbusy";

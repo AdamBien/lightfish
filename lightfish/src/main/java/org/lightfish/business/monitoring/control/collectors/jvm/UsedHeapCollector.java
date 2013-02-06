@@ -2,11 +2,13 @@ package org.lightfish.business.monitoring.control.collectors.jvm;
 
 import org.lightfish.business.monitoring.control.collectors.AbstractRestDataCollector;
 import org.lightfish.business.monitoring.control.collectors.DataPoint;
+import org.lightfish.business.monitoring.control.collectors.SnapshotDataCollector;
 
 /**
  *
- * @author rveldpau
+ * @author Rob Veldpaus
  */
+@SnapshotDataCollector
 public class UsedHeapCollector extends AbstractRestDataCollector<Long> {
     
     public static final String HEAP_SIZE = "jvm/memory/usedheapsize-count";

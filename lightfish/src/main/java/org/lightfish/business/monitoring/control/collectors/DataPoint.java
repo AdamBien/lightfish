@@ -2,7 +2,7 @@ package org.lightfish.business.monitoring.control.collectors;
 
 /**
  *
- * @author rveldpau
+ * @author Rob Veldpaus
  */
 public class DataPoint<TYPE> {
     private String name;

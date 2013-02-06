@@ -31,7 +31,15 @@
                             <span class="help-block">The server instance to monitor</span>
                         </div>
                     </div>                        
-
+                    <legend>Experimental</legend>
+                    <div class="control-group">
+                        <label class="control-label">Parallel Data Collection</label>
+                        <div class="controls">
+                            <h:selectBooleanCheckbox value="#{advancedConfig.parallelDataCollection}" />
+                            <span class="help-block">Splits the data collection into a parallel process - this is experimental because it goes against the JAVA EE specifications.</span>
+                        </div>
+                    </div>   
+                    
                     <div class="control-group">
                         <div class="controls">
                             <div class="btn-toolbar form-btn-toolbar">

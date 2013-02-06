@@ -31,6 +31,7 @@ import org.lightfish.business.monitoring.boundary.DomainInformation;
 @Model
 public class AdvancedConfig {
     public static final String SERVER_INSTANCE = "serverInstance";
+    public static final String PARALLEL_DATA_COLLECTION = "parallelDataCollection";
     
     @Inject
     Configurator configurator;
@@ -51,6 +52,14 @@ public class AdvancedConfig {
     
     public void setInstance(String instance){
         this.configurator.setValue(SERVER_INSTANCE,instance);
+    }
+    
+    public Boolean getParallelDataCollection(){
+        return Boolean.valueOf(this.configurator.getValue(PARALLEL_DATA_COLLECTION));
+    }
+    
+    public void setParallelDataCollection(Boolean parallelDataCollection){
+        this.configurator.setValue(PARALLEL_DATA_COLLECTION,parallelDataCollection);
     }
     
     public String updateConfiguration(){
