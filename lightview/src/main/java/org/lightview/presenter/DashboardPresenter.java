@@ -1,18 +1,18 @@
 /*
-Copyright 2012 Adam Bien, adam-bien.com
+ Copyright 2012 Adam Bien, adam-bien.com
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 package org.lightview.presenter;
 
 import java.util.HashSet;
@@ -32,9 +32,7 @@ import javafx.collections.ObservableSet;
 import org.lightview.model.Application;
 
 /**
- * User: blog.adam-bien.com
- * Date: 21.11.11
- * Time: 17:50
+ * User: blog.adam-bien.com Date: 21.11.11 Time: 17:50
  */
 public class DashboardPresenter implements DashboardPresenterBindings {
 
@@ -103,7 +101,6 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         this.startFetching();
     }
 
-
     public void setUri(String uri) {
         this.uri.setValue(uri);
     }
@@ -117,27 +114,24 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         return this.uri;
     }
 
-
     void startFetching() {
         this.service = new SnapshotProvider(appendLive(getUri()));
         service.start();
         service.valueProperty().addListener(
                 new ChangeListener<Snapshot>() {
-
-                    @Override
-                    public void changed(ObservableValue<? extends Snapshot> observable, Snapshot old, Snapshot newValue) {
-                        if (newValue != null) {
-                            snapshots.add(newValue);
-                            onSnapshotArrival(newValue);
-                        }
-                    }
-
-                });
+            @Override
+            public void changed(ObservableValue<? extends Snapshot> observable, Snapshot old, Snapshot newValue) {
+                if (newValue != null) {
+                    snapshots.add(newValue);
+                    onSnapshotArrival(newValue);
+                }
+            }
+        });
         registerRestarting();
     }
-    
-     String appendLive(String liveDataURL) {
-        if(!liveDataURL.endsWith("/live")){
+
+    String appendLive(String liveDataURL) {
+        if (!liveDataURL.endsWith("/live")) {
             return liveDataURL + "/live";
         }
         return liveDataURL;
@@ -152,7 +146,6 @@ public class DashboardPresenter implements DashboardPresenterBindings {
                     service.start();
                 }
             }
-
         });
     }
 
@@ -173,17 +166,17 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         this.apps.addAll(snapshot.getApps());
         long current = System.currentTimeMillis();
         long delta = current - lastTimeStamp;
-        if(old == null){
+        if (old == null) {
             old = snapshot;
         }
-        this.commitsPerSecond.set(getTPSValue(delta,old.getCommittedTX(),snapshot.getCommittedTX()));
-        this.rollbacksPerSecond.set(getTPSValue(delta,old.getRolledBackTX(),snapshot.getRolledBackTX()));
+        this.commitsPerSecond.set(getTPSValue(delta, old.getCommittedTX(), snapshot.getCommittedTX()));
+        this.rollbacksPerSecond.set(getTPSValue(delta, old.getRolledBackTX(), snapshot.getRolledBackTX()));
         lastTimeStamp = current;
         this.old = snapshot;
     }
 
-    public double getTPSValue(long delta,long oldValue,long newValue){
-        return (newValue - oldValue) / ((delta / 100));
+    public double getTPSValue(long delta, long oldValue, long newValue) {
+        return (newValue - oldValue) / ((delta / 1000));
     }
 
     void updatePools(Snapshot snapshot) {
@@ -192,14 +185,13 @@ public class DashboardPresenter implements DashboardPresenterBindings {
             String jndiName = connectionPool.getJndiName();
             ConnectionPoolBindings bindings = ConnectionPoolBindings.from(connectionPool);
             ConnectionPoolBindings poolBindings = this.pools.get(jndiName);
-            if(poolBindings != null){
+            if (poolBindings != null) {
                 poolBindings.update(connectionPool);
-            }else{
-                this.pools.put(jndiName,bindings);
+            } else {
+                this.pools.put(jndiName, bindings);
             }
         }
     }
-    
 
     @Override
     public EscalationsPresenterBindings getEscalationsPresenterBindings() {
@@ -267,7 +259,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     }
 
     @Override
-    public ObservableMap<String,ConnectionPoolBindings> getPools() {
+    public ObservableMap<String, ConnectionPoolBindings> getPools() {
         return pools;
     }
 
@@ -285,11 +277,10 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     public ReadOnlyDoubleProperty getRollbacksPerSecond() {
         return rollbacksPerSecond;
     }
-    
-    
+
     @Override
-    public String getBaseURI(){
-        if(this.baseURI == null){
+    public String getBaseURI() {
+        if (this.baseURI == null) {
             return "http://localhost:8080";
         }
         return this.baseURI;
@@ -299,5 +290,4 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     public ObservableSet<Application> getApplications() {
         return this.apps;
     }
-
 }
