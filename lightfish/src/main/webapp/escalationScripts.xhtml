@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>LightFish Stress Test Result Capturing - Advanced Configuration</title>
+        <link rel="shortcut icon" href="./favicon.ico" />
+        <h:outputStylesheet library="css" name="bootstrap.css"  />
+        <h:outputStylesheet library="css" name="style.css"  />     
+    </h:head>
+    <h:body>
+        <div class="container">
+            <div class="row">
+                <div class="page-header">
+                    <h1>LightFish <small>Stress Test Result Capturing</small></h1>
+                </div>
+            </div>
+
+            <div class="row">
+                <h:form class="form-horizontal">
+                    <legend>Scripts</legend>
+                    <div class="control-group">
+                        <!--<label class="control-label">Instance</label>-->
+                        <div class="controls">
+                            <ui:repeat value="#{escalationScriptConfig.scripts}" var="script">
+                                #{script.name}
+                            </ui:repeat>
+                        </div>
+                    </div>                        
+                </h:form>
+            </div>
+
+
+            <div class="row">
+                <legend>References</legend>
+                <a href="/lightfish/live" target="_blank">Live Data</a><br/>
+                <a href="./lightview.html" target="_blank" id="lightview">LightView</a>
+            </div>
+        </div>
+    </h:body>
+</html>

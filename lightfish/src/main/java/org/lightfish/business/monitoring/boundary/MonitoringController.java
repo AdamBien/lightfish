@@ -53,9 +53,6 @@ public class MonitoringController {
     
     @PersistenceContext
     EntityManager em;
-    
-    @Inject @Severity(Severity.Level.ESCALATION)
-    Event<Snapshot> escalationSink;
 
     @Inject @Severity(Severity.Level.HEARTBEAT)
     Event<Snapshot> heartBeat;
