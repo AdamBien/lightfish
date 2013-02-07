@@ -1,23 +1,14 @@
-<?xml version='1.0' encoding='UTF-8' ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:ui="http://java.sun.com/jsf/facelets">
-    <h:head>
-        <title>LightFish Stress Test Result Capturing</title>
-        <link rel="shortcut icon" href="./favicon.ico" />
-        <h:outputStylesheet library="css" name="bootstrap.css"  />
-        <h:outputStylesheet library="css" name="style.css"  />     
-    </h:head>
-    <h:body>
-        <div class="container">
-            <div class="row">
-                <div class="page-header">
-                    <h1>LightFish <small>Stress Test Result Capturing</small></h1>
-                </div>
-            </div>
-
-            <div class="row">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.prime.com.tr/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/templates/main.xhtml">
+    <ui:define name="windowTitle">Main</ui:define>
+    <ui:define name="content">
+        <div class="row">
                 <h:form class="form-horizontal">
                     <legend>Configuration</legend>
 
@@ -103,15 +94,5 @@
                     </div>
                 </h:form>                
             </div>
-
-            <div class="row">
-                <legend>References</legend>
-                <a href="/lightfish/live" target="_blank">Live Data</a><br/>
-                LightView: <a href="./lightview.html" target="_blank" id="lightview">JavaFX</a> - 
-                <a href="./view.xhtml" id="lightview">HTML5</a>
-                
-                
-            </div>
-        </div>
-    </h:body>
-</html>
+    </ui:define>
+</ui:composition>

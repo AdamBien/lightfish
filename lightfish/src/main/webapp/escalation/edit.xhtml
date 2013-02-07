@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.prime.com.tr/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/templates/main.xhtml">
+    <ui:define name="windowTitle">Escalation - Edit Script</ui:define>
+    <ui:define name="content">
+        <f:metadata>
+            <f:viewParam name="script" value="#{editScript.script}" converter="scriptConverter"/>
+        </f:metadata>
+        <div class="row">
+            <h:form class="form-horizontal">
+                <legend>Edit Script</legend>
+                <div class="control-group">
+                    <label class="control-label">Name</label>
+                    <div class="controls">
+                        #{editScript.script.name}
+                    </div>
+                </div>  
+                <div class="control-group">
+                    <label class="control-label">Active</label>
+                    <div class="controls">
+                        <h:selectBooleanCheckbox value="#{editScript.script.active}" />
+                    </div>
+                </div>  
+                <div class="control-group">
+                    <label class="control-label">Content</label>
+                    <div class="controls">
+                        <h:inputTextarea value="#{editScript.script.content}" />
+                        <a href="help.xhtml" title="Scripting Reference" class="page-help">Scripting Reference</a>
+                    </div>
+                </div>  
+                <div class="form-actions">
+                    <div class="btn-toolbar form-btn-toolbar">
+                        <div class="btn-group">
+                            <h:commandButton value="Update" action="#{editScript.update}"  class="btn btn-primary"/> 
+                            <h:button value="Cancel" outcome="scripts?faces-redirect=true"  class="btn"/> 
+                        </div>
+                    </div>
+                </div>    
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -56,3 +56,20 @@
     margin-top:0;
     margin-bottom:0.5em;
 }
+
+textarea{
+    width:750px;
+    height:200px;
+}
+
+.control-label.script{
+}
+
+label.control-label.script.inactive{
+    color:#999;
+}
+
+h1 a,h1 a:hover{
+    text-decoration: none;
+    color:inherit;
+}

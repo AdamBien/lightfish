@@ -13,32 +13,42 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.lightfish.presentation.administration;
+package org.lightfish.presentation.administration.escalation;
 
-import java.util.List;
-import org.lightfish.business.configuration.boundary.Configurator;
 
+import java.io.Serializable;
+import javax.ejb.Stateful;
+import javax.ejb.Stateless;
 import javax.enterprise.inject.Model;
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.inject.Named;
+import org.lightfish.business.escalation.boundary.ScriptingResource;
 import org.lightfish.business.escalation.control.ScriptStore;
 import org.lightfish.business.escalation.entity.Script;
-import org.lightfish.business.monitoring.boundary.DomainInformation;
 
 /**
  *
  * @author Rob Veldpaus
  */
-@Model
-public class EscalationScriptConfig {
+@Named
+@Stateless
+public class EditScript{
     @Inject ScriptStore scriptStore;
     
-    public List<Script> getScripts(){
-        return scriptStore.activeScripts();
+    private Script script;
+
+    public Script getScript() {
+        return script;
+    }
+
+    public void setScript(Script script) {
+        this.script = script;
     }
     
-    public String updateConfiguration(){
-        return "index?faces-redirect=true";
+    public String update(){
+        scriptStore.save(script);
+        script = null;
+        return "scripts?faces-redirect=true";
     }
+    
 }

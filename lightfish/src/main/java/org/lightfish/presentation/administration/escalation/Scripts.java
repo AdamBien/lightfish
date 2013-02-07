@@ -13,34 +13,25 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.lightfish.presentation.administration;
+package org.lightfish.presentation.administration.escalation;
 
-import org.lightfish.business.configuration.boundary.Configurator;
+import java.util.List;
 
 import javax.enterprise.inject.Model;
 import javax.inject.Inject;
-import org.lightfish.business.monitoring.control.SnapshotProvider;
-import org.lightfish.business.monitoring.entity.Snapshot;
+import org.lightfish.business.escalation.boundary.ScriptingResource;
+import org.lightfish.business.escalation.control.ScriptStore;
+import org.lightfish.business.escalation.entity.Script;
 
 /**
  *
  * @author Rob Veldpaus
  */
 @Model
-public class LightView {
-    public static final String INTERVAL = "interval";
-
-    @Inject
-    Configurator configurator;
+public class Scripts {
+    @Inject ScriptStore scriptStore;
     
-    @Inject SnapshotProvider snapshotProvider;
-    
-    public int getInterval() {
-        return configurator.getValueAsInt(INTERVAL);
+    public List<Script> getScripts(){
+        return scriptStore.scripts();
     }
-    
-    public Snapshot getSnapshot() throws Exception{
-        return snapshotProvider.fetchSnapshot();
-    }
-    
 }
