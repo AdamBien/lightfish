@@ -42,6 +42,6 @@ public class TunguskaGate extends HttpServlet {
             throws ServletException, IOException {
         AsyncContext startAsync = request.startAsync();
         events.fire(new BrowserWindow(startAsync));
-        LOG.info("Event sent");
+        LOG.fine("Event sent");
     }
 }

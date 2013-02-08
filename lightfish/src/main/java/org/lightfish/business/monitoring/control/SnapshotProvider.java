@@ -80,7 +80,7 @@ public class SnapshotProvider {
         }
         
         long elapsed = new Date().getTime() - start.getTime();
-        LOG.info("Data collection took " + elapsed);
+        LOG.fine("Data collection took " + elapsed);
         
         return snapshot;
 
@@ -107,7 +107,6 @@ public class SnapshotProvider {
                     dataCollectorList, new DataCollectionBehaviour(mapper, snapshot)
                 );
         forkPool.invoke(dataCollectionAction);
-        LOG.info("Active Threads: " + forkPool.getActiveThreadCount());
         
         if(dataCollectionAction.getThrownException()!=null){
             throw dataCollectionAction.getThrownException();

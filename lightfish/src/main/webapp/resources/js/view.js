@@ -125,51 +125,6 @@ function Chart(userOptions){
     
 }
 
-var _EscalationScript = {
-    name: null,
-    poll: function(){
-        $.ajax({
-            url: lightfish.view.config.baseUri + "/escalations/" + (this.srcObj==undefined?this:this.srcObj).name, 
-            success: function(rawData,dataType,xhr){
-                (this.srcObj==undefined?this:this.srcObj).poll();
-                if(rawData==undefined){
-                    return;
-                }
-                var data = lightfish.view.charts._parseData(rawData);
-                
-                var storedData = lightfish.view._data[data.id];
-                if(storedData!=undefined){
-                    storedData.escalated = true;
-                    if(!storedData.escalatedBy[this.srcObj.name]){
-                        storedData.escalatedBy[this.srcObj.name] = true;
-                        storedData.element.addClass("escalated");
-                        if(!lightfish.view.escalations._disableNotifications){
-                            lightfish.view.charts._addNotification(
-                            this.srcObj.name,"An escalation has been retrieved for " + this.srcObj.name + 
-                                ", see the Live Logs for more details.");
-                        }
-                    }
-                }
-                
-            },
-            error: function(){
-                (this.srcObj==undefined?this:this.srcObj).poll();
-            },
-            dataType: "xml", 
-            timeout: lightfish.view.config.refreshInterval * 2000, 
-            srcObj:this.srcObj==undefined?this:this.srcObj
-        });
-    },
-    construct: function(){
-        this.srcObj = this;
-    }
-}
-
-function EscalationScript(userOptions){
-    $.extend(true,this,_EscalationScript,userOptions);
-    this.construct();
-}
-
 var _LogData = {
     purgeOld:function(){
         var objectKeys = Object.keys(lightfish.view._data)
@@ -216,7 +171,7 @@ lightfish.view = {
             url: lightfish.view.config.baseUri + "/live", 
             success: function(rawData){
                 lightfish.view._snapshotPoll();
-                var data = lightfish.view.charts._parseData(rawData);
+                var data = lightfish.view._parseSnapshot(rawData);
                 lightfish.view._data[data.id] = data;
                 lightfish.view._data.purgeOld();
                 
@@ -233,6 +188,37 @@ lightfish.view = {
             dataType: "xml", 
             timeout: lightfish.view.config.refreshInterval * 2000
         });
+    },
+    _parseSnapshot: function(rawData){
+        var $data = $(rawData);
+        var parsed = {};
+        parsed.id = Number($data.find("id:first").text());
+        parsed.time = new Date($data.find("monitoringTime").text())
+        parsed.heapSize = Number($data.find("usedHeapSize").text());
+        parsed.threadCount = Number($data.find("threadCount").text());
+        parsed.peakThreadCount = Number($data.find("peakThreadCount").text());
+        parsed.txCommitCount = Number($data.find("committedTX").text());
+        parsed.txRollbackCount = Number($data.find("rolledBackTX").text());
+        parsed.queuedConnectionCount = Number($data.find("queuedConnections").text());
+        parsed.errorCount = Number($data.find("totalErrors").text());
+        parsed.currentBusyThreadCount = Number($data.find("currentThreadBusy").text());
+        parsed.sessionCount = Number($data.find("activeSessions").text());
+        parsed.expiredSessionCount = Number($data.find("expiredSessions").text());
+        parsed.pools = {};
+        $data.find("pools").each(function(){
+            var poolData = $(this);
+            var poolName = poolData.find("jndiName").text();
+            parsed.pools[poolName]= {};
+            parsed.pools[poolName].freeConnections = Number(poolData.find("numconnfree").text());
+            parsed.pools[poolName].usedConnections = Number(poolData.find("numconnused").text());
+            parsed.pools[poolName].waitQueueLength = Number(poolData.find("waitqueuelength").text());
+            parsed.pools[poolName].potentialLeak = Number(poolData.find("numpotentialconnleak").text());
+        });
+
+        parsed.escalated = false;
+        parsed.escalatedBy = {};
+
+        return parsed;
     },
     setup: function(){
         $("#applicationsContainer").accordion({
@@ -382,11 +368,13 @@ lightfish.view = {
                 }
                 
                 dialogElem.appendTo("#snapshotdialogContainer").dialog(
-                $.extend(true,
-                    {title: 'Snapshot ' + snapshotId + ' Details'},
+                    $.extend(true,
+                    {
+                        title: 'Snapshot ' + snapshotId + ' Details'
+                    },
                     lightfish.view.config.logs.dialogOptions
-                )
-            );
+                    )
+                    );
             }
         }
         
@@ -394,39 +382,49 @@ lightfish.view = {
     escalations:{
         _escalations:[],
         _disableNotifications: false,
-        _retrieveScripts: function(){
+        _escalationPoll: function(){
             $.ajax({
-                url: lightfish.view.config.baseUri + "/resources/scripts", 
+                url: lightfish.view.config.baseUri + "/escalations/", 
                 success: function(rawData){
-                    var $data = $(rawData);
-                    $data.find("script").each(function(){
-                        var scriptData = $(this);
-                        var scriptName = scriptData.find("name").text();
-                        var scriptActive = Boolean(scriptData.find("active").text());
+                    lightfish.view.escalations._escalationPoll();
+                    var $rawData = $(rawData);
+                    var entries = $rawData.find("escalations > entry");
+                    entries.each(function(){
+                        var escalationKey = $(this).find("> key").text();
+                        var escalationSnapshot = lightfish.view._parseSnapshot($(this).find("> value"));
                         
-                        if(scriptActive){
-                            var escalation = new EscalationScript({
-                                name:scriptName
-                            });
-                            lightfish.view.escalations._escalations.push(escalation);
-                            escalation.poll();
+                        var storedData = lightfish.view._data[escalationSnapshot.id];
+                        if(storedData!=undefined){
+                            storedData.escalated = true;
+                            if(!storedData.escalatedBy[escalationKey]){
+                                storedData.escalatedBy[escalationKey] = true;
+                                storedData.element.addClass("escalated");
+                                if(!lightfish.view.escalations._disableNotifications){
+                                    lightfish.view.charts._addNotification(
+                                        escalationKey,"An escalation has been retrieved for " + escalationKey + 
+                                        ", see the Live Logs for more details.");
+                                }
+                            }
                         }
-                    });
+                    })
                 }, 
+                error:function(){
+                    lightfish.view.escalations._escalationPoll();
+                },
                 dataType: "xml", 
                 timeout: lightfish.view.config.refreshInterval * 2000
             });
         },
         setup:function(){
             $("#notificationContainer").notify();
-            lightfish.view.escalations._retrieveScripts();
+            lightfish.view.escalations._escalationPoll();
             $("#toggleNotifications").click(lightfish.view.escalations.toggleNotifcations)
         },
         toggleNotifcations:function(e){
             e.preventDefault();
             lightfish.view.escalations._disableNotifications = !lightfish.view.escalations._disableNotifications;
             $("#toggleNotifications").html(
-            lightfish.view.escalations._disableNotifications?"Enable Notifications":"Disable Notifications");
+                lightfish.view.escalations._disableNotifications?"Enable Notifications":"Disable Notifications");
         }
     },
     charts:{
@@ -442,37 +440,6 @@ lightfish.view = {
                 title: inTitle,
                 body: inBody
             })
-        },
-        _parseData: function(rawData){
-            var $data = $(rawData);
-            var parsed = {};
-            parsed.id = Number($data.find("id:first").text());
-            parsed.time = new Date($data.find("monitoringTime").text())
-            parsed.heapSize = Number($data.find("usedHeapSize").text());
-            parsed.threadCount = Number($data.find("threadCount").text());
-            parsed.peakThreadCount = Number($data.find("peakThreadCount").text());
-            parsed.txCommitCount = Number($data.find("committedTX").text());
-            parsed.txRollbackCount = Number($data.find("rolledBackTX").text());
-            parsed.queuedConnectionCount = Number($data.find("queuedConnections").text());
-            parsed.errorCount = Number($data.find("totalErrors").text());
-            parsed.currentBusyThreadCount = Number($data.find("currentThreadBusy").text());
-            parsed.sessionCount = Number($data.find("activeSessions").text());
-            parsed.expiredSessionCount = Number($data.find("expiredSessions").text());
-            parsed.pools = {};
-            $data.find("pools").each(function(){
-                var poolData = $(this);
-                var poolName = poolData.find("jndiName").text();
-                parsed.pools[poolName]= {};
-                parsed.pools[poolName].freeConnections = Number(poolData.find("numconnfree").text());
-                parsed.pools[poolName].usedConnections = Number(poolData.find("numconnused").text());
-                parsed.pools[poolName].waitQueueLength = Number(poolData.find("waitqueuelength").text());
-                parsed.pools[poolName].potentialLeak = Number(poolData.find("numpotentialconnleak").text());
-            });
-
-            parsed.escalated = false;
-            parsed.escalatedBy = {};
-
-            return parsed;
         },
         _calculateAdditionalData: function(newData, previousData){
             if(previousData==null){
@@ -520,7 +487,7 @@ lightfish.view = {
                         lightfish.view.charts._charts.pool[poolKey][chartKey].appendData([
                             [data.time,data.pools[poolKey].usedConnections],
                             [data.time,data.pools[poolKey].freeConnections]
-                        ]);
+                            ]);
                     }
                 }
             }
