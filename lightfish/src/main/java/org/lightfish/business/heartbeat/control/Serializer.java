@@ -43,7 +43,9 @@ public class Serializer {
     
     public void serialize(Snapshot snapshot,Writer writer){
         try {
-            this.marshaller.marshal(snapshot, writer);
+            synchronized(this.marshaller){
+                this.marshaller.marshal(snapshot, writer);
+            }
         } catch (JAXBException ex) {
             throw new RuntimeException("Cannot marshal Snapshot " + snapshot + " Reason: " +ex,ex);
         }

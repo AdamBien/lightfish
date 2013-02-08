@@ -8,9 +8,11 @@
                 template="/templates/master.xhtml">
     <ui:define name="windowTitle">LightView</ui:define>
     <ui:define name="page">
-        <h:outputScript library="js" name="view.js"  />
         <h:outputScript library="js" name="third-party/jquery.flot.js"  />
         <h:outputScript library="js" name="third-party/jquery.flot.stack.js"  />
+        <h:outputScript library="js" name="third-party/jquery.ui.notify.js"  />
+        <h:outputStylesheet library="css" name="jquery.ui.notify.css"  />
+        <h:outputScript library="js" name="view.js"  />
         <div id="tabs">
             <ul id="tabIndex">
                 <li><a href="#system"><span>Threads and Memory</span></a></li>
@@ -19,6 +21,7 @@
                 <li><a href="#performance"><span>Performance</span></a></li>
                 <li><a href="#sessions"><span>Sessions</span></a></li>
                 <li><a href="#applications"><span>Applications</span></a></li>
+                <li><a href="#logs"><span>Live Logs</span></a></li>
             </ul>
             <div class="chart-group" id="system">
                 <h1>Threads and Memory</h1>
@@ -105,13 +108,38 @@
                 <small class="help-block" style="margin-top:1em;">This information is loaded when the page loads and is only refreshed if you refresh the page.</small>
                 <div style="clear:both" />
             </div>
+            <div id="logs">
+                <div id="logHeader">
+                </div>
+                <div id="logContainer">
+
+                </div>
+                <div id="followControl">
+                    <a href="javascript:void(0)" id="toggleFollow">Stop Following</a>
+                </div>
+                <div id="log-template" class="log-line" style="display:none">
+                    <div class="log-datum log-data-time"></div>
+                    <div class="log-datum log-data-id"></div>
+                </div>
+            </div>
+        </div>
+        <div id="notificationContainer" style="display:none">
+            <div id="escalation-template">
+                <a class="ui-notify-cross ui-notify-close" href="#">x</a>
+                <h1>\#{title}</h1>
+                <p>\#{body}</p>
+            </div>
+        </div>
+        <div id="notificationControl">
+            <a href="javascript:void(0)" id="toggleNotifications">Disable Notifications</a>
         </div>
         <script type="text/javascript">
             $(function(){
                 lightfish.view.config.baseUri = '${facesContext.externalContext.getRequestContextPath()}';
          
             });
-            _Chart.chartOptions.xaxis.tickSize = [${lightView.interval} * 8, 'second'];
+            lightfish.view.config.refreshInterval = ${lightView.interval};
+            _Chart.chartOptions.xaxis.tickSize = [${lightView.interval} * 5, 'second'];
         </script>
     </ui:define>
 </ui:composition>

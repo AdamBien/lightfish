@@ -748,6 +748,7 @@ button.ui-button::-moz-focus-inner {
 	float: left;
 	padding: .5em 1em;
 	text-decoration: none;
+        font-weight:bold;
 }
 .ui-tabs .ui-tabs-nav li.ui-tabs-active {
 	margin-bottom: -1px;
@@ -783,8 +784,6 @@ body .ui-tooltip {
 /* Component containers
 ----------------------------------*/
 .ui-widget {
-	font-family: Verdana,Arial,sans-serif;
-	font-size: 1.1em;
 }
 .ui-widget .ui-widget {
 	font-size: 1em;
@@ -801,9 +800,7 @@ body .ui-tooltip {
 	background: #ffffff url('#{resource['images:jquery/ui-bg_flat_75_ffffff_40x100.png']}') 50% 50% repeat-x;
 	color: #222222;
 }
-.ui-widget-content a {
-	color: #222222;
-}
+
 .ui-widget-header {
 	border: 1px solid #aaaaaa;
 	background: #cccccc url('#{resource['images:jquery/ui-bg_highlight-soft_75_cccccc_1x100.png']}') 50% 50% repeat-x;
