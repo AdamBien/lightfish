@@ -144,7 +144,9 @@ var _EscalationScript = {
                         storedData.escalatedBy[this.srcObj.name] = true;
                         storedData.element.addClass("escalated");
                         if(!lightfish.view.escalations._disableNotifications){
-                            lightfish.view.charts._addNotification("Escalation Notification","An escalation has been retrieved for " + this.srcObj.name);
+                            lightfish.view.charts._addNotification(
+                            this.srcObj.name,"An escalation has been retrieved for " + this.srcObj.name + 
+                                ", see the Live Logs for more details.");
                         }
                     }
                 }
@@ -196,6 +198,12 @@ lightfish.view = {
             importantData: {
                 heapSize:"Used Heap", 
                 threadCount:"Thread Count"
+            },
+            dialogOptions: {
+                height: "auto",
+                width:630,
+                maxHeight: 600,
+                resizable: true
             }
         },
         charts: {
@@ -241,15 +249,34 @@ lightfish.view = {
         _follow:true,
         formatters:{
             time: formatTime,
-            heapSize: formatBytes
+            heapSize: formatBytes,
+            escalatedBy: function(val){
+                if(val==undefined || val == null){
+                    return "";
+                }
+                var outVal = ""
+                for(var key in val){
+                    outVal += key + "  ";
+                }
+                return outVal;
+            }
+        },
+        _formatData:function(key, inValue){
+            var outValue = inValue;
+            if(lightfish.view.logs.formatters[key]){
+                outValue = lightfish.view.logs.formatters[key](outValue);
+            }
+            return outValue;
         },
         _addLog:function(data, header){
             var logEntry = lightfish.view.logs._logTemplate.clone();
             logEntry.addClass(lightfish.view.logs._idOdd?"odd":"even");
+            logEntry.attr('data-snapshot-id',data.id);
+            logEntry.dblclick(lightfish.view.logs._logDblClick);
             for(var datumKey in data){
                 var datumValue = data[datumKey];
-                if((!header) && lightfish.view.logs.formatters[datumKey]){
-                    datumValue = lightfish.view.logs.formatters[datumKey](datumValue);
+                if(!header){
+                    datumValue = lightfish.view.logs._formatData(datumKey, datumValue);
                 }
                 logEntry.find(".log-data-" + datumKey).append(datumValue);
             }
@@ -268,6 +295,10 @@ lightfish.view = {
             }
             return logEntry;
         },
+        _logDblClick: function(){
+            var snapshotId = $(this).attr('data-snapshot-id');
+            lightfish.view.logs.snapshotDialog.show(snapshotId);
+        },
         setup:function(){
             var logTemplate = $("#log-template");
             lightfish.view.logs._logTemplate = logTemplate;
@@ -281,14 +312,84 @@ lightfish.view = {
                 id:"ID"
             }, lightfish.view.config.logs.importantData);
             lightfish.view.logs._addLog(headers,true).addClass("log-header").removeClass("log-line");
-            
+            lightfish.view.logs.snapshotDialog.setup();
             $("#toggleFollow").click(lightfish.view.logs.toggleFollow)
+            
         },
         toggleFollow:function(e){
             e.preventDefault();
             lightfish.view.logs._follow = !lightfish.view.logs._follow;
             $("#toggleFollow").html(lightfish.view.logs._follow?"Stop Following":"Follow");
+        },
+        snapshotDialog:{
+            _template: null,
+            _poolTemplate: null,
+            setup: function(){
+                var template = $("#snapshot-dialog-template");
+                lightfish.view.logs.snapshotDialog._template = template;
+                template.remove();
+                
+                var poolTemplate = $("#snapshot-dialog-pool-template");
+                lightfish.view.logs.snapshotDialog._poolTemplate = poolTemplate;
+                poolTemplate.remove();
+            },
+            show: function(snapshotId){
+                var data = lightfish.view._data[snapshotId];
+                if(data==undefined){
+                    return;
+                }
+                var template = lightfish.view.logs.snapshotDialog._template;
+                var dialogElem = template.clone();
+                var dialogId = "snapshot-" + snapshotId;
+                dialogElem.attr({
+                    id:dialogId
+                });
+                
+                if(!data.escalated){
+                    dialogElem.find("#snapshot-datum-escalatedBy").parent().hide();
+                }
+                
+                for(var key in data){
+                    if(key=="pools"){
+                        continue;
+                    }
+                    var datumValue = lightfish.view.logs._formatData(key,data[key]);
+                    
+                    dialogElem.find("#snapshot-datum-" + key)
+                    .attr('id',dialogId + '-datum-' + key)
+                    .html(datumValue)
+                }
+                
+                
+                var poolsElem = dialogElem.find("#snapshot-datum-pools")
+                for(var poolKey in data.pools){
+                    var poolData = lightfish.view.logs._formatData(key,data.pools[poolKey]);
+                    var poolElem = lightfish.view.logs.snapshotDialog._poolTemplate.clone();
+                    var poolElemId = dialogId + '-' + poolKey;
+                    poolElem.attr('id',poolElemId)
+                    poolElem.find("#snapshot-datum-pool-name")
+                    .attr('id',poolElemId + '-datum-name')
+                    .html(poolKey)
+
+                    for(var key in poolData){
+                        var datumValue = lightfish.view.logs._formatData(key,data.pools[poolKey][key]);
+                        poolElem.find("#snapshot-datum-pool-" + key)
+                        .attr('id',poolElemId + '-datum-' + key)
+                        .html(datumValue)
+                    }
+                    poolElem.appendTo(poolsElem)
+                    
+                }
+                
+                dialogElem.appendTo("#snapshotdialogContainer").dialog(
+                $.extend(true,
+                    {title: 'Snapshot ' + snapshotId + ' Details'},
+                    lightfish.view.config.logs.dialogOptions
+                )
+            );
+            }
         }
+        
     },
     escalations:{
         _escalations:[],
@@ -325,7 +426,7 @@ lightfish.view = {
             e.preventDefault();
             lightfish.view.escalations._disableNotifications = !lightfish.view.escalations._disableNotifications;
             $("#toggleNotifications").html(
-                lightfish.view.escalations._disableNotifications?"Enable Notifications":"Disable Notifications");
+            lightfish.view.escalations._disableNotifications?"Enable Notifications":"Disable Notifications");
         }
     },
     charts:{
@@ -419,7 +520,7 @@ lightfish.view = {
                         lightfish.view.charts._charts.pool[poolKey][chartKey].appendData([
                             [data.time,data.pools[poolKey].usedConnections],
                             [data.time,data.pools[poolKey].freeConnections]
-                            ]);
+                        ]);
                     }
                 }
             }

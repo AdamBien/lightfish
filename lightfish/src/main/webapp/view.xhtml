@@ -96,7 +96,7 @@
                     <ui:repeat value="${lightView.snapshot.apps}" var="app">
                         <h3>${app.applicationName}</h3>
                         <div>
-                            <h4>Components</h4>
+                            <h5>Components</h5>
                             <ul>
                                 <ui:repeat value="${app.components}" var="comp">
                                     <li>${comp}</li>
@@ -133,13 +133,117 @@
         <div id="notificationControl">
             <a href="javascript:void(0)" id="toggleNotifications">Disable Notifications</a>
         </div>
+        <div id="snapshotdialogContainer" style="display:none">
+            <div id="snapshot-dialog-template" class="snapshot-dialog">
+                <div class="snapshot-datum-group clearfix">
+                    <div class="snapshot-datum-entry">
+                        <label class="snapshot-datum-label">Time</label>
+                        <div id="snapshot-datum-time" class="snapshot-datum-value"></div>
+                    </div>
+                </div>
+                <div class="snapshot-datum-group clearfix">
+                    <div class="snapshot-datum-entry">
+                        <label class="snapshot-datum-label">Escalated By</label>
+                        <div id="snapshot-datum-escalatedBy" class="snapshot-datum-value escalated"></div>
+                    </div>
+                </div>
+                <h5>Threads and Memory</h5>
+                <div class="snapshot-datum-group clearfix">
+                    <div class="snapshot-datum-entry">
+                        <label class="snapshot-datum-label">Used Heap Size</label>
+                        <div id="snapshot-datum-heapSize" class="snapshot-datum-value"></div>
+                    </div>
+                    <div class="snapshot-datum-entry">
+                        <label class="snapshot-datum-label">Thread Count</label>
+                        <div id="snapshot-datum-threadCount" class="snapshot-datum-value"></div>
+                    </div>
+                    <div class="snapshot-datum-entry">
+                        <label class="snapshot-datum-label">Peak Thread Count</label>
+                        <div id="snapshot-datum-peakThreadCount" class="snapshot-datum-value"></div>
+                    </div>
+                </div>
+                <h5>Transactions</h5>
+                <div class="snapshot-datum-group clearfix">
+                    <div class="snapshot-datum-entry">
+                        <label class="snapshot-datum-label">Commit Count (Cumulative)</label>
+                        <div id="snapshot-datum-txCommitCount" class="snapshot-datum-value"></div>
+                    </div>
+                    <div class="snapshot-datum-entry">
+                        <label class="snapshot-datum-label">Rollback Count (Cumulative)</label>
+                        <div id="snapshot-datum-txRollbackCount" class="snapshot-datum-value"></div>
+                    </div>
+                    <div class="snapshot-datum-entry">
+                        <label class="snapshot-datum-label">Commits Per Second</label>
+                        <div id="snapshot-datum-commitsPerSecond" class="snapshot-datum-value"></div>
+                    </div>
+                    <div class="snapshot-datum-entry">
+                        <label class="snapshot-datum-label">Rollbacks Per Second</label>
+                        <div id="snapshot-datum-rollbacksPerSecond" class="snapshot-datum-value"></div>
+                    </div>
+                </div>
+                <h5>Paranormal Activity</h5>
+                <div class="snapshot-datum-group clearfix">
+                    <div class="snapshot-datum-entry">
+                        <label class="snapshot-datum-label">Errors (Cumulative)</label>
+                        <div id="snapshot-datum-errorCount" class="snapshot-datum-value"></div>
+                    </div>
+                    <div class="snapshot-datum-entry">
+                        <label class="snapshot-datum-label">Errors Per Second</label>
+                        <div id="snapshot-datum-errorsPerSecond" class="snapshot-datum-value"></div>
+                    </div>
+                    <div class="snapshot-datum-entry">
+                        <label class="snapshot-datum-label">Queued Connections</label>
+                        <div id="snapshot-datum-queuedConnectionCount" class="snapshot-datum-value"></div>
+                    </div>
+                    <div class="snapshot-datum-entry">
+                        <label class="snapshot-datum-label">Busy Thread Count</label>
+                        <div id="snapshot-datum-currentBusyThreadCount" class="snapshot-datum-value"></div>
+                    </div>
+                </div>
+                <h5>Web</h5>
+                <div class="snapshot-datum-group clearfix">
+                    <div class="snapshot-datum-entry">
+                        <label class="snapshot-datum-label">Session Count</label>
+                        <div id="snapshot-datum-sessionCount" class="snapshot-datum-value"></div>
+                    </div>
+                    <div class="snapshot-datum-entry">
+                        <label class="snapshot-datum-label">Expired Session Count</label>
+                        <div id="snapshot-datum-expiredSessionCount" class="snapshot-datum-value"></div>
+                    </div>
+                </div>
+                <h5>Resources</h5>
+                <div id="snapshot-datum-pools"></div>
+            </div>
+            <div id="snapshot-dialog-pool-template" class="clearfix">
+                <h6 id="snapshot-datum-pool-name"></h6>
+                <div class="snapshot-datum-group clearfix">
+                    <div class="snapshot-datum-entry">
+                        <label class="snapshot-datum-label">Free Connections</label>
+                        <div id="snapshot-datum-pool-freeConnections" class="snapshot-datum-value"></div>
+                    </div>
+                    <div class="snapshot-datum-entry">
+                        <label class="snapshot-datum-label">Used Connections</label>
+                        <div id="snapshot-datum-pool-usedConnections" class="snapshot-datum-value"></div>
+                    </div>
+                    <div class="snapshot-datum-entry">
+                        <label class="snapshot-datum-label">Wait Queue Length</label>
+                        <div id="snapshot-datum-pool-waitQueueLength" class="snapshot-datum-value"></div>
+                    </div>
+                    <div class="snapshot-datum-entry">
+                        <label class="snapshot-datum-label">Potential Leak Count</label>
+                        <div id="snapshot-datum-pool-potentialLeak" class="snapshot-datum-value"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script type="text/javascript">
             $(function(){
                 lightfish.view.config.baseUri = '${facesContext.externalContext.getRequestContextPath()}';
          
             });
             lightfish.view.config.refreshInterval = ${lightView.interval};
-            _Chart.chartOptions.xaxis.tickSize = [${lightView.interval} * 5, 'second'];
+            _Chart.chartOptions.xaxis.tickSize = [${lightView.interval} * 8, 'second'];
         </script>
     </ui:define>
 </ui:composition>
