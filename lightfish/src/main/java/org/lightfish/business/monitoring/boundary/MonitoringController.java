@@ -77,7 +77,13 @@ public class MonitoringController {
 
     @Timeout
     public void gatherAndPersist(){
-        Snapshot current = dataProvider.fetchSnapshot();
+        Snapshot current;
+        try {
+            current = dataProvider.fetchSnapshot();
+        } catch (Exception ex) {
+            LOG.error("Could not retrieve snapshot",ex);
+            return;
+        }
         em.persist(current);
         try{
             heartBeat.fire(current);
