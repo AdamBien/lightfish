@@ -15,7 +15,6 @@
  */
 package org.lightfish.business.heartbeat.boundary;
 
-import java.io.IOException;
 import org.lightfish.business.heartbeat.control.Serializer;
 import org.lightfish.business.logging.Log;
 import org.lightfish.business.monitoring.boundary.Severity;
@@ -28,14 +27,16 @@ import javax.ejb.Singleton;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.io.Writer;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.*;
 import javax.enterprise.inject.Instance;
+import javax.xml.bind.annotation.XmlRootElement;
+import org.lightfish.presentation.publication.escalation.EscalationWindow;
+import org.lightfish.presentation.publication.escalation.Escalations;
 
 /**
  *
@@ -46,6 +47,7 @@ import javax.enterprise.inject.Instance;
 public class SnapshotEventBroker {
 
     private ConcurrentLinkedQueue<BrowserWindow> browsers = new ConcurrentLinkedQueue<>();
+    private ConcurrentLinkedQueue<BrowserWindow> escalationBrowsers = new ConcurrentLinkedQueue<>();
     private ConcurrentHashMap<String, Snapshot> escalations = new ConcurrentHashMap<>();
     @Inject
     Log LOG;
@@ -65,7 +67,12 @@ public class SnapshotEventBroker {
     }
 
     public void onBrowserRequest(@Observes BrowserWindow browserWindow) {
+        LOG.info("Added " + browserWindow.hashCode());
         browsers.add(browserWindow);
+    }
+    
+    public void onEscalationBrowserRequest(@Observes @EscalationWindow BrowserWindow browserWindow) {
+        escalationBrowsers.add(browserWindow);
     }
 
     public void onNewSnapshot(@Observes @Severity(Severity.Level.HEARTBEAT) Snapshot snapshot) {
@@ -73,6 +80,7 @@ public class SnapshotEventBroker {
             if (browserWindow.getChannel() == null) {
                 try {
                     send(browserWindow, snapshot);
+                    LOG.info("Sent to " + browserWindow.hashCode());
                 } finally {
                     browsers.remove(browserWindow);
                 }
@@ -86,24 +94,38 @@ public class SnapshotEventBroker {
 
     @Timeout
     public void notifyEscalationListeners() {
-        for (BrowserWindow browserWindow : browsers) {
+        for (BrowserWindow browserWindow : escalationBrowsers) {
             String channel = browserWindow.getChannel();
-            if (channel != null) {
-                Snapshot snapshot = this.escalations.get(channel);
-                try {
-                    if(snapshot != null){
+            try {
+                if (channel != null && !channel.isEmpty()) {
+                    Snapshot snapshot = this.escalations.get(channel);
+
+                    if (snapshot != null) {
                         send(browserWindow, snapshot);
-                    }else{
+                    } else {
                         browserWindow.nothingToSay();
                     }
-                } finally {
-                    browsers.remove(browserWindow);
+
+                } else {
+                    if (!this.escalations.isEmpty()) {
+                        send(browserWindow, new Escalations(this.escalations));
+                    } else {
+                        browserWindow.nothingToSay();
+                    }
                 }
+            } finally {
+                escalationBrowsers.remove(browserWindow);
             }
         }
     }
 
     void send(BrowserWindow browserWindow, Snapshot snapshot) {
+        Writer writer = browserWindow.getWriter();
+        serializer.serialize(snapshot, writer);
+        browserWindow.send();
+    }
+
+    void send(BrowserWindow browserWindow, Escalations snapshot) {
         Writer writer = browserWindow.getWriter();
         serializer.serialize(snapshot, writer);
         browserWindow.send();

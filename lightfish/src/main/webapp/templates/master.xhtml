@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>LightFish - <ui:insert name="windowTitle" /></title>
+        <link rel="shortcut icon" href="#{resource['images:favicon.ico']}" />
+        <h:outputStylesheet library="css" name="bootstrap.css"  />
+        <h:outputStylesheet library="css" name="style.css"  /> 
+        <h:outputStylesheet library="css" name="jquery-ui.css"  />     
+        <h:outputScript library="js" name="third-party/jquery.js"  />
+        <h:outputScript library="js" name="third-party/jquery-ui.js"  />
+        <h:outputScript library="js" name="help.js"  />
+
+        <f:metadata>
+            <f:viewParam name="script" value="#{editScript.script}" converter="scriptConverter"/>
+        </f:metadata>
+    </h:head>
+    <h:body>
+        <div class="container">
+            <div class="row">
+                <div class="page-header">
+                    <h1><a href="#{request.contextPath}">LightFish</a> <small>Stress Test Result Capturing</small></h1>
+                </div>
+            </div>
+
+            <ui:insert name="page">
+            </ui:insert>
+        </div>
+    </h:body>
+</html>

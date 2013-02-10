@@ -1,117 +1,106 @@
-<?xml version='1.0' encoding='UTF-8' ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:ui="http://java.sun.com/jsf/facelets">
-    <h:head>
-        <title>LightFish Stress Test Result Capturing</title>
-        <link rel="shortcut icon" href="./favicon.ico" />
-        <h:outputStylesheet library="css" name="bootstrap.css"  />
-        <h:outputStylesheet library="css" name="style.css"  />     
-    </h:head>
-    <h:body>
-        <div class="container">
-            <div class="row">
-                <div class="page-header">
-                    <h1>LightFish <small>Stress Test Result Capturing</small></h1>
-                </div>
-            </div>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.prime.com.tr/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/templates/main.xhtml">
+    <ui:define name="windowTitle">Main</ui:define>
+    <ui:define name="content">
+        <div class="row">
+            <h:form class="form-horizontal">
+                <legend>Configuration</legend>
 
-            <div class="row">
-                <h:form class="form-horizontal">
-                    <legend>Configuration</legend>
+                <div class="control-group">
+                    <label class="control-label"><h:outputText value="#{authentication.protocol}"/></label>
+                    <div class="controls">
+                        <h:inputText value="#{index.location}"/>
+                    </div>
+                </div> 
+                <div class="control-group">
+                    <label class="control-label">Interval</label>
+                    <div class="controls">
+                        <h:inputText value="#{index.interval}"/>
+                        <span class="help-block">Interval is specified in seconds</span>
+                    </div>
+                </div>                        
+                <div class="control-group">
+                    <label class="control-label">Server version</label>
+                    <div class="controls">                            
+                        <label class="text-label"><h:outputText value="#{index.version}"/>   </label>
+                    </div>
+                </div>        
+                <div class="control-group">
+                    <label class="control-label">Uptime</label>
+                    <div class="controls">
+                        <label class="text-label"><h:outputText value="#{index.uptime}"/>  </label>                              
+                    </div>
+                </div>         
 
-                    <div class="control-group">
-                        <label class="control-label"><h:outputText value="#{authentication.protocol}"/></label>
-                        <div class="controls">
-                            <h:inputText value="#{index.location}"/>
-                        </div>
-                    </div> 
-                    <div class="control-group">
-                        <label class="control-label">Interval</label>
-                        <div class="controls">
-                            <h:inputText value="#{index.interval}"/>
-                            <span class="help-block">Interval is specified in seconds</span>
-                        </div>
-                    </div>                        
-                    <div class="control-group">
-                        <label class="control-label">Server version</label>
-                        <div class="controls">                            
-                            <label class="text-label"><h:outputText value="#{index.version}"/>   </label>
-                        </div>
-                    </div>        
-                    <div class="control-group">
-                        <label class="control-label">Uptime:</label>
-                        <div class="controls">
-                            <label class="text-label"><h:outputText value="#{index.uptime}"/>  </label>                              
-                        </div>
-                    </div>         
+                <div class="control-group">
+                    <div class="controls">
+                        <h:commandButton value="Update" action="#{index.changeAdministration}" class="btn btn-primary"/> 
+                    </div>
+                </div>                        
 
-                    <div class="control-group">
-                        <div class="controls">
-                            <h:commandButton value="Update" action="#{index.changeAdministration}" class="btn btn-primary"/> 
+                <div class="control-group">
+                    <label class="control-label">More Options</label>
+                    <div class="controls">
+                        <div class="text-label">
+                            <div><h:link value="Authentication &gt;&gt;" outcome="authentication"/></div>
+                            <div><h:link value="Advanced Configuration &gt;&gt;" outcome="advancedconfig"/></div>
+                            <div><h:link value="Escalation &gt;&gt;" outcome="escalation/scripts"/></div>
                         </div>
-                    </div>                        
+                    </div>
+                </div>         
+            </h:form>
+        </div>
 
-                </h:form>
-            </div>
-
-            <div class="row">
-                <div class="span2"></div>
-                <div class="span10">
-                    <div class="control-group">
-                        <div class="controls">
-                            <div class="btn-toolbar form-btn-toolbar">
-                                <div class="btn-group">
-                                    <h:link value="Authentication &gt;&gt;" class="btn btn-small" outcome="authentication"/>
-                                    <h:link value="Advanced Configuration &gt;&gt;" class="btn btn-small" outcome="advancedconfig"/>
-                                </div>
+        <div class="row">
+            <div class="span2"></div>
+            <div class="span10">
+                <div class="control-group">
+                    <div class="controls">
+                        <div class="btn-toolbar form-btn-toolbar">
+                            <div class="btn-group">
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="row">
-                <h:form class="form-horizontal">
-                    <legend>Actions</legend>
-
-                    <div class="control-group">
-                        <label class="control-label">Monitoring</label>
-                        <div class="controls">
-                            <div class="btn-toolbar form-btn-toolbar">
-                                <div class="btn-group">
-                                    <h:commandButton value="Activate" action="#{index.activateMonitoring}" class="btn"/>
-                                    <h:commandButton value="Deactivate" action="#{index.deactivateMonitoring}" class="btn"/>      
-                                </div>
-                            </div>
-                            <span class="help-block">Enable or disable the monitoring configuration on the server.</span>
-                        </div>         
-                    </div>
-
-                    <div class="control-group">
-                        <label class="control-label">Timer</label>
-                        <div class="controls">
-                            <div class="btn-toolbar form-btn-toolbar">
-                                <div class="btn-group">
-                                    <h:commandButton disabled="#{index.running}" value="Start" action="#{index.start}" class="btn btn-primary"/>
-                                    <h:commandButton disabled="#{!index.running}" value="Stop" action="#{index.stop}" class="btn"/>  
-                                </div>
-                            </div>
-                            <span class="help-block">Start or stop polling the server for monitoring information.</span>
-                        </div>         
-                    </div>
-                </h:form>                
-            </div>
-
-            <div class="row">
-                <legend>References</legend>
-                <a href="/lightfish/live" target="_blank">Live Data</a><br/>
-                LightView: <a href="./lightview.html" target="_blank" id="lightview">JavaFX</a> - 
-                <a href="./view.xhtml" id="lightview">HTML5</a>
-                
-                
             </div>
         </div>
-    </h:body>
-</html>
+
+        <div class="row">
+            <h:form class="form-horizontal">
+                <legend>Actions</legend>
+
+                <div class="control-group">
+                    <label class="control-label">Monitoring</label>
+                    <div class="controls">
+                        <div class="btn-toolbar form-btn-toolbar">
+                            <div class="btn-group">
+                                <h:commandButton value="Activate" action="#{index.activateMonitoring}" class="btn"/>
+                                <h:commandButton value="Deactivate" action="#{index.deactivateMonitoring}" class="btn"/>      
+                            </div>
+                        </div>
+                        <span class="help-block">Enable or disable the monitoring configuration on the server.</span>
+                    </div>         
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Timer</label>
+                    <div class="controls">
+                        <div class="btn-toolbar form-btn-toolbar">
+                            <div class="btn-group">
+                                <h:commandButton disabled="#{index.running}" value="Start" action="#{index.start}" class="btn btn-primary"/>
+                                <h:commandButton disabled="#{!index.running}" value="Stop" action="#{index.stop}" class="btn"/>  
+                            </div>
+                        </div>
+                        <span class="help-block">Start or stop polling the server for monitoring information.</span>
+                    </div>         
+                </div>
+            </h:form>                
+        </div>
+    </ui:define>
+</ui:composition>

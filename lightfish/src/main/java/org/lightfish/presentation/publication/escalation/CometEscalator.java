@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.lightfish.presentation.publication;
+package org.lightfish.presentation.publication.escalation;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.logging.Logger;
+import org.lightfish.presentation.publication.BrowserWindow;
 
 /**
  *
@@ -33,7 +34,7 @@ import java.util.logging.Logger;
 @WebServlet(name = "CometEscalator", urlPatterns = {"/escalations/*"}, asyncSupported = true)
 public class CometEscalator extends HttpServlet {
 
-    @Inject
+    @Inject @EscalationWindow
     Event<BrowserWindow> events;
     private final static Logger LOG = Logger.getLogger(CometEscalator.class.getName());
 
@@ -43,7 +44,7 @@ public class CometEscalator extends HttpServlet {
         AsyncContext startAsync = request.startAsync();
         String channel = extractChannel(request.getRequestURI());
         events.fire(new BrowserWindow(startAsync,channel));
-        LOG.info("Event sent for channel " + channel);
+        LOG.fine("Event sent for channel " + channel);
     }
     
     
