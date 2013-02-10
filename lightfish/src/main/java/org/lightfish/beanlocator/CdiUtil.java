@@ -1,4 +1,4 @@
-package org.lightfish.util;
+package org.lightfish.beanlocator;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +25,7 @@ public class CdiUtil {
      * @return The equivalent of a CDI injected bean.
      * @throws CdiException
      */
-    public <TYPE> TYPE lookup(Class<TYPE> clazz) throws CdiException {
+    public <TYPE> TYPE lookup(Class<TYPE> clazz) throws BeanLocationException {
         BeanManager beanManager = jndiLookup("java:comp/BeanManager", BeanManager.class);
 
         Bean<TYPE> handlerBean = (Bean<TYPE>) beanManager.getBeans(clazz).iterator().next();
@@ -45,18 +45,18 @@ public class CdiUtil {
      * @throws JndiLookupException
      */
     private <TYPE> TYPE jndiLookup(String jndiName, Class<TYPE> clazz)
-            throws CdiException {
+            throws BeanLocationException {
         TYPE returnObject = null;
         try {
             Context ctx = retrieveContext();
             returnObject = (TYPE) ctx.lookup(jndiName);
 
         } catch (NamingException ne) {
-            throw new CdiException(
+            throw new BeanLocationException(
                     "Could not retrieve Object because of a naming exception: " + ne.getMessage(), ne);
 
         } catch (ClassCastException cce) {
-            throw new CdiException(
+            throw new BeanLocationException(
                     "Retrieved an Object, but it could not be cast to the requested type.", cce);
         }
         return returnObject;
@@ -74,12 +74,12 @@ public class CdiUtil {
      * @return The context to use for the actions.
      * @throws JndiLookupException
      */
-    private Context retrieveContext() throws CdiException {
+    private Context retrieveContext() throws BeanLocationException {
         if (context == null) {
             try {
                 context = new InitialContext();
             } catch (NamingException ex) {
-                throw new CdiException("Could not retrieve intial context.", ex);
+                throw new BeanLocationException("Could not retrieve intial context.", ex);
             }
         }
         return context;

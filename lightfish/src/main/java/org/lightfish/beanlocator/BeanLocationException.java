@@ -1,16 +1,16 @@
-package org.lightfish.util;
+package org.lightfish.beanlocator;
 
 /**
  *
  * @author rveldpau
  */
-public class CdiException extends Exception {
+public class BeanLocationException extends Exception {
 
     /**
      * Creates a new instance of
      * <code>CdiException</code> without detail message.
      */
-    public CdiException() {
+    public BeanLocationException() {
     }
 
     /**
@@ -19,7 +19,7 @@ public class CdiException extends Exception {
      *
      * @param msg the detail message.
      */
-    public CdiException(String msg) {
+    public BeanLocationException(String msg) {
         super(msg);
     }
 
@@ -30,7 +30,7 @@ public class CdiException extends Exception {
      * @param msg the detail message.
      * @param cause The cause of the exception
      */
-    public CdiException(String msg, Throwable cause) {
+    public BeanLocationException(String msg, Throwable cause) {
         super(msg, cause);
     }
 }

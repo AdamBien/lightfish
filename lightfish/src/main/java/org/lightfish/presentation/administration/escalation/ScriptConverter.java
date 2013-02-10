@@ -8,8 +8,8 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import org.lightfish.business.escalation.control.ScriptStore;
 import org.lightfish.business.escalation.entity.Script;
-import org.lightfish.util.CdiException;
-import org.lightfish.util.CdiUtil;
+import org.lightfish.beanlocator.BeanLocationException;
+import org.lightfish.beanlocator.CdiUtil;
 
 /**
  *
@@ -24,7 +24,7 @@ public class ScriptConverter implements Converter {
         try {
             ScriptStore scriptStore = retrieveScriptStore();
             return scriptStore.getScript(string);
-        } catch (CdiException ex) {
+        } catch (BeanLocationException ex) {
             LOG.log(Level.SEVERE, null, ex);
             return null;
         }
@@ -38,7 +38,7 @@ public class ScriptConverter implements Converter {
         return null;
     }
 
-    private ScriptStore retrieveScriptStore() throws CdiException{
+    private ScriptStore retrieveScriptStore() throws BeanLocationException{
         return new CdiUtil().lookup(ScriptStore.class);
     }
 }
