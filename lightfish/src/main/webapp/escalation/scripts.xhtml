@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.prime.com.tr/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/templates/main.xhtml">
+    <ui:define name="windowTitle">Escalation - Scripts</ui:define>
+    <ui:define name="content">
+        <div class="row">
+            <h:form class="form-horizontal">
+                <legend>Scripts</legend>
+                <ui:repeat value="#{scripts.scripts}" var="script">
+                    <div class="control-group">
+                        <label class="control-label script #{script.active?'active':'inactive'}">#{script.name}</label>
+                        <div class="controls">
+                            <h:button class="btn" outcome="edit.xhtml?script=#{script.name}" value="Edit" />
+                        </div>
+                    </div>  
+                </ui:repeat>
+                <div class="control-group">
+                    <div class="controls">
+                        <h:button class="btn" outcome="add.xhtml" value="Add" />    
+                    </div>
+                </div>
+
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

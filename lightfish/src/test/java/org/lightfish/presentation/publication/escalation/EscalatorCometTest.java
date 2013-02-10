@@ -1,5 +1,6 @@
-package org.lightfish.presentation.publication;
+package org.lightfish.presentation.publication.escalation;
 
+import org.lightfish.presentation.publication.escalation.CometEscalator;
 import org.junit.AfterClass;
 import org.junit.Test;
 import static org.junit.Assert.*;

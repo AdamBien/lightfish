@@ -39,7 +39,7 @@ public class SnapshotEventBrokerTest {
         snapshot.setEscalationChannel(escalationChannel);
         when(window.getChannel()).thenReturn(escalationChannel);
         
-        this.cut.onBrowserRequest(window);
+        this.cut.onEscalationBrowserRequest(window);
         this.cut.onNewEscalation(snapshot);
         verify(window,never()).send();
         this.cut.notifyEscalationListeners();
@@ -50,9 +50,10 @@ public class SnapshotEventBrokerTest {
     public void separationOfNotificationsAndEscalations() {
         final String escalationChannel = "duke";
         BrowserWindow window = mock(BrowserWindow.class);
+        when(window.getChannel()).thenReturn("not"+escalationChannel);
         Snapshot snapshot = new Snapshot();
         snapshot.setEscalationChannel(escalationChannel);
-        this.cut.onBrowserRequest(window);
+        this.cut.onEscalationBrowserRequest(window);
         this.cut.onNewEscalation(snapshot);
         verify(window,never()).send();
         this.cut.notifyEscalationListeners();
@@ -63,7 +64,7 @@ public class SnapshotEventBrokerTest {
     public void nothingToSay(){
         BrowserWindow window = mock(BrowserWindow.class);
         when(window.getChannel()).thenReturn("does-not-matter");
-        this.cut.onBrowserRequest(window);
+        this.cut.onEscalationBrowserRequest(window);
         verify(window,never()).send();
         this.cut.notifyEscalationListeners();
         verify(window).nothingToSay();
