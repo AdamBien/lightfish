@@ -35,11 +35,13 @@ public class SnapshotEscalator {
 
     @PostConstruct
     public void initScripting() {
+        
         ScriptEngineManager engineManager = new ScriptEngineManager();
         this.scriptEngine = engineManager.getEngineByName(ENGINE_NAME);
         if (this.scriptEngine == null) {
             throw new IllegalStateException("Cannot create ScriptEngine: " + ENGINE_NAME);
         }
+        LOG.info("Loaded script engine: " + ENGINE_NAME);
     }
 
     public void escalate(@Observes @Severity(Severity.Level.HEARTBEAT) Snapshot current) {

@@ -15,45 +15,30 @@
  */
 package org.lightfish.business.monitoring.control;
 
-import org.lightfish.business.monitoring.entity.Application;
 import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.UniformInterfaceException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.lightfish.business.monitoring.entity.ConnectionPool;
+import java.util.Date;
 import org.lightfish.business.monitoring.entity.Snapshot;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.ws.rs.core.MediaType;
-import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ForkJoinPool;
 import javax.enterprise.inject.Instance;
 import org.lightfish.business.authenticator.GlassfishAuthenticator;
 import java.util.logging.Logger;
+import org.lightfish.business.monitoring.control.collectors.DataCollector;
+import org.lightfish.business.monitoring.control.collectors.DataPoint;
+import org.lightfish.business.monitoring.control.collectors.DataPointToSnapshotMapper;
+import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionAction;
+import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionActionBehaviour;
+import org.lightfish.business.monitoring.control.collectors.SnapshotDataCollector;
 
 /**
- * @author Adam Bien, blog.adam-bien.com
+ * @author Adam Bien, blog.adam-bien.com / Rob Veldpaus
  */
 public class SnapshotProvider {
 
-    public static final String HEAP_SIZE = "jvm/memory/usedheapsize-count";
-    private static final String THREAD_COUNT = "jvm/thread-system/threadcount";
-    private static final String PEAK_THREAD_COUNT = "jvm/thread-system/peakthreadcount";
-    private static final String DEADLOCKED_THREADS = "jvm/thread-system/deadlockedthreads";
-    private static final String ERROR_COUNT = "http-service/server/request/errorcount";
-    private static final String AVG_PROCESSING_TIME = "http-service/server/request/processingtime";
-    private static final String HTTP_BUSY_THREADS = "network/thread-pool/currentthreadsbusy";
-    private static final String COMMITTED_TX = "transaction-service/committedcount";
-    private static final String ROLLED_BACK_TX = "transaction-service/rolledbackcount";
-    private static final String QUEUED_CONNS = "network/connection-queue/countqueued";
-    private static final String CURRENT_SESSIONS = "web/session/activesessionscurrent";
-    private static final String EXPIRED_SESSIONS = "web/session/expiredsessionstotal";
-    private static final String APPLICATIONS = "applications";
     private static final Logger LOG = Logger.getLogger(SnapshotProvider.class.getName());
     static final String RESOURCES = "resources";
     private Client client;
@@ -66,231 +51,86 @@ public class SnapshotProvider {
     @Inject
     Instance<String> serverInstance;
     @Inject
+    Instance<Boolean> parallelDataCollection;
+    @Inject
     Instance<GlassfishAuthenticator> authenticator;
+    @Inject
+    @SnapshotDataCollector
+    Instance<DataCollector> dataCollectors;
+    @Inject
+    DataPointToSnapshotMapper mapper;
+    @Inject
+    ForkJoinPool forkPool;
 
     @PostConstruct
     public void initializeClient() {
         this.client = Client.create();
     }
 
-    public Snapshot fetchSnapshot() {
+    public Snapshot fetchSnapshot() throws Exception {
         authenticator.get().addAuthenticator(client, username.get(), password.get());
-        try {
-            long usedHeapSize = usedHeapSize();
-            int threadCount = threadCount();
-            int peakThreadCount = peakThreadCount();
-            int totalErrors = totalErrors();
-            int currentThreadBusy = currentThreadBusy();
-            int committedTX = committedTX();
-            int rolledBackTX = rolledBackTX();
-            int queuedConnections = queuedConnections();
-            int activeSessionsCurrent = activeSessionsCurrent();
-            int expiredSessions = expiredSessions();
-            String deadlockedThreads = deadlockedThreads();
-            Snapshot snapshot = new Snapshot.Builder().
-                    usedHeapSize(usedHeapSize).
-                    threadCount(threadCount).
-                    peakThreadCount(peakThreadCount).
-                    totalErrors(totalErrors).
-                    currentThreadBusy(currentThreadBusy).
-                    committedTX(committedTX).
-                    rolledBackTX(rolledBackTX).
-                    queuedConnections(queuedConnections).
-                    activeSessions(activeSessionsCurrent).
-                    expiredSessions(expiredSessions).
-                    deadlockedThreads(deadlockedThreads).
-                    build();
-            for (String jdbcPoolName : resources()) {
-                snapshot.add(fetchResource(jdbcPoolName));
-            }
-            for (String application : applications()) {
-                snapshot.add(fetchApplication(application));
-            }
-            return snapshot;
-        } catch (Exception e) {
-            throw new IllegalStateException("Cannot fetch monitoring data for URI: " + this.getBaseURI(), e);
+        
+        Snapshot snapshot = null;
+        Date start = new Date();
+        
+        if (parallelDataCollection.get()) {
+            snapshot = parallelDataCollection();
+        } else {
+            snapshot = serialDataCollection();
         }
+        
+        long elapsed = new Date().getTime() - start.getTime();
+        LOG.fine("Data collection took " + elapsed);
+        
+        return snapshot;
+
     }
 
-    String getBaseURI() {
-        return getProtocol() + location.get() + "/monitoring/domain/" + serverInstance.get() + "/";
-    }
-
-    public ConnectionPool fetchResource(String jndiName) {
-        try {
-
-            int numconnfree = numconnfree(jndiName);
-            int waitqueuelength = waitqueuelength(jndiName);
-            int numpotentialconnleak = numpotentialconnleak(jndiName);
-            int numconnused = numconnused(jndiName);
-            return new ConnectionPool(jndiName, numconnfree, numconnused, waitqueuelength, numpotentialconnleak);
-        } catch (Exception e) {
-            throw new IllegalStateException("Cannot fetch monitoring data for URI: " + this.getBaseURI(), e);
+    private Snapshot serialDataCollection() throws Exception {
+        Snapshot snapshot = new Snapshot.Builder().build();
+        for (DataCollector collector : dataCollectors) {
+            DataPoint dataPoint = collector.collect();
+            mapper.mapDataPointToSnapshot(dataPoint, snapshot);
         }
+        return snapshot;
     }
 
-    Application fetchApplication(String applicationName) throws JSONException {
-        return new Application(applicationName, fetchComponents(applicationName));
-    }
-
-    List<String> fetchComponents(String applicationName) throws JSONException {
-        return Arrays.asList(components(applicationName));
-    }
-
-    String deadlockedThreads() throws JSONException {
-        final String uri = getBaseURI() + DEADLOCKED_THREADS;
-        return getString(uri, "deadlockedthreads", "current");
-    }
-
-    int numconnfree(String jndiName) throws JSONException {
-        String uri = constructResourceString(jndiName);
-        return getInt(uri, "numconnfree", "current");
-    }
-
-    int numconnused(String jndiName) throws JSONException {
-        String uri = constructResourceString(jndiName);
-        return getInt(uri, "numconnused", "current");
-    }
-
-    int waitqueuelength(String jndiName) throws JSONException {
-        String uri = constructResourceString(jndiName);
-        return getInt(uri, "waitqueuelength");
-    }
-
-    int numpotentialconnleak(String jndiName) throws JSONException {
-        String uri = constructResourceString(jndiName);
-        return getInt(uri, "numpotentialconnleak");
-    }
-
-    String constructResourceString(String resourceName) {
-        return getBaseURI() + RESOURCES + "/" + resourceName;
-    }
-
-    long usedHeapSize() throws JSONException {
-        final String uri = getBaseURI() + HEAP_SIZE;
-        return getLong(uri, "usedheapsize-count");
-    }
-
-    int threadCount() throws JSONException {
-        final String uri = getBaseURI() + THREAD_COUNT;
-        return getInt(uri, "threadcount");
-    }
-
-    int activeSessionsCurrent() throws JSONException {
-        final String uri = getBaseURI() + CURRENT_SESSIONS;
-        return getInt(uri, "activesessionscurrent", "current");
-    }
-
-    int expiredSessions() throws JSONException {
-        final String uri = getBaseURI() + EXPIRED_SESSIONS;
-        return getInt(uri, "expiredsessionstotal", "count");
-    }
-
-    int peakThreadCount() throws JSONException {
-        final String uri = getBaseURI() + PEAK_THREAD_COUNT;
-        return getInt(uri, "peakthreadcount");
-    }
-
-    int totalErrors() throws JSONException {
-        final String uri = getBaseURI() + ERROR_COUNT;
-        return getInt(uri, "errorcount");
-    }
-
-    int currentThreadBusy() throws JSONException {
-        final String uri = getBaseURI() + HTTP_BUSY_THREADS;
-        return getInt(uri, "currentthreadsbusy");
-    }
-
-    int committedTX() throws JSONException {
-        final String uri = getBaseURI() + COMMITTED_TX;
-        return getInt(uri, "committedcount");
-    }
-
-    int rolledBackTX() throws JSONException {
-        final String uri = getBaseURI() + ROLLED_BACK_TX;
-        return getInt(uri, "rolledbackcount");
-    }
-
-    int queuedConnections() throws JSONException {
-        final String uri = getBaseURI() + QUEUED_CONNS;
-        return getInt(uri, "countqueued");
-    }
-
-    String[] resources() throws JSONException {
-        return getStringArray(RESOURCES, "childResources");
-    }
-
-    String[] applications() throws JSONException {
-        return getStringArray(APPLICATIONS, "childResources");
-    }
-
-    String[] components(String applicationName) throws JSONException {
-        return getStringArray(APPLICATIONS + "/" + applicationName, "childResources");
-    }
-
-    long getLong(String uri, String name) throws JSONException {
-        return getLong(uri, name, "count");
-
-    }
-
-    int getInt(String uri, String name) throws JSONException {
-        return getInt(uri, name, "count");
-    }
-
-    long getLong(String uri, String name, String key) throws JSONException {
-        ClientResponse result = getClientResponse(uri);
-        return getJSONObject(result, name).getLong(key);
-
-    }
-
-    int getInt(String uri, String name, String key) throws JSONException {
-        ClientResponse result = getClientResponse(uri);
-        return getJSONObject(result, name).getInt(key);
-    }
-
-    String getString(String uri, String name, String key) throws JSONException {
-        ClientResponse result = getClientResponse(uri);
-        return getJSONObject(result, name).getString(key);
-    }
-
-    String[] getStringArray(String name, String key) throws JSONException {
-        String[] empty = new String[0];
-        ClientResponse result = getClientResponse(this.getBaseURI() + name);
-        JSONObject response = result.getEntity(JSONObject.class);
-        response = response.optJSONObject("extraProperties");
-        if (response == null) {
-            return empty;
+    private Snapshot parallelDataCollection() throws Exception {
+        Snapshot snapshot = new Snapshot.Builder().build();
+        List<DataCollector> dataCollectorList = new ArrayList<>();
+        for (DataCollector collector : dataCollectors) {
+            dataCollectorList.add(collector);
         }
-        response = response.optJSONObject("childResources");
-        if (response == null) {
-            return empty;
+        
+        ParallelDataCollectionAction dataCollectionAction = 
+                new ParallelDataCollectionAction(
+                    dataCollectorList, new DataCollectionBehaviour(mapper, snapshot)
+                );
+        forkPool.invoke(dataCollectionAction);
+        
+        if(dataCollectionAction.getThrownException()!=null){
+            throw dataCollectionAction.getThrownException();
         }
-        int length = response.length();
-        String retVal[] = new String[length];
-        Iterator keys = response.keys();
-        int counter = 0;
-        while (keys.hasNext()) {
-            retVal[counter++] = (String) keys.next();
-        }
-        return retVal;
+        
+        return snapshot;
     }
 
-    JSONObject getJSONObject(ClientResponse result, String name) throws JSONException {
-        JSONObject response = result.getEntity(JSONObject.class);
-        return response.getJSONObject("extraProperties").
-                getJSONObject("entity").
-                getJSONObject(name);
-    }
+    private class DataCollectionBehaviour implements ParallelDataCollectionActionBehaviour{
 
-    private String getProtocol() {
-        String protocol = "http://";
-        if (username != null && username.get() != null && !username.get().isEmpty()) {
-            protocol = "https://";
+        private DataPointToSnapshotMapper mapper;
+        private Snapshot snapshot;
+
+        public DataCollectionBehaviour(DataPointToSnapshotMapper mapper, Snapshot snapshot) {
+            this.mapper = mapper;
+            this.snapshot = snapshot;
         }
-        return protocol;
+        
+        @Override
+        public void perform(DataPoint dataPoint) throws Exception {
+            mapper.mapDataPointToSnapshot(dataPoint, snapshot);
+        }
+        
     }
 
-    ClientResponse getClientResponse(String uri) throws UniformInterfaceException {
-        return client.resource(uri).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
-    }
+    
 }

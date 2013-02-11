@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>LightFish Stress Test Result Capturing - Escalation - Script Help</title>
+        <link rel="shortcut icon" href="../favicon.ico" />
+        <h:outputStylesheet library="css" name="bootstrap.css"  />
+        <h:outputStylesheet library="css" name="style.css"  />   
+        <f:metadata>
+            <f:viewParam name="script" value="#{editScript.script}" converter="scriptConverter"/>
+        </f:metadata>
+    </h:head>
+    <h:body>
+        <div id="script-help">
+            <p>
+                Escalation scripting allows for logging of exceptional events. The script
+                engine used is JavaScript compliant; you can see an example script below
+                <pre>
+//returning "true" from the script, escalates the snapshot, "false" doesn't
+if((current.totalErrors - previous.totalErrors) == 0){
+	false
+}else{
+	true
+}
+                </pre>
+                You'll notice that you don't have to specify return when you want to return 
+                true or false. In fact, if you try to 'return true' you will cause errors.
+            </p>
+            <p>
+                There are two objects exposed for you to work with. One called 'current', and 
+                the other called 'previous'; these objects represent the most recent two
+                sets of data. They contain the following members:
+                <ul>
+                    <li>Date monitoringTime</li>
+                    <li>long usedHeapSize</li>
+                    <li>int threadCount</li>
+                    <li>int peakThreadCount</li>
+                    <li>int totalErrors</li>
+                    <li>int currentThreadBusy</li>
+                    <li>int committedTX</li>
+                    <li>int rolledBackTX</li>
+                    <li>int queuedConnections</li>
+                    <li>int activeSessions</li>
+                    <li>int expiredSessions</li>
+                    <li>boolean escalated</li>
+                    <li>String escalationReason</li>
+                    <li>String escalationChannel</li>
+                </ul>
+
+
+            </p>
+        </div>
+    </h:body>
+</html>

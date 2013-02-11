@@ -50,6 +50,10 @@ public class Configurator {
         return Integer.parseInt(getString(ip));
     }
 
+    @Produces
+    public boolean getBoolean(InjectionPoint ip) {
+        return Boolean.parseBoolean(getString(ip));
+    }
     
     @Produces
     public String getString(InjectionPoint ip) {
@@ -81,6 +85,10 @@ public class Configurator {
 
     public void setValue(String key,int interval) {
         this.setValue(key, String.valueOf(interval));
+    }
+    
+    public void setValue(String key,boolean value) {
+        this.setValue(key, String.valueOf(value));
     }
 
     public void setValue(String key, String value) {

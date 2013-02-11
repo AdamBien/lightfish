@@ -13,8 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.lightfish.presentation.administration;
+package org.lightfish.presentation.view;
 
+import javax.enterprise.inject.Instance;
 import org.lightfish.business.configuration.boundary.Configurator;
 
 import javax.enterprise.inject.Model;
@@ -33,13 +34,15 @@ public class LightView {
     @Inject
     Configurator configurator;
     
+    @Inject Instance<Integer> interval;
+    
     @Inject SnapshotProvider snapshotProvider;
     
     public int getInterval() {
-        return configurator.getValueAsInt(INTERVAL);
+        return interval.get();
     }
     
-    public Snapshot getSnapshot(){
+    public Snapshot getSnapshot() throws Exception{
         return snapshotProvider.fetchSnapshot();
     }
     

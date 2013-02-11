@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.prime.com.tr/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/templates/master.xhtml">
+    <ui:define name="page">
+        <ui:insert name="content">
+        </ui:insert>
+        <div class="row">
+            <legend>References</legend>
+            <a href="#{request.contextPath}/live">Live Data</a><br />
+            LightView - <h:link outcome="/lightview.html" value="JavaFX" /> or <h:link outcome="/view.xhtml" value="HTML5" />
+        </div>
+    </ui:define>
+</ui:composition>
