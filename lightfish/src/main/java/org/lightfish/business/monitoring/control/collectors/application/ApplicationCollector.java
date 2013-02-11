@@ -11,6 +11,7 @@ import org.lightfish.business.monitoring.control.SnapshotProvider;
 import org.lightfish.business.monitoring.control.collectors.AbstractRestDataCollector;
 import org.lightfish.business.monitoring.control.collectors.DataCollector;
 import org.lightfish.business.monitoring.control.collectors.DataPoint;
+import org.lightfish.business.monitoring.control.collectors.EJBExecutorService;
 import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionAction;
 import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionActionBehaviour;
 import org.lightfish.business.monitoring.control.collectors.SnapshotDataCollector;
@@ -31,7 +32,7 @@ public class ApplicationCollector extends AbstractRestDataCollector<List<Applica
     @Inject
     Instance<Boolean> parallelDataCollection;
     @Inject
-    ForkJoinPool forkPool;
+    EJBExecutorService forkPool;
 
     @Override
     public DataPoint<List<Application>> collect() throws Exception {
