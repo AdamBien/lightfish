@@ -23,15 +23,14 @@ import org.lightfish.business.monitoring.entity.Snapshot;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.List;
-import java.util.concurrent.ForkJoinPool;
 import javax.enterprise.inject.Instance;
 import org.lightfish.business.authenticator.GlassfishAuthenticator;
 import java.util.logging.Logger;
 import org.lightfish.business.monitoring.control.collectors.DataCollector;
 import org.lightfish.business.monitoring.control.collectors.DataPoint;
 import org.lightfish.business.monitoring.control.collectors.DataPointToSnapshotMapper;
-import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionAction;
 import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionActionBehaviour;
+import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionExecutor;
 import org.lightfish.business.monitoring.control.collectors.SnapshotDataCollector;
 
 /**
@@ -60,7 +59,7 @@ public class SnapshotProvider {
     @Inject
     DataPointToSnapshotMapper mapper;
     @Inject
-    ForkJoinPool forkPool;
+    ParallelDataCollectionExecutor parallelExecutor;
 
     @PostConstruct
     public void initializeClient() {
@@ -69,19 +68,19 @@ public class SnapshotProvider {
 
     public Snapshot fetchSnapshot() throws Exception {
         authenticator.get().addAuthenticator(client, username.get(), password.get());
-        
+
         Snapshot snapshot = null;
         Date start = new Date();
-        
+
         if (parallelDataCollection.get()) {
             snapshot = parallelDataCollection();
         } else {
             snapshot = serialDataCollection();
         }
-        
+
         long elapsed = new Date().getTime() - start.getTime();
         LOG.fine("Data collection took " + elapsed);
-        
+
         return snapshot;
 
     }
@@ -102,20 +101,12 @@ public class SnapshotProvider {
             dataCollectorList.add(collector);
         }
         
-        ParallelDataCollectionAction dataCollectionAction = 
-                new ParallelDataCollectionAction(
-                    dataCollectorList, new DataCollectionBehaviour(mapper, snapshot)
-                );
-        forkPool.invoke(dataCollectionAction);
-        
-        if(dataCollectionAction.getThrownException()!=null){
-            throw dataCollectionAction.getThrownException();
-        }
-        
+        parallelExecutor.execute(new DataCollectionBehaviour(mapper, snapshot), dataCollectorList);
+
         return snapshot;
     }
 
-    private class DataCollectionBehaviour implements ParallelDataCollectionActionBehaviour{
+    private class DataCollectionBehaviour implements ParallelDataCollectionActionBehaviour {
 
         private DataPointToSnapshotMapper mapper;
         private Snapshot snapshot;
@@ -124,13 +115,10 @@ public class SnapshotProvider {
             this.mapper = mapper;
             this.snapshot = snapshot;
         }
-        
+
         @Override
         public void perform(DataPoint dataPoint) throws Exception {
             mapper.mapDataPointToSnapshot(dataPoint, snapshot);
         }
-        
     }
-
-    
 }
