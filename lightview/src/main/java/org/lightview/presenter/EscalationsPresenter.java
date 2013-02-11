@@ -8,8 +8,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.concurrent.Worker;
+import org.lightview.model.Escalation;
 import org.lightview.model.Script;
 import org.lightview.model.Snapshot;
+import org.lightview.service.EscalationProvider;
 import org.lightview.service.ScriptManager;
 import org.lightview.service.SnapshotProvider;
 
@@ -23,7 +25,7 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
     ScriptManager scriptManager;
     StringProperty uri;
     private ObservableMap<String, ObservableList<Snapshot>> escalationBindings;
-    private Map<String, SnapshotProvider> runningServices;
+    private Map<String, EscalationProvider> runningServices;
 
     public EscalationsPresenter(StringProperty uri) {
         this.uri = uri;
@@ -73,16 +75,16 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
     }
 
     void registerService(final String scriptName) {
-        SnapshotProvider provider = new SnapshotProvider(getUri() + ESCALATIONS_URI + scriptName);
+        EscalationProvider provider = new EscalationProvider(getUri() + ESCALATIONS_URI + scriptName);
         this.runningServices.put(scriptName, provider);
         provider.start();
         provider.valueProperty().addListener(
-                new ChangeListener<Snapshot>() {
+                new ChangeListener<Escalation>() {
 
                     @Override
-                    public void changed(ObservableValue<? extends Snapshot> observable, Snapshot old, Snapshot newValue) {
+                    public void changed(ObservableValue<? extends Escalation> observable, Escalation old, Escalation newValue) {
                         if (newValue != null) {
-                            onSnapshotArrival(scriptName, newValue);
+                            onEscalationArrival(scriptName, newValue);
                         }
                     }
                 });
@@ -90,29 +92,29 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
     }
 
     void restartServices() {
-        for (SnapshotProvider snapshotProvider : runningServices.values()) {
-            resetService(snapshotProvider);
+        for (EscalationProvider escalationProvider : runningServices.values()) {
+            resetService(escalationProvider);
         }
         this.startFetching();
     }
 
-    void resetService(SnapshotProvider service) {
+    void resetService(EscalationProvider service) {
         if (service != null && service.isRunning()) {
             service.cancel();
             service.reset();
         }
     }
 
-    private void onSnapshotArrival(String scriptName, Snapshot newValue) {
+    private void onEscalationArrival(String scriptName, Escalation newValue) {
         System.out.println("Arrived: " + scriptName + " " + newValue);
         resyncActiveScripts();
         ObservableList<Snapshot> snapshots = getSnapshots(scriptName);
-        if (!snapshots.contains(newValue)) {
-            snapshots.add(newValue);
+        if (!snapshots.contains(newValue.getSnapshot())) {
+            snapshots.add(newValue.getSnapshot());
         }
     }
 
-    void registerRestarting(final SnapshotProvider provider) {
+    void registerRestarting(final EscalationProvider provider) {
         provider.stateProperty().addListener(new ChangeListener<Worker.State>() {
 
             @Override
@@ -169,7 +171,7 @@ public final class EscalationsPresenter implements EscalationsPresenterBindings 
     }
 
     void deactivateEscalationService(String scriptName) {
-        SnapshotProvider snapshot = this.runningServices.get(scriptName);
+        EscalationProvider snapshot = this.runningServices.get(scriptName);
         if(snapshot == null)
             return;
         snapshot.cancel();

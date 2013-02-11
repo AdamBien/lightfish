@@ -35,6 +35,7 @@ import javax.annotation.Resource;
 import javax.ejb.*;
 import javax.enterprise.inject.Instance;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.lightfish.business.escalation.entity.Escalation;
 import org.lightfish.presentation.publication.escalation.EscalationWindow;
 import org.lightfish.presentation.publication.escalation.Escalations;
 
@@ -48,7 +49,7 @@ public class SnapshotEventBroker {
 
     private ConcurrentLinkedQueue<BrowserWindow> browsers = new ConcurrentLinkedQueue<>();
     private ConcurrentLinkedQueue<BrowserWindow> escalationBrowsers = new ConcurrentLinkedQueue<>();
-    private ConcurrentHashMap<String, Snapshot> escalations = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, Escalation> escalations = new ConcurrentHashMap<>();
     @Inject
     Log LOG;
     @Inject
@@ -88,8 +89,8 @@ public class SnapshotEventBroker {
         }
     }
 
-    public void onNewEscalation(@Observes @Severity(Severity.Level.ESCALATION) Snapshot escalated) {
-        this.escalations.put(escalated.getEscalationChannel(), escalated);
+    public void onNewEscalation(@Observes @Severity(Severity.Level.ESCALATION) Escalation escalated) {
+        this.escalations.put(escalated.getChannel(), escalated);
     }
 
     @Timeout
@@ -98,7 +99,7 @@ public class SnapshotEventBroker {
             String channel = browserWindow.getChannel();
             try {
                 if (channel != null && !channel.isEmpty()) {
-                    Snapshot snapshot = this.escalations.get(channel);
+                    Escalation snapshot = this.escalations.get(channel);
 
                     if (snapshot != null) {
                         send(browserWindow, snapshot);
@@ -122,6 +123,12 @@ public class SnapshotEventBroker {
     void send(BrowserWindow browserWindow, Snapshot snapshot) {
         Writer writer = browserWindow.getWriter();
         serializer.serialize(snapshot, writer);
+        browserWindow.send();
+    }
+    
+    void send(BrowserWindow browserWindow, Escalation escalation) {
+        Writer writer = browserWindow.getWriter();
+        serializer.serialize(escalation, writer);
         browserWindow.send();
     }
 

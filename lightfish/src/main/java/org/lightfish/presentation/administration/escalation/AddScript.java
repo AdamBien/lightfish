@@ -37,6 +37,7 @@ public class AddScript{
     
     private String scriptName;
     private String content;
+    private String message;
 
     public String getScriptName() {
         return scriptName;
@@ -53,11 +54,21 @@ public class AddScript{
     public void setContent(String content) {
         this.content = content;
     }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+    
     
     public String save(){
         Script script = new Script();
         script.setName(scriptName);
         script.setContent(content);
+        script.setMessage(message);
         script.setActive(true);
         scriptStore.save(script);
         

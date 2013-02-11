@@ -27,6 +27,8 @@ public class Script {
     private String name;
     @Lob
     private String content;
+    @Lob
+    private String message;
     
     @XmlElement(defaultValue="true")
     private boolean active;
@@ -57,6 +59,14 @@ public class Script {
         this.content = script;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+    
     public boolean isActive() {
         return active;
     }
