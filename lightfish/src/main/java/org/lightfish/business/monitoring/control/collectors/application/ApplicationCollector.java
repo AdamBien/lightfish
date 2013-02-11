@@ -2,7 +2,6 @@ package org.lightfish.business.monitoring.control.collectors.application;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ForkJoinPool;
 import java.util.logging.Logger;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -11,9 +10,8 @@ import org.lightfish.business.monitoring.control.SnapshotProvider;
 import org.lightfish.business.monitoring.control.collectors.AbstractRestDataCollector;
 import org.lightfish.business.monitoring.control.collectors.DataCollector;
 import org.lightfish.business.monitoring.control.collectors.DataPoint;
-import org.lightfish.business.monitoring.control.collectors.EJBExecutorService;
-import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionAction;
 import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionActionBehaviour;
+import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionExecutor;
 import org.lightfish.business.monitoring.control.collectors.SnapshotDataCollector;
 import org.lightfish.business.monitoring.entity.Application;
 
@@ -32,7 +30,7 @@ public class ApplicationCollector extends AbstractRestDataCollector<List<Applica
     @Inject
     Instance<Boolean> parallelDataCollection;
     @Inject
-    EJBExecutorService forkPool;
+    ParallelDataCollectionExecutor parallelExecutor;
 
     @Override
     public DataPoint<List<Application>> collect() throws Exception {
@@ -75,15 +73,8 @@ public class ApplicationCollector extends AbstractRestDataCollector<List<Applica
         collectors.addAll(applicationCollectors);
 
         List<Application> applications = new ArrayList<>(collectors.size());
-
-        ParallelDataCollectionAction dataCollectionAction =
-                new ParallelDataCollectionAction(
-                collectors, new DataCollectionBehaviour(applications));
-        forkPool.invoke(dataCollectionAction);
-
-        if (dataCollectionAction.getThrownException() != null) {
-            throw dataCollectionAction.getThrownException();
-        }
+        
+        parallelExecutor.execute(new DataCollectionBehaviour(applications), collectors);
 
         return applications;
     }

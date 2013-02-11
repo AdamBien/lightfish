@@ -2,16 +2,14 @@ package org.lightfish.business.monitoring.control.collectors.resources;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ForkJoinPool;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONException;
 import org.lightfish.business.monitoring.control.collectors.AbstractRestDataCollector;
 import org.lightfish.business.monitoring.control.collectors.DataCollector;
 import org.lightfish.business.monitoring.control.collectors.DataPoint;
-import org.lightfish.business.monitoring.control.collectors.EJBExecutorService;
-import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionAction;
 import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionActionBehaviour;
+import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionExecutor;
 import org.lightfish.business.monitoring.control.collectors.SnapshotDataCollector;
 import org.lightfish.business.monitoring.entity.ConnectionPool;
 
@@ -29,7 +27,7 @@ public class ResourceCollector extends AbstractRestDataCollector<List<Connection
     @Inject
     Instance<Boolean> parallelDataCollection;
     @Inject
-    EJBExecutorService forkPool;
+    ParallelDataCollectionExecutor parallelExecutor;
 
     @Override
     public DataPoint<List<ConnectionPool>> collect() throws Exception {
@@ -68,15 +66,8 @@ public class ResourceCollector extends AbstractRestDataCollector<List<Connection
 
         List<ConnectionPool> resources = new ArrayList<>(collectors.size());
 
-        ParallelDataCollectionAction dataCollectionAction =
-                new ParallelDataCollectionAction(
-                collectors, new DataCollectionBehaviour(resources));
-        forkPool.invoke(dataCollectionAction);
-
-        if (dataCollectionAction.getThrownException() != null) {
-            throw dataCollectionAction.getThrownException();
-        }
-
+        parallelExecutor.execute(new DataCollectionBehaviour(resources), collectors);
+        
         return resources;
     }
 
