@@ -23,17 +23,14 @@ import org.lightfish.business.monitoring.entity.Snapshot;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.List;
-import java.util.concurrent.AbstractExecutorService;
-import java.util.concurrent.ForkJoinPool;
 import javax.enterprise.inject.Instance;
 import org.lightfish.business.authenticator.GlassfishAuthenticator;
 import java.util.logging.Logger;
 import org.lightfish.business.monitoring.control.collectors.DataCollector;
 import org.lightfish.business.monitoring.control.collectors.DataPoint;
 import org.lightfish.business.monitoring.control.collectors.DataPointToSnapshotMapper;
-import org.lightfish.business.monitoring.control.collectors.EJBExecutorService;
-import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionAction;
 import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionActionBehaviour;
+import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionExecutor;
 import org.lightfish.business.monitoring.control.collectors.SnapshotDataCollector;
 
 /**
@@ -62,7 +59,7 @@ public class SnapshotProvider {
     @Inject
     DataPointToSnapshotMapper mapper;
     @Inject
-    EJBExecutorService forkPool;
+    ParallelDataCollectionExecutor parallelExecutor;
 
     @PostConstruct
     public void initializeClient() {
@@ -103,15 +100,8 @@ public class SnapshotProvider {
         for (DataCollector collector : dataCollectors) {
             dataCollectorList.add(collector);
         }
-
-        ParallelDataCollectionAction dataCollectionAction =
-                new ParallelDataCollectionAction(
-                dataCollectorList, new DataCollectionBehaviour(mapper, snapshot));
-        forkPool.invoke(dataCollectionAction);
-
-        if (dataCollectionAction.getThrownException() != null) {
-            throw dataCollectionAction.getThrownException();
-        }
+        
+        parallelExecutor.execute(new DataCollectionBehaviour(mapper, snapshot), dataCollectorList);
 
         return snapshot;
     }

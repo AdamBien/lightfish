@@ -1,65 +1,40 @@
 package org.lightfish.business.monitoring.control.collectors;
 
-import java.util.List;
-import java.util.concurrent.RecursiveAction;
+import java.io.Serializable;
+import java.util.concurrent.Future;
+import java.util.logging.Logger;
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
+import javax.ejb.Stateful;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 /**
  *
  * @author Rob Veldpaus
  */
-public class ParallelDataCollectionAction extends RecursiveAction {
-
-    private ParallelDataCollectionActionBehaviour behaviour;
-    private List<DataCollector> dataCollectors;
-    private int threshold = 1;
+@Stateless
+public class ParallelDataCollectionAction implements Serializable{
+    
+    private static final Logger LOG = Logger.getLogger(ParallelDataCollectionAction.class.getName());
+    transient 
     private Exception thrownException = null;
-
-    public ParallelDataCollectionAction(List<DataCollector> dataCollectors, ParallelDataCollectionActionBehaviour behaviour) {
-        this.dataCollectors = dataCollectors;
-        this.behaviour = behaviour;
-    }
-
-    @Override
-    protected void compute() {
-        if (this.dataCollectors.size() <= threshold) {
-            computeDirectly();
-            return;
-        }
-        int middleIndex = dataCollectors.size() / 2;
-        ParallelDataCollectionAction firstHalf =
-                new ParallelDataCollectionAction(dataCollectors.subList(0, middleIndex), behaviour);
-        ParallelDataCollectionAction secondHalf =
-                new ParallelDataCollectionAction(dataCollectors.subList(middleIndex, dataCollectors.size()), behaviour);
-        invokeAll(firstHalf, secondHalf);
-        if (firstHalf.thrownException != null) {
-            thrownException = firstHalf.thrownException;
-        }
-
-        if (secondHalf.thrownException != null) {
-            thrownException = secondHalf.thrownException;
-        }
-    }
-
-    private void computeDirectly() {
+    
+    @Asynchronous
+    public <TYPE> Future<DataPoint<TYPE>> compute(DataCollector<TYPE> collector){
         try {
-            for (DataCollector collector : dataCollectors) {
-                DataPoint dataPoint = collector.collect();
-                behaviour.perform(dataPoint);
-            }
+            LOG.finer("Starting data collection for " + collector);
+            DataPoint<TYPE> dataPoint = collector.collect();
+            return new AsyncResult<>(dataPoint);
         } catch (Exception ex) {
             thrownException = ex;
         }
+        return new AsyncResult<>(null);
     }
 
     public Exception getThrownException() {
         return thrownException;
     }
-
-    public int getThreshold() {
-        return threshold;
-    }
-
-    public void setThreshold(int threshold) {
-        this.threshold = threshold;
-    }
+    
 }
