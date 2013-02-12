@@ -1,11 +1,8 @@
 package org.lightfish.presentation.publication.escalation;
 
-import org.lightfish.presentation.publication.escalation.CometEscalator;
-import org.junit.AfterClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import static org.hamcrest.CoreMatchers.*;
 
 /**
