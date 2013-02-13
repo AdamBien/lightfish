@@ -37,7 +37,8 @@ public class AddScript{
     
     private String scriptName;
     private String content;
-    private String message;
+    private String basicMessage;
+    private String richMessage;
 
     public String getScriptName() {
         return scriptName;
@@ -55,27 +56,38 @@ public class AddScript{
         this.content = content;
     }
 
-    public String getMessage() {
-        return message;
+    public String getBasicMessage() {
+        return basicMessage;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setBasicMessage(String basicMessage) {
+        this.basicMessage = basicMessage;
     }
+
+    public String getRichMessage() {
+        return richMessage;
+    }
+
+    public void setRichMessage(String richMessage) {
+        this.richMessage = richMessage;
+    }
+
+
     
     
     public String save(){
         Script script = new Script();
         script.setName(scriptName);
         script.setContent(content);
-        script.setMessage(message);
+        script.setBasicMessage(basicMessage);
+        script.setRichMessage(richMessage);
         script.setActive(true);
         scriptStore.save(script);
         
         scriptName = null;
         content = null;
         
-        return "scripts?faces-redirect=true";
+        return "/escalation/configuration?faces-redirect=true";
     }
     
 }

@@ -30,20 +30,28 @@
                     <label class="control-label">Content</label>
                     <div class="controls">
                         <h:inputTextarea value="#{editScript.script.content}" />
-                        <a href="help.xhtml" title="Scripting Reference" class="page-help">Scripting Reference</a>
+                        <a href="scriptReference.xhtml" title="Scripting Reference" class="page-help">Scripting Reference</a>
                     </div>
                 </div>  
                 <div class="control-group">
-                    <label class="control-label">Message</label>
+                    <label class="control-label">Basic Message</label>
                     <div class="controls">
-                        <h:inputTextarea value="#{editScript.script.message}" />
+                        <h:inputText value="#{editScript.script.basicMessage}" class="full-width" />
+                        <a href="messageReference.xhtml" title="Messaging Reference" class="page-help">Messaging Reference</a>
+                    </div>
+                </div> 
+                <div class="control-group">
+                    <label class="control-label">Rich Message</label>
+                    <div class="controls">
+                        <h:inputTextarea value="#{editScript.script.richMessage}" />
+                        <a href="messageReference.xhtml" title="Messaging Reference" class="page-help">Messaging Reference</a>
                     </div>
                 </div>  
                 <div class="form-actions">
                     <div class="btn-toolbar form-btn-toolbar">
                         <div class="btn-group">
                             <h:commandButton value="Update" action="#{editScript.update}"  class="btn btn-primary"/> 
-                            <h:button value="Cancel" outcome="scripts?faces-redirect=true"  class="btn"/> 
+                            <h:button value="Cancel" outcome="/escalation/configuration?faces-redirect=true"  class="btn"/> 
                         </div>
                     </div>
                 </div>    

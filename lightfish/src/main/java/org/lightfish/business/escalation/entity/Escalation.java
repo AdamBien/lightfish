@@ -14,7 +14,8 @@ import org.lightfish.business.monitoring.entity.Snapshot;
 public class Escalation {
 
     private String channel;
-    private String message;
+    private String basicMessage;
+    private String richMessage;
     private Snapshot snapshot;
 
     public String getChannel() {
@@ -25,12 +26,20 @@ public class Escalation {
         this.channel = channel;
     }
 
-    public String getMessage() {
-        return message;
+    public String getBasicMessage() {
+        return basicMessage;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setBasicMessage(String basicMessage) {
+        this.basicMessage = basicMessage;
+    }
+
+    public String getRichMessage() {
+        return richMessage;
+    }
+
+    public void setRichMessage(String richMessage) {
+        this.richMessage = richMessage;
     }
 
     public Snapshot getSnapshot() {
@@ -54,8 +63,13 @@ public class Escalation {
             return this;
         }
 
-        public Builder message(String message) {
-            escalation.message = message;
+        public Builder basicMessage(String message) {
+            escalation.basicMessage = message;
+            return this;
+        }
+        
+        public Builder richMessage(String message) {
+            escalation.richMessage = message;
             return this;
         }
 

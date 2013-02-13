@@ -31,6 +31,8 @@ public class SnapshotEscalator {
     @Inject
     ScriptStore scripting;
     @Inject
+    EscalationMessageProcessor messageProcessor;
+    @Inject
     @Severity(Severity.Level.ESCALATION)
     Event<Escalation> escalationSink;
 
@@ -65,9 +67,12 @@ public class SnapshotEscalator {
                             LOG.error("Cannot evaluate script: " + script, scriptException);
                         }
                         if (canBeConvertedToTrue(retVal)) {
+                            String basicMessage = messageProcessor.processBasicMessage(script.getBasicMessage(), current);
+                            String richMessage = messageProcessor.processRichMessage(script.getRichMessage(), current);
                             Escalation escalation = new Escalation.Builder()
                                     .channel(script.getName())
-                                    .message(script.getMessage())
+                                    .basicMessage(basicMessage)
+                                    .richMessage(richMessage)
                                     .snapshot(current)
                                     .build();
                             escalationSink.fire(escalation);

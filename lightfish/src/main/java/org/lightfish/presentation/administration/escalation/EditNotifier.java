@@ -15,23 +15,34 @@ limitations under the License.
 */
 package org.lightfish.presentation.administration.escalation;
 
-import java.util.List;
 
-import javax.enterprise.inject.Model;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
-import org.lightfish.business.escalation.boundary.ScriptingResource;
-import org.lightfish.business.escalation.control.ScriptStore;
-import org.lightfish.business.escalation.entity.Script;
+import javax.inject.Named;
+import org.lightfish.business.escalation.entity.Notifier;
+import org.lightfish.business.escalation.boundary.notification.NotifierStore;
 
 /**
  *
  * @author Rob Veldpaus
  */
-@Model
-public class Scripts {
-    @Inject ScriptStore scriptStore;
-    
-    public List<Script> getScripts(){
-        return scriptStore.scripts();
+@Named
+@Stateless
+public class EditNotifier{
+    @Inject NotifierStore notificationStore;
+    private Notifier notification;
+
+    public Notifier getNotification() {
+        return notification;
     }
+
+    public void setNotification(Notifier notification) {
+        this.notification = notification;
+    }
+
+    public String update(){
+        notificationStore.save(notification);
+        return "/escalation/configuration?faces-redirect=true";
+    }
+    
 }

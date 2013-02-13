@@ -392,7 +392,7 @@ lightfish.view = {
                     entries.each(function(){
                         var escalationKey = $(this).find("> key").text();
                         var escalationSnapshot = lightfish.view._parseSnapshot($(this).find("> value > snapshot"));
-                        var escalationMessage = $(this).find("> value > message").text();
+                        var escalationMessage = $(this).find("> value > basicMessage").text();
                         
                         var storedData = lightfish.view._data[escalationSnapshot.id];
                         if(storedData!=undefined){

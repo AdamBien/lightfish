@@ -62,6 +62,10 @@ textarea{
     height:200px;
 }
 
+input.full-width{
+    width:750px;
+}
+
 .control-label.script{
 }
 

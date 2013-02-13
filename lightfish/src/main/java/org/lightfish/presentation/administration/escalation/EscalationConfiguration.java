@@ -15,10 +15,12 @@ limitations under the License.
 */
 package org.lightfish.presentation.administration.escalation;
 
+import java.util.List;
 
-import javax.ejb.Stateless;
+import javax.enterprise.inject.Model;
 import javax.inject.Inject;
-import javax.inject.Named;
+import org.lightfish.business.escalation.boundary.notification.NotifierStore;
+import org.lightfish.business.escalation.entity.Notifier;
 import org.lightfish.business.escalation.control.ScriptStore;
 import org.lightfish.business.escalation.entity.Script;
 
@@ -26,25 +28,16 @@ import org.lightfish.business.escalation.entity.Script;
  *
  * @author Rob Veldpaus
  */
-@Named
-@Stateless
-public class EditScript{
+@Model
+public class EscalationConfiguration {
     @Inject ScriptStore scriptStore;
+    @Inject NotifierStore notifierStore;
     
-    private Script script;
-
-    public Script getScript() {
-        return script;
-    }
-
-    public void setScript(Script script) {
-        this.script = script;
+    public List<Script> getScripts(){
+        return scriptStore.scripts();
     }
     
-    public String update(){
-        scriptStore.save(script);
-        script = null;
-        return "/escalation/configuration?faces-redirect=true";
+    public List<Notifier> getNotifiers(){
+        return notifierStore.all();
     }
-    
 }

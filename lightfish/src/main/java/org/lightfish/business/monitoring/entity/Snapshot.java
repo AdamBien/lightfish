@@ -244,6 +244,10 @@ public class Snapshot {
             return this;
         }
 
+        public Builder pools(List<ConnectionPool> pools){
+            snapshot.pools = pools;
+            return this;
+        }
         
         public Snapshot build(){
             return this.snapshot;
