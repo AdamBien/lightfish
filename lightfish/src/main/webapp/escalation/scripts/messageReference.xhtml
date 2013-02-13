@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>LightFish - Escalation - Message Help</title>
+        <link rel="shortcut icon" href="../favicon.ico" />
+        <h:outputStylesheet library="css" name="bootstrap.css"  />
+        <h:outputStylesheet library="css" name="style.css"  />   
+    </h:head>
+    <h:body>
+        <div id="script-help">
+            <p>
+                Escalation messages can be used to inform the reason for the escalation.
+            </p>
+            <h4>Message types</h4>
+            <p>
+                There are two types of escalation messages. There is a basic message,
+                 and a rich message. The basic message is plain text and will be used
+                 when rich content cannot be displayed. The rich message uses a
+                 MarkDown processor, specifically <a href="https://github.com/sirthias/pegdown">PegDown</a>,
+                 to create an HTML message.
+            </p>
+            <h4>Variable Replacement</h4>
+            <p>
+                In your message you may want to reference specific values from the
+                the current data; to do this you add text like '\${propertyName}', 
+                where the property name is the property you want to access.
+                You have access to all the properties of the current snapshot that
+                caused the escalation. Here is a list of the property names:
+                <ul>
+                    <li>monitoringTime</li>
+                    <li>usedHeapSize</li>
+                    <li>threadCount</li>
+                    <li>peakThreadCount</li>
+                    <li>totalErrors</li>
+                    <li>currentThreadBusy</li>
+                    <li>committedTX</li>
+                    <li>rolledBackTX</li>
+                    <li>queuedConnections</li>
+                    <li>activeSessions</li>
+                    <li>expiredSessions</li>
+                </ul>
+            </p>
+        </div>
+    </h:body>
+</html>

@@ -391,7 +391,8 @@ lightfish.view = {
                     var entries = $rawData.find("escalations > entry");
                     entries.each(function(){
                         var escalationKey = $(this).find("> key").text();
-                        var escalationSnapshot = lightfish.view._parseSnapshot($(this).find("> value"));
+                        var escalationSnapshot = lightfish.view._parseSnapshot($(this).find("> value > snapshot"));
+                        var escalationMessage = $(this).find("> value > basicMessage").text();
                         
                         var storedData = lightfish.view._data[escalationSnapshot.id];
                         if(storedData!=undefined){
@@ -401,8 +402,8 @@ lightfish.view = {
                                 storedData.element.addClass("escalated");
                                 if(!lightfish.view.escalations._disableNotifications){
                                     lightfish.view.charts._addNotification(
-                                        escalationKey,"An escalation has been retrieved for " + escalationKey + 
-                                        ", see the Live Logs for more details.");
+                                        "Escalation Notification: " + escalationKey,
+                                        escalationMessage);
                                 }
                             }
                         }

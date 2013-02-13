@@ -53,7 +53,29 @@ public class ConnectionPool {
 
     public ConnectionPool() {
     }
-    
-    
 
+    public long getId() {
+        return id;
+    }
+
+    public String getJndiName() {
+        return jndiName;
+    }
+
+    public int getNumconnfree() {
+        return numconnfree;
+    }
+
+    public int getWaitqueuelength() {
+        return waitqueuelength;
+    }
+
+    public int getNumpotentialconnleak() {
+        return numpotentialconnleak;
+    }
+
+    public int getNumconnused() {
+        return numconnused;
+    }
+    
 }

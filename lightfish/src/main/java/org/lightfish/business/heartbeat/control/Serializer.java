@@ -23,6 +23,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.Writer;
 import java.util.Map;
+import org.lightfish.business.escalation.entity.Escalation;
 import org.lightfish.business.heartbeat.boundary.SnapshotEventBroker;
 import org.lightfish.presentation.publication.escalation.Escalations;
 
@@ -37,7 +38,7 @@ public class Serializer {
     @PostConstruct
     public void initialize(){
         try {
-            JAXBContext jaxb = JAXBContext.newInstance(Snapshot.class,Escalations.class);
+            JAXBContext jaxb = JAXBContext.newInstance(Snapshot.class,Escalations.class, Escalation.class);
             this.marshaller = jaxb.createMarshaller();
         } catch (JAXBException ex) {
             throw new IllegalStateException("Cannot initialize JAXB context " + ex);
@@ -45,22 +46,24 @@ public class Serializer {
     }
     
     public void serialize(Snapshot snapshot,Writer writer){
-        try {
-            synchronized(this.marshaller){
-                this.marshaller.marshal(snapshot, writer);
-            }
-        } catch (JAXBException ex) {
-            throw new RuntimeException("Cannot marshal Snapshot " + snapshot + " Reason: " +ex,ex);
-        }
+        serializeObject(snapshot, writer);
     }
     
-    public void serialize(Escalations snapshots,Writer writer){
+    public void serialize(Escalations escalations,Writer writer){
+        serializeObject(escalations, writer);
+    }
+    
+    public void serialize(Escalation escalation,Writer writer){
+        serializeObject(escalation, writer);
+    }
+    
+    private void serializeObject(Object obj,Writer writer){
         try {
             synchronized(this.marshaller){
-                this.marshaller.marshal(snapshots, writer);
+                this.marshaller.marshal(obj, writer);
             }
         } catch (JAXBException ex) {
-            throw new RuntimeException("Cannot marshal Snapshot " + snapshots + " Reason: " +ex,ex);
+            throw new RuntimeException("Cannot marshal object " + obj + " Reason: " +ex,ex);
         }
     }
 }

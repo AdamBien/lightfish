@@ -19,7 +19,8 @@ import java.util.List;
 
 import javax.enterprise.inject.Model;
 import javax.inject.Inject;
-import org.lightfish.business.escalation.boundary.ScriptingResource;
+import org.lightfish.business.escalation.boundary.notification.NotifierStore;
+import org.lightfish.business.escalation.entity.Notifier;
 import org.lightfish.business.escalation.control.ScriptStore;
 import org.lightfish.business.escalation.entity.Script;
 
@@ -28,10 +29,15 @@ import org.lightfish.business.escalation.entity.Script;
  * @author Rob Veldpaus
  */
 @Model
-public class Scripts {
+public class EscalationConfiguration {
     @Inject ScriptStore scriptStore;
+    @Inject NotifierStore notifierStore;
     
     public List<Script> getScripts(){
         return scriptStore.scripts();
+    }
+    
+    public List<Notifier> getNotifiers(){
+        return notifierStore.all(false);
     }
 }

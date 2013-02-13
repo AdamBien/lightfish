@@ -48,13 +48,8 @@ public class Snapshot {
     private int queuedConnections;
     private int activeSessions;
     private int expiredSessions;
-    private boolean escalated;
-    private String escalationReason;
     private String deadlockedThreads;
 
-    @XmlTransient @Transient
-    private String escalationChannel;
-    
     @OneToMany(cascade= CascadeType.PERSIST)
     private List<ConnectionPool> pools;
 
@@ -190,32 +185,6 @@ public class Snapshot {
     public void setApps(List<Application> apps) {
         this.apps = apps;
     }
-    
-    
-
-    public String getEscalationChannel() {
-        return escalationChannel;
-    }
-
-    public void setEscalationChannel(String escalationChannel) {
-        this.escalationChannel = escalationChannel;
-    }
-
-    public boolean isEscalated() {
-        return escalated;
-    }
-
-    public void setEscalated(boolean escalated) {
-        this.escalated = escalated;
-    }
-
-    public String getEscalationReason() {
-        return escalationReason;
-    }
-
-    public void setEscalationReason(String escalationReason) {
-        this.escalationReason = escalationReason;
-    }
 
     public static class Builder{
         private Snapshot snapshot;
@@ -275,6 +244,10 @@ public class Snapshot {
             return this;
         }
 
+        public Builder pools(List<ConnectionPool> pools){
+            snapshot.pools = pools;
+            return this;
+        }
         
         public Snapshot build(){
             return this.snapshot;

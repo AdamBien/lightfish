@@ -4,6 +4,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.lightfish.business.escalation.entity.Escalation;
 import org.lightfish.business.monitoring.entity.Snapshot;
 
 /**
@@ -13,20 +14,20 @@ import org.lightfish.business.monitoring.entity.Snapshot;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class Escalations {
-    private Map<String, Snapshot> escalations;
+    private Map<String, Escalation> escalations;
 
     public Escalations() {
     }
 
-    public Escalations(Map<String, Snapshot> escalations) {
+    public Escalations(Map<String, Escalation> escalations) {
         this.escalations = escalations;
     }
 
-    public Map<String, Snapshot> getEscalations() {
+    public Map<String, Escalation> getEscalations() {
         return escalations;
     }
 
-    public void setEscalations(Map<String, Snapshot> escalations) {
+    public void setEscalations(Map<String, Escalation> escalations) {
         this.escalations = escalations;
     }
 }

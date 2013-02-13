@@ -19,8 +19,8 @@ package org.lightfish.presentation.administration.escalation;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.lightfish.business.escalation.control.ScriptStore;
-import org.lightfish.business.escalation.entity.Script;
+import org.lightfish.business.escalation.entity.Notifier;
+import org.lightfish.business.escalation.boundary.notification.NotifierStore;
 
 /**
  *
@@ -28,22 +28,20 @@ import org.lightfish.business.escalation.entity.Script;
  */
 @Named
 @Stateless
-public class EditScript{
-    @Inject ScriptStore scriptStore;
-    
-    private Script script;
+public class EditNotifier{
+    @Inject NotifierStore notificationStore;
+    private Notifier notification;
 
-    public Script getScript() {
-        return script;
+    public Notifier getNotification() {
+        return notification;
     }
 
-    public void setScript(Script script) {
-        this.script = script;
+    public void setNotification(Notifier notification) {
+        this.notification = notification;
     }
-    
+
     public String update(){
-        scriptStore.save(script);
-        script = null;
+        notificationStore.save(notification);
         return "/escalation/configuration?faces-redirect=true";
     }
     

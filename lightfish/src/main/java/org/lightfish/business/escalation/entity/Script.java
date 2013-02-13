@@ -4,7 +4,6 @@ import java.util.Objects;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -15,24 +14,26 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @Entity
 @NamedQueries({
-    @NamedQuery(name=Script.findAll,query="Select s from Script s"),
-    @NamedQuery(name=Script.findAllActive,query="Select s from Script s where s.active = true")
+    @NamedQuery(name = Script.findAll, query = "Select s from Script s"),
+    @NamedQuery(name = Script.findAllActive, query = "Select s from Script s where s.active = true")
 })
 public class Script {
+
     public static final String PREFIX = "org.lightfish.business.scripting.entity.";
     public static final String findAll = PREFIX + "findAll";
     public static final String findAllActive = PREFIX + "findAllActive";
-    
     @Id
     private String name;
     @Lob
     private String content;
-    
-    @XmlElement(defaultValue="true")
+    private String basicMessage;
+    @Lob
+    private String richMessage;
+    @XmlElement(defaultValue = "true")
     private boolean active;
-    
+
     public Script() {
-        this.content ="false";
+        this.content = "false";
     }
 
     public Script(String name, String script, boolean active) {
@@ -55,6 +56,22 @@ public class Script {
 
     public void setContent(String script) {
         this.content = script;
+    }
+
+    public String getBasicMessage() {
+        return basicMessage;
+    }
+
+    public void setBasicMessage(String basicMessage) {
+        this.basicMessage = basicMessage;
+    }
+
+    public String getRichMessage() {
+        return richMessage;
+    }
+
+    public void setRichMessage(String richMessage) {
+        this.richMessage = richMessage;
     }
 
     public boolean isActive() {
@@ -94,6 +111,4 @@ public class Script {
         }
         return true;
     }
-
-    
 }

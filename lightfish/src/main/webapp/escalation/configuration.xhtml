@@ -11,20 +11,33 @@
         <div class="row">
             <h:form class="form-horizontal">
                 <legend>Scripts</legend>
-                <ui:repeat value="#{scripts.scripts}" var="script">
+                <ui:repeat value="#{escalationConfiguration.scripts}" var="script">
                     <div class="control-group">
                         <label class="control-label script #{script.active?'active':'inactive'}">#{script.name}</label>
                         <div class="controls">
-                            <h:button class="btn" outcome="edit.xhtml?script=#{script.name}" value="Edit" />
+                            <h:button class="btn" outcome="scripts/edit.xhtml?script=#{script.name}" value="Edit" />
                         </div>
                     </div>  
                 </ui:repeat>
                 <div class="control-group">
                     <div class="controls">
-                        <h:button class="btn" outcome="add.xhtml" value="Add" />    
+                        <h:button class="btn" outcome="scripts/add.xhtml" value="Add Script" />    
                     </div>
                 </div>
-
+                <legend>Notifiers</legend>
+                <ui:repeat value="#{escalationConfiguration.notifiers}" var="notifier">
+                    <div class="control-group">
+                        <label class="control-label">#{notifier.name}</label>
+                        <div class="controls">
+                            <h:button class="btn" outcome="notifier/edit.xhtml?notifier=#{notifier.name}" value="Edit" />
+                        </div>
+                    </div>  
+                </ui:repeat>
+                <div class="control-group">
+                    <div class="controls">
+                        <h:button class="btn" outcome="notifier/add.xhtml" value="Add Notifier" />    
+                    </div>
+                </div>
             </h:form>
         </div>
     </ui:define>

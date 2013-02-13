@@ -35,6 +35,7 @@ public class ParallelDataCollectionExecutor {
                 if(action.getThrownException()!=null){
                     throw action.getThrownException();
                 }
+                continue;
             }
             behaviour.perform(dataPoint);
         }
