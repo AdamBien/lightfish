@@ -4,34 +4,38 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:p="http://primefaces.prime.com.tr/ui"
-                template="/templates/main.xhtml">
-    <ui:define name="windowTitle">Escalation - Add Script</ui:define>
+                template="/templates/main.xhtml"
+                xmlns:f="http://java.sun.com/jsf/core">
+    <ui:define name="windowTitle">Escalation - Add Notifier</ui:define>
     <ui:define name="content">
         <div class="row">
             <h:form class="form-horizontal">
-                <legend>Add a script</legend>
+                <legend>Add Notifier</legend>
 
+                <h:messages />
+                
                 <div class="control-group">
                     <label class="control-label">Name</label>
                     <div class="controls">
-                        <h:inputText value="#{addScript.scriptName}" />
+                        <h:inputText value="#{addNotifier.name}" />
                     </div>
                 </div>  
 
                 <div class="control-group">
-                    <label class="control-label">Content</label>
+                    <label class="control-label">Transmitter Type</label>
                     <div class="controls">
-                        <h:inputTextarea value="#{addScript.content}" />
-                        <a href="help.xhtml" title="Scripting Reference" class="page-help">Scripting Reference</a>
-
+                        <h:selectOneMenu value="#{addNotifier.notifierId}">
+                            <f:selectItems value="#{addNotifier.transmitterTypes}" var="type"
+                                           itemValue="#{type.id}" itemLabel="#{type.name}" />
+                        </h:selectOneMenu>
                     </div>
                 </div>  
 
                 <div class="form-actions">
                     <div class="btn-toolbar form-btn-toolbar">
                         <div class="btn-group">
-                            <h:commandButton value="Save" action="#{addScript.save}"  class="btn btn-primary"/> 
-                            <h:button value="Cancel" outcome="scripts?faces-redirect=true"  class="btn"/> 
+                            <h:commandButton value="Configure" action="#{addNotifier.configure}"  class="btn btn-primary"/> 
+                            <h:commandButton value="Cancel" action="#{addNotifier.cancel}" immediate="true" class="btn"/> 
                         </div>
                     </div>
                 </div>     

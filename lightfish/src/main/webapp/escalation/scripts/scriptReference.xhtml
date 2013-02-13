@@ -9,9 +9,6 @@
         <link rel="shortcut icon" href="../favicon.ico" />
         <h:outputStylesheet library="css" name="bootstrap.css"  />
         <h:outputStylesheet library="css" name="style.css"  />   
-        <f:metadata>
-            <f:viewParam name="script" value="#{editScript.script}" converter="scriptConverter"/>
-        </f:metadata>
     </h:head>
     <h:body>
         <div id="script-help">
@@ -45,9 +42,6 @@ if((current.totalErrors - previous.totalErrors) == 0){
                     <li>int queuedConnections</li>
                     <li>int activeSessions</li>
                     <li>int expiredSessions</li>
-                    <li>boolean escalated</li>
-                    <li>String escalationReason</li>
-                    <li>String escalationChannel</li>
                 </ul>
 
 

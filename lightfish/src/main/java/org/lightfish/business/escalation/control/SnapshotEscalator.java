@@ -10,6 +10,7 @@ import javax.script.Bindings;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import org.lightfish.business.escalation.entity.Escalation;
 import org.lightfish.business.escalation.entity.Script;
 import org.lightfish.business.logging.Log;
 import org.lightfish.business.monitoring.boundary.Severity;
@@ -30,8 +31,10 @@ public class SnapshotEscalator {
     @Inject
     ScriptStore scripting;
     @Inject
+    EscalationMessageProcessor messageProcessor;
+    @Inject
     @Severity(Severity.Level.ESCALATION)
-    Event<Snapshot> escalationSink;
+    Event<Escalation> escalationSink;
 
     @PostConstruct
     public void initScripting() {
@@ -64,9 +67,15 @@ public class SnapshotEscalator {
                             LOG.error("Cannot evaluate script: " + script, scriptException);
                         }
                         if (canBeConvertedToTrue(retVal)) {
-                            current.setEscalated(true);
-                            current.setEscalationChannel(script.getName());
-                            escalationSink.fire(current);
+                            String basicMessage = messageProcessor.processBasicMessage(script.getBasicMessage(), current);
+                            String richMessage = messageProcessor.processRichMessage(script.getRichMessage(), current);
+                            Escalation escalation = new Escalation.Builder()
+                                    .channel(script.getName())
+                                    .basicMessage(basicMessage)
+                                    .richMessage(richMessage)
+                                    .snapshot(current)
+                                    .build();
+                            escalationSink.fire(escalation);
                             LOG.info("Escalated: " + script + " for snapshot: " + current + " and recent: " + recent);
                         }
                     }

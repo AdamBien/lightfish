@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:body>
+        <h:outputScript library="js" name="escalation/notifier/email.js" />
+        <div class="control-group">
+            <label class="control-label">Known Providers</label>
+            <div class="controls">
+                <a href="javascript:void(0)" id="provider_gmail">GMail</a>
+            </div>
+        </div> 
+        <div class="control-group">
+            <label class="control-label">Protocol</label>
+            <div class="controls">
+                <h:selectOneMenu id="protocol" value="#{transmitterConfiguration.protocol}">
+                    <f:selectItem itemValue="SMTP" />
+                    <f:selectItem itemValue="SMTPS" />
+                    <f:selectItem itemValue="TLS" />
+                </h:selectOneMenu>
+            </div>
+        </div>  
+        <div class="control-group">
+            <label class="control-label">Host</label>
+            <div class="controls">
+                <h:inputText id="host" value="#{transmitterConfiguration.host}" />
+            </div>
+        </div>  
+        <div class="control-group">
+            <label class="control-label">Port</label>
+            <div class="controls">
+                <h:inputText id="port" value="#{transmitterConfiguration.port}" />
+            </div>
+        </div>  
+        <div class="control-group">
+            <label class="control-label">From Address</label>
+            <div class="controls">
+                <h:inputText id="from" value="#{transmitterConfiguration.from}" />
+            </div>
+        </div>  
+        <div class="control-group">
+            <label class="control-label">To Addresses</label>
+            <div class="controls">
+                <h:inputText id="to" value="#{transmitterConfiguration.to}" />
+            </div>
+        </div>  
+        <div class="control-group">
+            <label class="control-label">Authorization Required</label>
+            <div class="controls">
+                <h:selectBooleanCheckbox id="authorization" value="#{transmitterConfiguration.authorizationRequired}" />
+            </div>
+        </div>  
+        <div class="control-group">
+            <label class="control-label">User Name</label>
+            <div class="controls">
+                <h:inputText id="user" value="#{transmitterConfiguration.userName}" />
+            </div>
+        </div>  
+        <div class="control-group">
+            <label class="control-label">Password</label>
+            <div class="controls">
+                <h:inputSecret id="password" value="#{transmitterConfiguration.password}" />
+            </div>
+        </div>  
+        <em>Note: This transmitter uses the rich message in the body of the message.</em>
+    </h:body>
+</html>
+
