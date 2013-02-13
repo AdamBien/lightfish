@@ -82,11 +82,13 @@ public class AddNotifier implements Serializable {
     }
 
     public List<Transmitter> getTransmitterTypes() {
-        List<Transmitter> notifierList = new ArrayList<>();
-        for (Transmitter notifier : transmitterInstance) {
-            notifierList.add(notifier);
+        List<Transmitter> transmitters = new ArrayList<>();
+        for (Transmitter transmitter : transmitterInstance) {
+            if(!transmitter.isSystem()){
+                transmitters.add(transmitter);
+            }
         }
-        Collections.sort(notifierList, new Comparator<Transmitter>() {
+        Collections.sort(transmitters, new Comparator<Transmitter>() {
             @Override
             public int compare(Transmitter o1, Transmitter o2) {
                 if (o1.getName() == null && o2.getName() != null) {
@@ -95,7 +97,7 @@ public class AddNotifier implements Serializable {
                 return o1.getName().compareTo(o2.getName());
             }
         });
-        return notifierList;
+        return transmitters;
     }
 
     public String configure() {

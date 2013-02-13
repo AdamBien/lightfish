@@ -7,8 +7,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import org.lightfish.business.escalation.entity.Script;
-import org.lightfish.business.monitoring.entity.Snapshot;
 
 /**
  *
@@ -20,11 +18,9 @@ public class NotifierStore {
     @PersistenceContext
     EntityManager em;
 
-    public List<Notifier> all() {
-        CriteriaBuilder cb = this.em.getCriteriaBuilder();
-        CriteriaQuery q = cb.createQuery();
-        CriteriaQuery<Notifier> select = q.select(q.from(Notifier.class));
-        return this.em.createQuery(select).getResultList();
+    public List<Notifier> all(boolean includeSystem) {
+        String queryName = includeSystem?"notifier.all":"notifier.nonsystem";
+        return em.createNamedQuery(queryName, Notifier.class).getResultList();
     }
 
     public Notifier save(Notifier configuration) {

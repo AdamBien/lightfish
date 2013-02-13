@@ -32,18 +32,24 @@ import org.lightfish.business.escalation.entity.Escalation;
 @TransmitterType("email")
 public class EmailTransmitter implements Transmitter<EmailTransmitterConfiguration> {
 
-    @Inject Logger LOG;
+    @Inject
+    Logger LOG;
 
     @Override
     public String getId() {
         return "email";
     }
-    
+
     @Override
     public String getName() {
         return "E-Mail";
     }
-    
+
+    @Override
+    public boolean isSystem() {
+        return false;
+    }
+
     @Override
     public void send(EmailTransmitterConfiguration configuration, Escalation escalation) {
         Properties props = createProperties(configuration);
@@ -96,7 +102,7 @@ public class EmailTransmitter implements Transmitter<EmailTransmitterConfigurati
                 props.put("mail.smtp.starttls.enable", true);
                 break;
         }
-        
+
         return props;
     }
 
@@ -148,9 +154,6 @@ public class EmailTransmitter implements Transmitter<EmailTransmitterConfigurati
                 emailTemplate = "";
             }
         }
-        return emailTemplate ;
+        return emailTemplate;
     }
-
-
-    
 }

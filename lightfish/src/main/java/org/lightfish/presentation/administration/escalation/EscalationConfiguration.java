@@ -38,6 +38,6 @@ public class EscalationConfiguration {
     }
     
     public List<Notifier> getNotifiers(){
-        return notifierStore.all();
+        return notifierStore.all(false);
     }
 }

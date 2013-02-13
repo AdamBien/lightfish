@@ -66,6 +66,7 @@ public class CometTransmitterDelegate {
                     .name("comet-escalator")
                     .transmitterId("comet")
                     .configuration(new CometTransmitterConfiguration())
+                    .system(true)
                     .build();
             notificationStore.save(configuration);
         }

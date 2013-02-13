@@ -31,7 +31,7 @@ public class EscalationNotificationBroker {
     @Inject AsyncTransmitterService asyncService;
     
     public void onEscalationBrowserRequest(@Observes Escalation escalation) {
-        for(Notifier notifier: notifierStore.all()){
+        for(Notifier notifier: notifierStore.all(true)){
             try {
                 LOG.fine("Sending notification to " + notifier);
                 

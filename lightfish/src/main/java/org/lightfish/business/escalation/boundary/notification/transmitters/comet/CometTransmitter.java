@@ -25,10 +25,17 @@ public class CometTransmitter  implements Transmitter<CometTransmitterConfigurat
     public String getName() {
         return "COMET (AJAX)";
     }
+    
+    @Override
+    public boolean isSystem() {
+        return true;
+    }
 
     @Override
     public void send(CometTransmitterConfiguration configuration, Escalation escalation) {
         delegate.addEscalation(escalation);
     }
+
+
     
 }
