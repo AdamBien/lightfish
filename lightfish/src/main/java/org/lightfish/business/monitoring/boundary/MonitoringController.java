@@ -16,6 +16,7 @@
 package org.lightfish.business.monitoring.boundary;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import org.lightfish.business.logging.Log;
 import org.lightfish.business.monitoring.control.SnapshotProvider;
 import org.lightfish.business.monitoring.entity.Snapshot;
@@ -35,6 +36,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.Map;
+import org.lightfish.business.monitoring.entity.Application;
+import org.lightfish.business.monitoring.entity.ConnectionPool;
 
 /**
  *
@@ -112,6 +116,8 @@ public class MonitoringController {
         int queuedConnections = 0;
         int activeSessions = 0;
         int expiredSessions = 0;
+        List<Application> applications = null;
+        Map<String, ConnectionPool> pools = new HashMap<>();
         for (Snapshot current : snapshots) {
             usedHeapSize += current.getUsedHeapSize();
             threadCount += current.getThreadCount();
@@ -123,6 +129,21 @@ public class MonitoringController {
             queuedConnections += current.getQueuedConnections();
             activeSessions += current.getActiveSessions();
             expiredSessions += current.getExpiredSessions();
+            applications = current.getApps();
+            
+            for(ConnectionPool currentPool: current.getPools()){
+                ConnectionPool combinedPool = pools.get(currentPool.getJndiName());
+                if(combinedPool==null){
+                    combinedPool = new ConnectionPool();
+                    combinedPool.setJndiName(currentPool.getJndiName());
+                    pools.put(currentPool.getJndiName(), combinedPool);
+                }
+                combinedPool.setNumconnfree(currentPool.getNumconnfree() + combinedPool.getNumconnfree());
+                combinedPool.setNumconnused(currentPool.getNumconnused() + combinedPool.getNumconnused());
+                combinedPool.setNumpotentialconnleak(currentPool.getNumpotentialconnleak() + combinedPool.getNumpotentialconnleak());
+                combinedPool.setWaitqueuelength(currentPool.getWaitqueuelength() + combinedPool.getWaitqueuelength());
+            }
+            
         }
 
         Snapshot combined = new Snapshot.Builder()
@@ -139,6 +160,9 @@ public class MonitoringController {
                 .instanceName(COMBINED_SNAPSHOT_NAME)
                 .build();
 
+        combined.setApps(applications);
+        combined.setPools(new ArrayList(pools.values()));
+        
         return combined;
     }
 

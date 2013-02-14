@@ -15,6 +15,7 @@ limitations under the License.
 */
 package org.lightfish.business.configuration.boundary;
 
+import java.util.Arrays;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.enterprise.inject.Produces;
@@ -65,6 +66,10 @@ public class Configurator {
     public String[] getStringArray(InjectionPoint ip){
         return asArray(getString(ip));
     }
+    
+    public String[] getStringArray(String key){
+        return asArray(getValue(key));
+    }
 
     public String getValue(String key){
         return this.configuration.get(key);
@@ -93,5 +98,16 @@ public class Configurator {
 
     public void setValue(String key, String value) {
         this.configuration.put(key, value);
+    }
+    
+    public void setArrayValue(String key, String[] values) {
+        StringBuilder sb = new StringBuilder();
+        for(String value:values){
+            if(sb.length()!=0){
+                sb.append(",");
+            }
+            sb.append(value);
+        }
+        this.configuration.put(key, sb.toString());
     }
 }

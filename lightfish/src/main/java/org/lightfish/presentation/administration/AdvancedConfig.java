@@ -46,12 +46,12 @@ public class AdvancedConfig {
     
     @NotNull(message="Instance may not be null")
     @Size(min=1, message="Instance must be set")
-    public String getInstance(){
-        return this.configurator.getValue(SERVER_INSTANCES);
+    public String[] getInstances(){
+        return this.configurator.getStringArray(SERVER_INSTANCES);
     }
     
-    public void setInstance(String instance){
-        this.configurator.setValue(SERVER_INSTANCES,instance);
+    public void setInstances(String[] instance){
+        this.configurator.setArrayValue(SERVER_INSTANCES,instance);
     }
     
     public Boolean getParallelDataCollection(){
