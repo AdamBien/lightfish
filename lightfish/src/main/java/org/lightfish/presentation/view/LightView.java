@@ -48,4 +48,7 @@ public class LightView {
         return snapshotProvider.fetchSnapshot(serverInstances.get()[0]);
     }
     
+    public String[] getMonitoredInstances(){
+        return serverInstances.get();
+    }
 }

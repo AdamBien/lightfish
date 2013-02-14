@@ -16,6 +16,7 @@
 package org.lightfish.business.monitoring.boundary;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import org.lightfish.business.logging.Log;
 import org.lightfish.business.monitoring.control.SnapshotProvider;
@@ -159,7 +160,6 @@ public class MonitoringController {
                 .usedHeapSize(usedHeapSize)
                 .instanceName(COMBINED_SNAPSHOT_NAME)
                 .build();
-
         combined.setApps(applications);
         combined.setPools(new ArrayList(pools.values()));
         
