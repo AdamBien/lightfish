@@ -14,10 +14,24 @@
                 <div class="control-group">
                     <label class="control-label">Instance</label>
                     <div class="controls">
-                        <h:selectManyCheckbox value="#{advancedConfig.instances}">
-                            <f:selectItems value="#{advancedConfig.serverList}" var="server"
-                                           itemLabel="#{server}"  itemValue="#{server}" />
-                        </h:selectManyCheckbox>
+                        <div class="server-instance-select">
+                            <h:selectManyCheckbox value="#{advancedConfig.instances}">
+                                <f:selectItems value="#{advancedConfig.serverList}" var="server"
+                                               itemLabel="#{server}"  itemValue="#{server}" />
+                            </h:selectManyCheckbox>
+                        </div>
+                        <script>
+                            $(function(){
+                                var checkboxes = jQuery('.server-instance-select input');
+                                checkboxes.remove();
+                                checkboxes.appendTo('.server-instance-select');
+                                checkboxes.wrap('<span />');
+                                checkboxes.each(function() {
+                                    jQuery(this).parent().append(jQuery('<label />').html(jQuery(this).val()).attr('for',this.id));
+                                });
+                                jQuery('.server-instance-select table').remove();
+                            });
+                        </script>
                         <span class="help-block">The server instance to monitor</span>
                     </div>
                 </div>                        
