@@ -25,12 +25,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.logging.Logger;
+import org.lightfish.business.monitoring.boundary.MonitoringController;
 
 /**
  *
  * @author Adam Bien, blog.adam-bien.com
  */
-@WebServlet(name = "TunguskaGate", urlPatterns = {"/live"}, asyncSupported = true)
+@WebServlet(name = "TunguskaGate", urlPatterns = {"/live/*"}, asyncSupported = true)
 public class TunguskaGate extends HttpServlet {
 
     @Inject
@@ -41,7 +42,16 @@ public class TunguskaGate extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         AsyncContext startAsync = request.startAsync();
-        events.fire(new BrowserWindow(startAsync));
+        String channel = extractChannel(request.getRequestURI());
+        if(channel==null||channel.trim().isEmpty()){
+            channel = MonitoringController.COMBINED_SNAPSHOT_NAME;
+        }
+        events.fire(new BrowserWindow(startAsync,channel));
         LOG.fine("Event sent");
+    }
+    
+    String extractChannel(String uri){
+        int lastIndexOf = uri.lastIndexOf("/");
+        return uri.substring(lastIndexOf+1);
     }
 }

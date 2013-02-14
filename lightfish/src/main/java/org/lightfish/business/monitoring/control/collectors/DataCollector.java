@@ -1,11 +1,11 @@
 package org.lightfish.business.monitoring.control.collectors;
 
-import javax.ejb.Asynchronous;
-
 /**
  *
  * @author Rob Veldpaus
  */
 public interface DataCollector<TYPE> {
+    String getServerInstance();
+    void setServerInstance(String serverInstance);
     public DataPoint<TYPE> collect() throws Exception;
 }

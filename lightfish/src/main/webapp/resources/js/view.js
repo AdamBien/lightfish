@@ -168,7 +168,7 @@ lightfish.view = {
     _data: new LogData({}),
     _snapshotPoll: function(){
         $.ajax({
-            url: lightfish.view.config.baseUri + "/live", 
+            url: lightfish.view.config.baseUri + "/live/", 
             success: function(rawData){
                 lightfish.view._snapshotPoll();
                 var data = lightfish.view._parseSnapshot(rawData);

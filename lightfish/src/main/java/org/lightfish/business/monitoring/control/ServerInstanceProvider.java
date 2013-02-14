@@ -30,8 +30,6 @@ public class ServerInstanceProvider {
     @Inject
     Instance<String> password;
     @Inject
-    Instance<String> serverInstance;
-    @Inject
     Instance<GlassfishAuthenticator> authenticator;
     private WebResource managementResource;
 
@@ -40,9 +38,9 @@ public class ServerInstanceProvider {
         this.client = Client.create();
     }
 
-    String getConfigRef() throws JSONException {
+    String getConfigRef(String instanceName) throws JSONException {
         this.managementResource = this.client.resource(getInstanceUri());
-        JSONObject serverResult = getJSONObject(serverInstance.get());
+        JSONObject serverResult = getJSONObject(instanceName);
         JSONObject extraProperties = serverResult.getJSONObject("extraProperties");
         JSONObject entity = extraProperties.getJSONObject("entity");
         String result = entity.getString("configRef");
@@ -58,16 +56,16 @@ public class ServerInstanceProvider {
         return getProtocol() + location.get() + "/management/domain/servers/server/";
     }
 
-    public ServerInstance fetchServerInstanceInfo() {
+    public ServerInstance fetchServerInstanceInfo(String instanceName) {
         authenticator.get().addAuthenticator(client, username.get(), password.get());
         String configRef = null;
         try {
-            configRef = getConfigRef();
+            configRef = getConfigRef(instanceName);
 
         } catch (Exception e) {
             throw new IllegalStateException("Cannot fetch domain information because of: " + e);
         }
-        return new ServerInstance.Builder().configRef(configRef).build();
+        return new ServerInstance.Builder().name(instanceName).configRef(configRef).build();
     }
 
     private String getProtocol() {

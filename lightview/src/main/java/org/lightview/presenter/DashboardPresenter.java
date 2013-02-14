@@ -131,8 +131,8 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     }
 
     String appendLive(String liveDataURL) {
-        if (!liveDataURL.endsWith("/live")) {
-            return liveDataURL + "/live";
+        if (!liveDataURL.endsWith("/live/")) {
+            return liveDataURL + "/live/";
         }
         return liveDataURL;
     }

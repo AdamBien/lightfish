@@ -39,20 +39,8 @@ import org.lightfish.business.monitoring.control.collectors.SnapshotDataCollecto
 public class SnapshotProvider {
 
     private static final Logger LOG = Logger.getLogger(SnapshotProvider.class.getName());
-    static final String RESOURCES = "resources";
-    private Client client;
-    @Inject
-    Instance<String> location;
-    @Inject
-    Instance<String> username;
-    @Inject
-    Instance<String> password;
-    @Inject
-    Instance<String> serverInstance;
     @Inject
     Instance<Boolean> parallelDataCollection;
-    @Inject
-    Instance<GlassfishAuthenticator> authenticator;
     @Inject
     @SnapshotDataCollector
     Instance<DataCollector> dataCollectors;
@@ -61,21 +49,14 @@ public class SnapshotProvider {
     @Inject
     ParallelDataCollectionExecutor parallelExecutor;
 
-    @PostConstruct
-    public void initializeClient() {
-        this.client = Client.create();
-    }
-
-    public Snapshot fetchSnapshot() throws Exception {
-        authenticator.get().addAuthenticator(client, username.get(), password.get());
-
+    public Snapshot fetchSnapshot(String instanceName) throws Exception {
         Snapshot snapshot = null;
         Date start = new Date();
 
         if (parallelDataCollection.get()) {
-            snapshot = parallelDataCollection();
+            snapshot = parallelDataCollection(instanceName);
         } else {
-            snapshot = serialDataCollection();
+            snapshot = serialDataCollection(instanceName);
         }
 
         long elapsed = new Date().getTime() - start.getTime();
@@ -85,25 +66,30 @@ public class SnapshotProvider {
 
     }
 
-    private Snapshot serialDataCollection() throws Exception {
+    private Snapshot serialDataCollection(String instanceName) throws Exception {
         Snapshot snapshot = new Snapshot.Builder().build();
-        for (DataCollector collector : dataCollectors) {
+        for (DataCollector collector : retrieveDataCollectorList(instanceName)) {
             DataPoint dataPoint = collector.collect();
             mapper.mapDataPointToSnapshot(dataPoint, snapshot);
         }
         return snapshot;
     }
 
-    private Snapshot parallelDataCollection() throws Exception {
+    private Snapshot parallelDataCollection(String instanceName) throws Exception {
         Snapshot snapshot = new Snapshot.Builder().build();
-        List<DataCollector> dataCollectorList = new ArrayList<>();
-        for (DataCollector collector : dataCollectors) {
-            dataCollectorList.add(collector);
-        }
-        
-        parallelExecutor.execute(new DataCollectionBehaviour(mapper, snapshot), dataCollectorList);
+        parallelExecutor.execute(new DataCollectionBehaviour(mapper, snapshot), retrieveDataCollectorList(instanceName));
 
         return snapshot;
+    }
+
+    private List<DataCollector> retrieveDataCollectorList(String instanceName) {
+        List<DataCollector> dataCollectorList = new ArrayList<>();
+        for (DataCollector collector : dataCollectors) {
+            collector.setServerInstance(instanceName);
+            dataCollectorList.add(collector);
+            
+        }
+        return dataCollectorList;
     }
 
     private class DataCollectionBehaviour implements ParallelDataCollectionActionBehaviour {
