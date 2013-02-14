@@ -44,6 +44,8 @@ public class Configurator {
         this.configuration.put("username", "");
         this.configuration.put("password", "");
         this.configuration.put("serverInstances", "server");
+        this.configuration.put("maxParallelThreads", "0");
+        
     }
 
     @Produces

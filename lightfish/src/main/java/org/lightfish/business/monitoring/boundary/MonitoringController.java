@@ -38,6 +38,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.Map;
+import org.lightfish.business.monitoring.control.collectors.DataCollector;
+import org.lightfish.business.monitoring.control.collectors.DataPoint;
+import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionActionBehaviour;
+import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionExecutor;
 import org.lightfish.business.monitoring.entity.Application;
 import org.lightfish.business.monitoring.entity.ConnectionPool;
 
@@ -53,8 +57,12 @@ public class MonitoringController {
     public static final String COMBINED_SNAPSHOT_NAME = "__all__";
     @Inject
     private Log LOG;
+
     @Inject
-    SnapshotProvider dataProvider;
+    Instance<SnapshotCollector> snapshotCollectorInstance;
+    
+    @Inject ParallelDataCollectionExecutor parallelCollector;
+    
     @PersistenceContext
     EntityManager em;
     @Inject
@@ -79,11 +87,15 @@ public class MonitoringController {
         String[] serverInstancesName = serverInstances.get();
         List<Snapshot> snapshots = new ArrayList<>(serverInstancesName.length);
         try {
+            List<DataCollector> collectors = new ArrayList<>(serverInstancesName.length);
             for (String instanceName : serverInstancesName) {
-                Snapshot current = dataProvider.fetchSnapshot(instanceName);
-                current.setInstanceName(instanceName);
-                snapshots.add(current);
+                SnapshotCollector collector = snapshotCollectorInstance.get();
+                collector.setServerInstance(instanceName);
+                collectors.add(collector);
             }
+            
+            parallelCollector.execute(new SnapshotCollectionBehaviour(snapshots), collectors);
+            
         } catch (Exception ex) {
             LOG.error("Could not retrieve snapshot", ex);
             return;
@@ -165,7 +177,7 @@ public class MonitoringController {
         
         return combined;
     }
-
+    
     @GET
     public List<Snapshot> all() {
         CriteriaBuilder cb = this.em.getCriteriaBuilder();
@@ -191,5 +203,20 @@ public class MonitoringController {
 
     public boolean isRunning() {
         return (this.timer != null);
+    }
+    
+    private class SnapshotCollectionBehaviour implements ParallelDataCollectionActionBehaviour<Snapshot>{
+
+        List<Snapshot> snapshots;
+
+        public SnapshotCollectionBehaviour(List<Snapshot> snapshots) {
+            this.snapshots = snapshots;
+        }
+        
+        @Override
+        public void perform(DataPoint<Snapshot> dataPoint) throws Exception {
+            snapshots.add(dataPoint.getValue());
+        }
+        
     }
 }
