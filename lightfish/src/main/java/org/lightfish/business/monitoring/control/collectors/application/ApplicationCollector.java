@@ -41,6 +41,7 @@ public class ApplicationCollector extends AbstractRestDataCollector<List<Applica
         for (String appName : applicationNames) {
             SpecificApplicationCollector collector = specificCollector.get();
             collector.setApplicationName(appName);
+            collector.setServerInstance(getServerInstance());
             collectors.add(collector);
         }
 

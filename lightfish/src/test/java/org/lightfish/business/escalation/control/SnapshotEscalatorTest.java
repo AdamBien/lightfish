@@ -58,7 +58,7 @@ public class SnapshotEscalatorTest {
 
     @Test
     public void firstEscalation() throws ScriptException {
-        Snapshot snapshot = new Snapshot();
+        Snapshot snapshot = new Snapshot.Builder().instanceName("something").build();
         when(cut.scripting.activeScripts()).thenReturn(scripts(""));
         this.cut.escalate(snapshot);
 
@@ -70,7 +70,7 @@ public class SnapshotEscalatorTest {
 
     @Test
     public void escalation() throws ScriptException {
-        Snapshot snapshot = new Snapshot();
+        Snapshot snapshot = new Snapshot.Builder().instanceName("something").build();
         when(cut.scripting.activeScripts()).thenReturn(scripts("true"));
         this.cut.escalate(snapshot);
         this.cut.escalate(snapshot); //second invocation needed to enable evaluation
@@ -81,7 +81,7 @@ public class SnapshotEscalatorTest {
     @Test
     public void escalation_with_message() throws ScriptException {
         String expectedMessage = "I am expected";
-        Snapshot snapshot = new Snapshot();
+        Snapshot snapshot = new Snapshot.Builder().instanceName("something").build();
         when(cut.scripting.activeScripts()).thenReturn(scripts("true", expectedMessage));
         this.cut.escalate(snapshot);
         this.cut.escalate(snapshot); //second invocation needed to enable evaluation
@@ -92,7 +92,7 @@ public class SnapshotEscalatorTest {
 
     @Test
     public void noEscalation() throws ScriptException {
-        Snapshot snapshot = new Snapshot();
+        Snapshot snapshot = new Snapshot.Builder().instanceName("something").build();
         when(cut.scripting.activeScripts()).thenReturn(scripts("false"));
         this.cut.escalate(snapshot);
         this.cut.escalate(snapshot); //second invocation needed to enable evaluation
@@ -102,7 +102,7 @@ public class SnapshotEscalatorTest {
 
     @Test
     public void snapshotDependentEscalation() throws ScriptException {
-        Snapshot snapshot = new Snapshot.Builder().committedTX(1).build();
+        Snapshot snapshot = new Snapshot.Builder().instanceName("something").committedTX(1).build();
         when(cut.scripting.activeScripts()).thenReturn(scripts("current.committedTX == 1"));
         this.cut.escalate(snapshot);
         this.cut.escalate(snapshot); //second invocation needed to enable evaluation
@@ -114,7 +114,7 @@ public class SnapshotEscalatorTest {
     public void subequentEscalation() throws ScriptException {
         this.firstEscalation();
         when(this.cut.scriptEngine.createBindings()).thenReturn(mock(Bindings.class));
-        Snapshot snapshot = new Snapshot();
+        Snapshot snapshot = new Snapshot.Builder().instanceName("something").build();
         this.cut.escalate(snapshot);
         verify(this.cut.scriptEngine).eval(any(String.class), any(Bindings.class));
     }

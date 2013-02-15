@@ -77,5 +77,25 @@ public class ConnectionPool {
     public int getNumconnused() {
         return numconnused;
     }
+
+    public void setJndiName(String jndiName) {
+        this.jndiName = jndiName;
+    }
+
+    public void setNumconnfree(int numconnfree) {
+        this.numconnfree = numconnfree;
+    }
+
+    public void setWaitqueuelength(int waitqueuelength) {
+        this.waitqueuelength = waitqueuelength;
+    }
+
+    public void setNumpotentialconnleak(int numpotentialconnleak) {
+        this.numpotentialconnleak = numpotentialconnleak;
+    }
+
+    public void setNumconnused(int numconnused) {
+        this.numconnused = numconnused;
+    }
     
 }

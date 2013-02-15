@@ -26,9 +26,19 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
     @Inject
     Instance<String> password;
     @Inject
-    Instance<String> serverInstance;
+    String serverInstance;
     @Inject
     Instance<GlassfishAuthenticator> authenticator;
+
+    @Override
+    public String getServerInstance() {
+        return serverInstance;
+    }
+
+    @Override
+    public void setServerInstance(String serverInstance) {
+        this.serverInstance = serverInstance;
+    }
 
     @PostConstruct
     public void initializeClient() {
@@ -88,7 +98,7 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
     }
 
     private String getBaseURI() {
-        return getProtocol() + location.get() + "/monitoring/domain/" + serverInstance.get() + "/";
+        return getProtocol() + location.get() + "/monitoring/domain/" + serverInstance + "/";
     }
 
     private String getProtocol() {

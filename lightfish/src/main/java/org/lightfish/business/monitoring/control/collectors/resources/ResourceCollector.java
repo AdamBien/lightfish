@@ -36,6 +36,7 @@ public class ResourceCollector extends AbstractRestDataCollector<List<Connection
         for (String jdbcPoolName : resourceNames) {
             SpecificResourceCollector collector = specificCollector.get();
             collector.setResourceName(jdbcPoolName);
+            collector.setServerInstance(getServerInstance());
             collectors.add(collector);
         }
 

@@ -34,6 +34,8 @@ public class LightView {
     @Inject
     Configurator configurator;
     
+    @Inject Instance<String[]> serverInstances;
+    
     @Inject Instance<Integer> interval;
     
     @Inject SnapshotProvider snapshotProvider;
@@ -43,7 +45,10 @@ public class LightView {
     }
     
     public Snapshot getSnapshot() throws Exception{
-        return snapshotProvider.fetchSnapshot();
+        return snapshotProvider.fetchSnapshot(serverInstances.get()[0]);
     }
     
+    public String[] getMonitoredInstances(){
+        return serverInstances.get();
+    }
 }
