@@ -13,6 +13,15 @@
         <h:outputScript library="js" name="third-party/jquery.ui.notify.js"  />
         <h:outputStylesheet library="css" name="jquery.ui.notify.css"  />
         <h:outputScript library="js" name="view.js"  />
+        <div id="instance-selection">
+            Montioring:
+            <select id="instance-selection-dropdown">
+                <option value="__all__">All</option>
+                <ui:repeat value="${lightView.monitoredInstances}" var="instance">
+                    <option value="${instance}">${instance}</option>
+                </ui:repeat>
+            </select>
+        </div>
         <div id="tabs">
             <ul id="tabIndex">
                 <li><a href="#system"><span>Threads and Memory</span></a></li>

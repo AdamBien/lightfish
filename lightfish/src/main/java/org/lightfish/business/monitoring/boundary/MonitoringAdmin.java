@@ -37,8 +37,8 @@ import org.lightfish.business.monitoring.control.ServerInstanceProvider;
  */
 @RequestScoped
 public class MonitoringAdmin {
-    public static final String OFF = "OFF";
-    public static final String ON = "HIGH";
+    private static final String OFF = "OFF";
+    private static final String ON = "HIGH";
     
     private static final Logger LOG = Logger.getLogger(MonitoringAdmin.class.getName());
     
@@ -49,7 +49,7 @@ public class MonitoringAdmin {
     @Inject
     String password;
     @Inject 
-    Instance<String> serverInstance;
+    Instance<String[]> serverInstances;
     @Inject
     Instance<GlassfishAuthenticator> authenticator;
     @Inject
@@ -82,14 +82,19 @@ public class MonitoringAdmin {
         for (String module : modules) {
             formData.add(module, state);
         }
-        return postForm(formData);
+        return postForms(formData);
     }
     
-    boolean postForm(MultivaluedMap form) throws UniformInterfaceException {
-            ClientResponse response = this.client.resource(this.baseUri).path(getEnableMonitoringURI_312()).header("X-Requested-By","LightFish").type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(ClientResponse.class, form);
+    boolean postForms(MultivaluedMap form) throws UniformInterfaceException {
+        for(String instanceName: serverInstances.get()){
+            ClientResponse response = this.client.resource(this.baseUri).path(getEnableMonitoringURI_312(instanceName)).header("X-Requested-By","LightFish").type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(ClientResponse.class, form);
             int status = response.getStatus();
-            LOG.log(Level.INFO, "Got status: {0} for path: {1}  form: {2}", new Object[]{status, getEnableMonitoringURI_312(),form});
-            return (200 == response.getStatus());
+            LOG.log(Level.INFO, "Got status: {0} for path: {1}  form: {2}", new Object[]{status, getEnableMonitoringURI_312(instanceName),form});
+            if(200 != response.getStatus()){
+                return false;
+            }
+        }
+        return true;
     }
     
     
@@ -102,10 +107,10 @@ public class MonitoringAdmin {
         return protocol;
     }
     
-    private String getEnableMonitoringURI_312(){
+    private String getEnableMonitoringURI_312(String instanceName){
         
         String uri = "/management/domain/configs/config/"+
-                instancePorvider.fetchServerInstanceInfo().getConfigRef()
+                instancePorvider.fetchServerInstanceInfo(instanceName).getConfigRef()
                 +"/monitoring-service/module-monitoring-levels/";
         return uri;
     }

@@ -1,6 +1,5 @@
 package org.lightfish.business.monitoring.entity;
 
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -20,15 +19,28 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServerInstance {
+    private String name;
     private String configRef;
 
     public ServerInstance() {
     }
 
+    public String getName() {
+        return name;
+    }
+
     public String getConfigRef() {
         return configRef;
     }
-    
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setConfigRef(String configRef) {
+        this.configRef = configRef;
+    }
+
     public static class Builder{
         private ServerInstance domainInstance;
 
@@ -38,6 +50,12 @@ public class ServerInstance {
         
         public Builder configRef(String configRef){
             this.domainInstance.configRef = configRef;
+            return this;
+        }
+        
+        
+        public Builder name(String name){
+            this.domainInstance.name = name;
             return this;
         }
         

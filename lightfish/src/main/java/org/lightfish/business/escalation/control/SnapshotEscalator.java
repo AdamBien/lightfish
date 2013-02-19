@@ -1,6 +1,8 @@
 package org.lightfish.business.escalation.control;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.enterprise.event.Event;
@@ -24,7 +26,7 @@ import org.lightfish.business.monitoring.entity.Snapshot;
 public class SnapshotEscalator {
 
     private static final String ENGINE_NAME = "JavaScript";
-    Snapshot recent;
+    Map<String,Snapshot> recentSnapshots = new HashMap<>();
     ScriptEngine scriptEngine;
     @Inject
     Log LOG;
@@ -52,6 +54,7 @@ public class SnapshotEscalator {
         try {
             Bindings binding = this.scriptEngine.createBindings();
             binding.put("current", current);
+            Snapshot recent = this.recentSnapshots.get(current.getInstanceName());
             binding.put("previous", recent);
             long start = System.currentTimeMillis();
             try {
@@ -76,7 +79,7 @@ public class SnapshotEscalator {
                                     .snapshot(current)
                                     .build();
                             escalationSink.fire(escalation);
-                            LOG.info("Escalated: " + script + " for snapshot: " + current + " and recent: " + recent);
+                            LOG.info("Escalated: " + script + " for snapshot: " + current + " and recent: " + recentSnapshots);
                         }
                     }
                 }
@@ -84,7 +87,7 @@ public class SnapshotEscalator {
             } finally {
                 LOG.info("Performance: " + (System.currentTimeMillis() - start));
             }
-            this.recent = current;
+            this.recentSnapshots.put(current.getInstanceName(), current);
         } catch (Exception e) {
             throw new IllegalStateException("Exception during script evaluation: " + e, e);
         }

@@ -21,9 +21,9 @@ public class SnapshotProviderIT {
     @Before
     public void initialize(){
         this.dataProvider = new SnapshotProvider();
-        this.dataProvider.location = mock(Instance.class);
-        when(this.dataProvider.location.get()).thenReturn("localhost:4848");
-        this.dataProvider.initializeClient();
+//        this.dataProvider.location = mock(Instance.class);
+//        when(this.dataProvider.location.get()).thenReturn("localhost:4848");
+//        this.dataProvider.initializeClient();
     }
 
     @Test

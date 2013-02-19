@@ -27,17 +27,9 @@ import javax.ejb.Singleton;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.io.Writer;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.*;
-import javax.enterprise.inject.Instance;
-import javax.xml.bind.annotation.XmlRootElement;
-import org.lightfish.business.escalation.entity.Escalation;
-import org.lightfish.presentation.publication.escalation.EscalationWindow;
-import org.lightfish.presentation.publication.escalation.Escalations;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -49,21 +41,21 @@ public class SnapshotEventBroker {
 
     private ConcurrentLinkedQueue<BrowserWindow> browsers = new ConcurrentLinkedQueue<>();
     @Inject
-    Log LOG;
+    Logger LOG;
     @Inject
     Serializer serializer;
 
     public void onBrowserRequest(@Observes BrowserWindow browserWindow) {
-        LOG.info("Added " + browserWindow.hashCode());
+        LOG.log(Level.FINE, "Added {0}", browserWindow.hashCode());
         browsers.add(browserWindow);
     }
-    
+
     public void onNewSnapshot(@Observes @Severity(Severity.Level.HEARTBEAT) Snapshot snapshot) {
         for (BrowserWindow browserWindow : browsers) {
-            if (browserWindow.getChannel() == null) {
+            if (snapshot.getInstanceName().equals(browserWindow.getChannel())) {
                 try {
                     send(browserWindow, snapshot);
-                    LOG.info("Sent to " + browserWindow.hashCode());
+                    LOG.log(Level.FINE, "Sent to {0}", browserWindow.hashCode());
                 } finally {
                     browsers.remove(browserWindow);
                 }
@@ -76,5 +68,4 @@ public class SnapshotEventBroker {
         serializer.serialize(snapshot, writer);
         browserWindow.send();
     }
-    
 }

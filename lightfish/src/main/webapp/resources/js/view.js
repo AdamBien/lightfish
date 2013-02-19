@@ -147,6 +147,7 @@ function LogData(userOptions){
 lightfish.view = {
     config: {
         baseUri: "/lightfish",
+        currentInstance: "",
         refreshInterval: 2,
         logs: {
             maxDataLength: 100,
@@ -168,7 +169,7 @@ lightfish.view = {
     _data: new LogData({}),
     _snapshotPoll: function(){
         $.ajax({
-            url: lightfish.view.config.baseUri + "/live", 
+            url: lightfish.view.config.baseUri + "/live/" + lightfish.view.config.currentInstance, 
             success: function(rawData){
                 lightfish.view._snapshotPoll();
                 var data = lightfish.view._parseSnapshot(rawData);
@@ -221,6 +222,12 @@ lightfish.view = {
         return parsed;
     },
     setup: function(){
+        if(document.location.hash.length>0){
+            lightfish.view.config.currentInstance = document.location.hash.substr(1);
+            $("#instance-selection-dropdown").val(lightfish.view.config.currentInstance);
+            $("#instance-selection-dropdown").change(lightfish.view.changeInstance)
+        }
+        
         $("#applicationsContainer").accordion({
             heightStyle:"content"
         });
@@ -228,6 +235,10 @@ lightfish.view = {
         lightfish.view.logs.setup();
         lightfish.view.charts.setup();
         lightfish.view.escalations.setup();
+    },
+    changeInstance:function(){
+        document.location.assign("#" + $("#instance-selection-dropdown").val());
+        document.location.reload();
     },
     logs:{
         _logTemplate: null,

@@ -39,7 +39,7 @@ public class SnapshotFetcher {
     }
 
     public static void main(String[] args) throws Exception {
-        final String uri = "http://localhost:8080/lightfish/live";
+        final String uri = "http://localhost:8080/lightfish/live/";
         for (int i = 0; i < 10; i++) {
             SnapshotFetcher fetcher = new SnapshotFetcher(uri);
             System.out.println("--- " + fetcher.getSnapshot());

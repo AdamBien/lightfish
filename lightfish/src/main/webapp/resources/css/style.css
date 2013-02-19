@@ -132,3 +132,31 @@ h1 a,h1 a:hover{
 .yAxis .tickLabel{
     white-space: nowrap;
 }
+
+.server-instance-select{
+    display: block;
+    max-height: 8.5em;
+    overflow-y: auto;
+    overflow-x: visible;
+}
+
+.server-instance-select span{
+    display:inline-block;
+    float:left;
+    white-space: nowrap;
+    margin:0.2em;
+    vertical-align:top;
+    width:10em;
+}
+
+.server-instance-select input, input.checkbox{
+    margin:0px;
+    margin-right:0.2em;
+    background: none !important;
+    border: none !important;
+}
+
+.server-instance-select label{
+    vertical-align:top;
+    display:inline-block;
+}
