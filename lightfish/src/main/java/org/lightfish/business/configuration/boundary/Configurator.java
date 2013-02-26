@@ -45,6 +45,10 @@ public class Configurator {
         this.configuration.put("password", "");
         this.configuration.put("serverInstances", "server");
         this.configuration.put("maxParallelThreads", "0");
+        this.configuration.put("collectionTimeout", "10");
+        this.configuration.put("dataCollectionRetries", "1");
+        
+        
         
     }
 

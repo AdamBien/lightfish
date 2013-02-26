@@ -51,4 +51,8 @@ public class LightView {
     public String[] getMonitoredInstances(){
         return serverInstances.get();
     }
+    
+    public int getMonitoredInstancesLength(){
+        return serverInstances.get().length;
+    }
 }

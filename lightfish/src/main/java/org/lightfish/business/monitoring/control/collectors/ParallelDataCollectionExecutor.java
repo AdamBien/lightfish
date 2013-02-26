@@ -56,14 +56,9 @@ public class ParallelDataCollectionExecutor {
             }
             
             remainingCollectors.removeAll(collectorsBeingProcessed);
+            futureMap.clear();
             collectorsBeingProcessed.clear();
         }
-
-        for (DataCollector collector : collectors) {
-            ParallelDataCollectionAction action = actionInstance.get();
-            futureMap.put(action.compute(collector), action);
-        }
-
 
     }
 }

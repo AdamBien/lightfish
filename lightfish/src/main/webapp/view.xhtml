@@ -251,8 +251,8 @@
                 lightfish.view.config.baseUri = '${facesContext.externalContext.getRequestContextPath()}';
          
             });
-            lightfish.view.config.refreshInterval = ${lightView.interval};
-            _Chart.chartOptions.xaxis.tickSize = [${lightView.interval} * 8, 'second'];
+            lightfish.view.config.refreshInterval = ${lightView.interval} * ${lightView.monitoredInstancesLength};
+            _Chart.chartOptions.xaxis.tickSize = [lightfish.view.config.refreshInterval * 8, 'second'];
         </script>
     </ui:define>
 </ui:composition>
