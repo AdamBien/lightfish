@@ -15,6 +15,7 @@ limitations under the License.
 */
 package org.lightfish.business.configuration.boundary;
 
+import org.lightfish.business.configuration.entity.Configuration;
 import java.util.Arrays;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -23,6 +24,8 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import java.util.HashMap;
 import java.util.Map;
 import javax.ejb.Startup;
+import javax.inject.Inject;
+import org.lightfish.business.configuration.control.ConfigurationStore;
 
 /**
  *
@@ -31,27 +34,14 @@ import javax.ejb.Startup;
 @Startup
 @Singleton
 public class Configurator {
-    private int interval = 5;
-    
-    private Map<String,String> configuration;
+    private Configuration configuration;
+    @Inject ConfigurationStore configurationStore;
     
     @PostConstruct
     public void initialize(){
-        this.configuration = new HashMap<>();
-        this.configuration.put("location", "localhost:4848");
-        this.configuration.put("jdbcPoolNames","SamplePool");
-        this.configuration.put("interval","2");
-        this.configuration.put("username", "");
-        this.configuration.put("password", "");
-        this.configuration.put("serverInstances", "server");
-        this.configuration.put("maxParallelThreads", "0");
-        this.configuration.put("collectionTimeout", "10");
-        this.configuration.put("dataCollectionRetries", "1");
-        
-        
-        
+        this.configuration = configurationStore.retrieveConfiguration();
     }
-
+    
     @Produces
     public int getInteger(InjectionPoint ip) {
         return Integer.parseInt(getString(ip));
@@ -86,9 +76,9 @@ public class Configurator {
        return value.split(",");
     }
 
-    public Map<String, String> getConfiguration() {
-        return configuration;
-    }
+//    public Map<String, String> getConfiguration() {
+//        return configuration;
+//    }
 
     public int getValueAsInt(String interval) {
         return Integer.parseInt(getValue(interval));
@@ -104,6 +94,7 @@ public class Configurator {
 
     public void setValue(String key, String value) {
         this.configuration.put(key, value);
+        configurationStore.save(configuration);
     }
     
     public void setArrayValue(String key, String[] values) {
@@ -114,6 +105,6 @@ public class Configurator {
             }
             sb.append(value);
         }
-        this.configuration.put(key, sb.toString());
+        this.setValue(key, String.valueOf(sb.toString()));
     }
 }
