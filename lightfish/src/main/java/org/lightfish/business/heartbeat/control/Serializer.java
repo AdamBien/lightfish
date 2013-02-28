@@ -22,9 +22,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.Writer;
-import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.inject.Inject;
 import org.lightfish.business.escalation.entity.Escalation;
-import org.lightfish.business.heartbeat.boundary.SnapshotEventBroker;
 import org.lightfish.presentation.publication.escalation.Escalations;
 
 /**
@@ -32,7 +33,8 @@ import org.lightfish.presentation.publication.escalation.Escalations;
  * @author Adam Bien <blog.adam-bien.com>
  */
 public class Serializer {
-
+    @Inject Logger LOG;
+    
     private Marshaller marshaller;
 
     @PostConstruct
