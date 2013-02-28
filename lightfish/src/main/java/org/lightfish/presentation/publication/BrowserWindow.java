@@ -19,6 +19,8 @@ import javax.servlet.AsyncContext;
 import javax.servlet.ServletResponse;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.logging.Logger;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -26,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Adam Bien, blog.adam-bien.com
  */
 public class BrowserWindow {
-    
+    private static final Logger LOG = Logger.getLogger(BrowserWindow.class.getName());
     private AsyncContext asyncContext;
     private final ServletResponse response;
     private String channel;
@@ -46,12 +48,15 @@ public class BrowserWindow {
     public void send(){
         try{
             this.asyncContext.complete();
+            LOG.info("Finished completion of " + this.hashCode());
         }catch(Exception e){
-            System.err.println("Cannot complete context: " + e);
+            e.printStackTrace();
+            System.err.println("Cannot complete context for " + this.hashCode() + ": " + e);
         }
     }
     
     public Writer getWriter(){
+        
         try {
             return this.asyncContext.getResponse().getWriter();
         } catch (IOException ex) {

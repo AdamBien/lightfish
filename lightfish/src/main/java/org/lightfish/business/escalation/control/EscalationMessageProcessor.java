@@ -68,7 +68,6 @@ public class EscalationMessageProcessor {
         } catch (InvocationTargetException ex) {
             LOG.log(Level.SEVERE, ex.toString(), ex);
         } catch (NoSuchMethodException ex) {
-            ex.printStackTrace();
             LOG.log(Level.SEVERE, ex.toString(), ex);
         }
         return null;

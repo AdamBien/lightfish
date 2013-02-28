@@ -137,7 +137,6 @@ public class MonitoringController {
             em.flush();
             
             for (Snapshot snapshot : handledSnapshots) {
-                LOG.log(Level.FINE, "Firing heartbeat for {0}", snapshot.getInstanceName());
                 fireHeartbeat(snapshot);
             }
 
@@ -156,7 +155,6 @@ public class MonitoringController {
             Entry<String, SnapshotCollectionAction> entry = it.next();
             if (timedOutTime > entry.getValue().getStarted()) {
                 LOG.log(Level.WARNING, "The snapshot collection for {0} timed out.", entry.getKey());
-                currentCollectionActions.remove(entry.getKey());
                 it.remove();
             }
         }
@@ -237,7 +235,7 @@ public class MonitoringController {
             expiredSessions += current.getExpiredSessions();
             for (Application application : current.getApps()) {
                 Application combinedApp = new Application(application.getApplicationName(), application.getComponents());
-                applications.put(COMBINED_SNAPSHOT_NAME, combinedApp);
+                applications.put(application.getApplicationName(), combinedApp);
             }
 
             for (ConnectionPool currentPool : current.getPools()) {
@@ -298,6 +296,7 @@ public class MonitoringController {
     }
 
     private void fireHeartbeat(Snapshot snapshot) {
+        LOG.log(Level.FINE, "Firing heartbeat for {0}", snapshot.getInstanceName());
         try {
             heartBeat.fire(snapshot);
         } catch (Exception e) {
