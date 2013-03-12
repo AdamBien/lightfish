@@ -16,6 +16,7 @@ limitations under the License.
 package org.lightfish.business.configuration.boundary;
 
 import org.lightfish.business.configuration.entity.Configuration;
+import java.util.Arrays;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.enterprise.inject.Produces;
