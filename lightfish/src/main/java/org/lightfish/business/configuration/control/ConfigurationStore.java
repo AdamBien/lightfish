@@ -1,10 +1,7 @@
 package org.lightfish.business.configuration.control;
 
 import org.lightfish.business.configuration.entity.Configuration;
-import javax.enterprise.inject.Produces;
 import javax.persistence.EntityManager;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.PersistenceContext;
 
 /**
@@ -41,6 +38,7 @@ public class ConfigurationStore {
         configuration.put("collectionTimeout", "10");
         configuration.put("dataCollectionRetries", "1");
         configuration.put("defaultMaxLogResults", "40");
+        configuration.put("collectLogs", "true");
         em.persist(configuration);
         return configuration;
     }

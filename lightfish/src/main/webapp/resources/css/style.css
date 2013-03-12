@@ -161,6 +161,8 @@ h1 a,h1 a:hover{
     text-overflow:ellipsis;
 }
 
+
+
 .yAxis .tickLabel{
     white-space: nowrap;
 }

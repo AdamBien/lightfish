@@ -20,6 +20,8 @@ import org.lightfish.business.monitoring.control.collectors.DataPoint;
 import org.lightfish.business.monitoring.entity.LogRecord;
 import static org.powermock.api.mockito.PowerMockito.*;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
 import static org.junit.Assert.*;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -46,6 +48,7 @@ public class LogCollectorTest {
         instance.setLocation(mockInstance(String.class, "myServer"));
         instance.setUsername(mockInstance(String.class, null));
         instance.setPassword(mockInstance(String.class, null));
+        instance.collectLogs = mockInstance(Boolean.class, true);
     }
 
     private void setupMockClient() {
@@ -58,6 +61,20 @@ public class LogCollectorTest {
 
         mockClientResponse = mock(ClientResponse.class);
         when(mockBuilder.get(ClientResponse.class)).thenReturn(mockClientResponse);
+    }
+
+    @Test
+    public void dont_collect() throws Exception {
+        instance.collectLogs = mockInstance(Boolean.class, false);
+
+        JSONObject mockResponseObject = mockResponseObject();
+        when(mockClientResponse.getEntity(JSONObject.class)).thenReturn(mockResponseObject);
+
+        instance.setServerInstance("test");
+        DataPoint<List<LogRecord>> result = instance.collect();
+
+        assertNull(result);
+        verify(mockClient, never()).resource(anyString());
     }
 
     @Test
@@ -117,8 +134,8 @@ public class LogCollectorTest {
         DataPoint<List<LogRecord>> result = instance.collect();
 
         assertGoodResults(records, result);
-        for(Entry<String,String> entry:nameValuePairTest.entrySet()){
-            assertEquals(entry.getValue(),result.getValue().get(0).getNameValuePairs().get(entry.getKey()));
+        for (Entry<String, String> entry : nameValuePairTest.entrySet()) {
+            assertEquals(entry.getValue(), result.getValue().get(0).getNameValuePairs().get(entry.getKey()));
         }
     }
 
