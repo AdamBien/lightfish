@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.logging.Logger;
 import org.lightfish.business.monitoring.boundary.MonitoringController;
+import org.lightfish.business.monitoring.control.collectors.SnapshotDataCollector;
 
 /**
  *
@@ -34,7 +35,7 @@ import org.lightfish.business.monitoring.boundary.MonitoringController;
 @WebServlet(name = "TunguskaGate", urlPatterns = {"/live/*"}, asyncSupported = true)
 public class TunguskaGate extends HttpServlet {
 
-    @Inject
+    @Inject @SnapshotDataCollector
     Event<BrowserWindow> events;
     private final static Logger LOG = Logger.getLogger(TunguskaGate.class.getName());
 
@@ -43,10 +44,17 @@ public class TunguskaGate extends HttpServlet {
             throws ServletException, IOException {
         AsyncContext startAsync = request.startAsync();
         String channel = extractChannel(request.getRequestURI());
+        
+        LOG.info("Browser is requesting " + channel);
+        
+        
         if(channel==null||channel.trim().isEmpty()){
             channel = MonitoringController.COMBINED_SNAPSHOT_NAME;
         }
-        events.fire(new BrowserWindow(startAsync,channel));
+        BrowserWindow browser = new BrowserWindow(startAsync,channel);
+        LOG.info("Registering browser window("+ browser.hashCode() +") for channel " + channel);
+        
+        events.fire(browser);
         LOG.fine("Event sent");
     }
     

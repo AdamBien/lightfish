@@ -272,6 +272,7 @@ public class Snapshot {
     public String toString() {
         return "Snapshot{"
                 + "id=" + id
+                + ", instanceName=" + instanceName
                 + ", monitoringTime=" + monitoringTime
                 + ", usedHeapSize=" + usedHeapSize
                 + ", threadCount=" + threadCount

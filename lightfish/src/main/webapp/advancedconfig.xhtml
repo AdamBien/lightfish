@@ -9,7 +9,7 @@
     <ui:define name="windowTitle">Advanced Configuration</ui:define>
     <ui:define name="content">
         <div class="row">
-            <h:form class="form-horizontal">
+            <h:form class="form-horizontal" id="config">
                 <legend>Advanced Configuration</legend>
                 <div class="control-group">
                     <label class="control-label">Instance</label>
@@ -34,15 +34,53 @@
                         </script>
                         <span class="help-block">The server instance to monitor</span>
                     </div>
-                </div>                        
+                </div>    
+                <div class="control-group">
+                    <label class="control-label">Data Collection Retry Attempts</label>
+                    <div class="controls">
+                        <h:inputText value="#{advancedConfig.dataCollectionRetries}">
+                            <f:convertNumber minIntegerDigits="1" integerOnly="true"  />
+                        </h:inputText>
+                        <span class="help-block">Determines how many times the system will attempt to 
+                            retry data collection upon failure. This allows for some fault tolerance 
+                            if the data collection fails at any point.</span>
+                    </div>
+                </div>   
                 <legend>Experimental</legend>
                 <div class="control-group">
                     <label class="control-label">Parallel Data Collection</label>
                     <div class="controls">
-                        <h:selectBooleanCheckbox value="#{advancedConfig.parallelDataCollection}" />
-                        <span class="help-block">Splits the data collection into a parallel process - this is experimental because it goes against the JAVA EE specifications.</span>
+                        <h:selectBooleanCheckbox id="parallelCollection" value="#{advancedConfig.parallelDataCollection}" />
+                        <span class="help-block">Splits the data collection into a parallel process;
+                            this is experimental because it has the potential to cause performance issues
+                            for both LightFish and the Glassfish server you are monitoring.</span>
                     </div>
                 </div>   
+                <div class="control-group" id="maxThreads">
+                    <label class="control-label">Max Threads per Instance  </label>
+                    <div class="controls">
+                        <h:inputText value="#{advancedConfig.parallelDataCollectionThreads}">
+                            <f:convertNumber minIntegerDigits="1" integerOnly="true"  />
+                        </h:inputText>
+                        <span class="help-block">This designates the number of threads to use per instance 
+                            during data collection. You can use 0 for unlimited but this is very likely to
+                            cause performance issues if you are monitoring multiple instances. A quick rule 
+                            of thumb here is <div>Number of Cores / (Number of Monitored Instances + 1). Rounding 
+                                down is suggested, unless rounding down results in 0, in which case you should use 1.</div>
+                        </span>
+                    </div>
+                </div>
+                <script>
+                    function parallelDataCollectionChange(){
+                        var parallelEnabled = $('#config\\:parallelCollection').is(':checked');
+                        $('#maxThreads').toggle(parallelEnabled);
+                    }
+                    
+                    $(function(){
+                        parallelDataCollectionChange();
+                        $('#config\\:parallelCollection').change(parallelDataCollectionChange);
+                    });
+                </script>
 
                 <div class="form-actions">
                     <div class="btn-toolbar form-btn-toolbar">

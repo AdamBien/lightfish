@@ -20,6 +20,7 @@ import org.lightfish.business.configuration.boundary.Configurator;
 
 import javax.enterprise.inject.Model;
 import javax.inject.Inject;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.lightfish.business.monitoring.boundary.DomainInformation;
@@ -31,8 +32,9 @@ import org.lightfish.business.monitoring.boundary.DomainInformation;
 @Model
 public class AdvancedConfig {
     public static final String SERVER_INSTANCES = "serverInstances";
+    public static final String DATA_COLLECTION_RETRIES = "dataCollectionRetries";
     public static final String PARALLEL_DATA_COLLECTION = "parallelDataCollection";
-    
+    public static final String PARALLEL_DATA_COLLECTION_THREADS = "maxParallelThreads";
     @Inject
     Configurator configurator;
 
@@ -54,12 +56,31 @@ public class AdvancedConfig {
         this.configurator.setArrayValue(SERVER_INSTANCES,instance);
     }
     
+    @NotNull @Min(0)
+    public Integer getDataCollectionRetries(){
+        return Integer.valueOf(this.configurator.getValue(DATA_COLLECTION_RETRIES));
+    }
+    
+    public void setDataCollectionRetries(Integer dataCollectionRetries){
+        this.configurator.setValue(DATA_COLLECTION_RETRIES,dataCollectionRetries);
+    }
+    
     public Boolean getParallelDataCollection(){
         return Boolean.valueOf(this.configurator.getValue(PARALLEL_DATA_COLLECTION));
     }
     
     public void setParallelDataCollection(Boolean parallelDataCollection){
         this.configurator.setValue(PARALLEL_DATA_COLLECTION,parallelDataCollection);
+    }
+    
+    
+    @NotNull @Min(0)
+    public Integer getParallelDataCollectionThreads(){
+        return Integer.valueOf(this.configurator.getValue(PARALLEL_DATA_COLLECTION_THREADS));
+    }
+    
+    public void setParallelDataCollectionThreads(Integer parallelDataCollection){
+        this.configurator.setValue(PARALLEL_DATA_COLLECTION_THREADS,parallelDataCollection);
     }
     
     public String updateConfiguration(){

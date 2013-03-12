@@ -225,8 +225,9 @@ lightfish.view = {
         if(document.location.hash.length>0){
             lightfish.view.config.currentInstance = document.location.hash.substr(1);
             $("#instance-selection-dropdown").val(lightfish.view.config.currentInstance);
-            $("#instance-selection-dropdown").change(lightfish.view.changeInstance)
         }
+        
+        $("#instance-selection-dropdown").change(lightfish.view.changeInstance)
         
         $("#applicationsContainer").accordion({
             heightStyle:"content"
