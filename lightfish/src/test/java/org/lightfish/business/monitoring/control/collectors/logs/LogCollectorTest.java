@@ -44,10 +44,8 @@ public class LogCollectorTest {
         setupMockClient();
         instance.setClient(mockClient);
         instance.configurator = mock(Configurator.class);
-//        instance.setAuthenticator(mockInstance(GlassfishAuthenticator.class, mock(GlassfishAuthenticator.class)));
         instance.setLocation(mockInstance(String.class, "myServer"));
-//        instance.setUsername(mockInstance(String.class, null));
-//        instance.setPassword(mockInstance(String.class, null));
+        instance.setSessionToken(mockInstance(String.class, "something"));
         instance.collectLogs = mockInstance(Boolean.class, true);
     }
 
@@ -77,105 +75,105 @@ public class LogCollectorTest {
         verify(mockClient, never()).resource(anyString());
     }
 
-//    @Test
-//    public void collect_no_logs() throws Exception {
-//        JSONObject mockResponseObject = mockResponseObject();
-//        when(mockClientResponse.getEntity(JSONObject.class)).thenReturn(mockResponseObject);
-//
-//        instance.setServerInstance("test");
-//        DataPoint<List<LogRecord>> result = instance.collect();
-//
-//        assertEquals(0, result.getValue().size());
-//    }
-//
-//    @Test
-//    public void collect_one_log() throws Exception {
-//
-//
-//        LogRecord[] records = new LogRecord[]{
-//            new LogRecord.Builder()
-//            .level("INFO")
-//            .loggerName("org.lightfish")
-//            .message("Lightfish is awesome")
-//            .messageId("LF-AWE")
-//            .monitoringTime(new Date(123456789l))
-//            .nameValuePairs(new HashMap<String, String>())
-//            .build()
-//        };
-//        JSONObject mockResponseObject = mockResponseObject(records);
-//        when(mockClientResponse.getEntity(JSONObject.class)).thenReturn(mockResponseObject);
-//
-//        instance.setServerInstance("test");
-//        DataPoint<List<LogRecord>> result = instance.collect();
-//
-//        assertGoodResults(records, result);
-//    }
-//
-//    @Test
-//    public void collect_one_log_with_name_value_pairs() throws Exception {
-//        Map<String, String> nameValuePairTest = new HashMap<>();
-//        nameValuePairTest.put("thread", "109238");
-//        nameValuePairTest.put("something", "109212");
-//
-//        LogRecord[] records = new LogRecord[]{
-//            new LogRecord.Builder()
-//            .level("INFO")
-//            .loggerName("org.lightfish")
-//            .message("Lightfish is awesome")
-//            .messageId("LF-AWE")
-//            .monitoringTime(new Date(123456789l))
-//            .nameValuePairs(nameValuePairTest)
-//            .build()
-//        };
-//        JSONObject mockResponseObject = mockResponseObject(records);
-//        when(mockClientResponse.getEntity(JSONObject.class)).thenReturn(mockResponseObject);
-//
-//        instance.setServerInstance("test");
-//        DataPoint<List<LogRecord>> result = instance.collect();
-//
-//        assertGoodResults(records, result);
-//        for (Entry<String, String> entry : nameValuePairTest.entrySet()) {
-//            assertEquals(entry.getValue(), result.getValue().get(0).getNameValuePairs().get(entry.getKey()));
-//        }
-//    }
-//
-//    @Test
-//    public void collect_many_logs() throws Exception {
-//
-//        LogRecord[] records = new LogRecord[]{
-//            new LogRecord.Builder()
-//            .level("INFO")
-//            .loggerName("org.lightfish")
-//            .message("Lightfish is awesome")
-//            .messageId("LF-AWE")
-//            .monitoringTime(new Date(123456789l))
-//            .nameValuePairs(new HashMap<String, String>())
-//            .build(),
-//            new LogRecord.Builder()
-//            .level("WARNING")
-//            .loggerName("org.lightfish")
-//            .message("Lightfish is spectacular")
-//            .messageId("LF-AWE2")
-//            .monitoringTime(new Date(123456790l))
-//            .nameValuePairs(new HashMap<String, String>())
-//            .build(),
-//            new LogRecord.Builder()
-//            .level("SEVER")
-//            .loggerName("org.lightfish")
-//            .message("Lightfish is spectacularly amazing!")
-//            .messageId(null)
-//            .monitoringTime(new Date(123456791l))
-//            .nameValuePairs(new HashMap<String, String>())
-//            .build()
-//        };
-//        JSONObject mockResponseObject = mockResponseObject(records);
-//        when(mockClientResponse.getEntity(JSONObject.class)).thenReturn(mockResponseObject);
-//
-//        instance.setServerInstance("test");
-//        DataPoint<List<LogRecord>> result = instance.collect();
-//        assertGoodResults(records, result);
-//
-//    }
+    @Test
+    public void collect_no_logs() throws Exception {
+        JSONObject mockResponseObject = mockResponseObject();
+        when(mockClientResponse.getEntity(JSONObject.class)).thenReturn(mockResponseObject);
+
+        instance.setServerInstance("test");
+        DataPoint<List<LogRecord>> result = instance.collect();
+
+        assertEquals(0, result.getValue().size());
+    }
+
+    @Test
+    public void collect_one_log() throws Exception {
+
+
+        LogRecord[] records = new LogRecord[]{
+            new LogRecord.Builder()
+            .level("INFO")
+            .loggerName("org.lightfish")
+            .message("Lightfish is awesome")
+            .messageId("LF-AWE")
+            .monitoringTime(new Date(123456789l))
+            .nameValuePairs(new HashMap<String, String>())
+            .build()
+        };
+        JSONObject mockResponseObject = mockResponseObject(records);
+        when(mockClientResponse.getEntity(JSONObject.class)).thenReturn(mockResponseObject);
+
+        instance.setServerInstance("test");
+        DataPoint<List<LogRecord>> result = instance.collect();
+
+        assertGoodResults(records, result);
+    }
+
+    @Test
+    public void collect_one_log_with_name_value_pairs() throws Exception {
+        Map<String, String> nameValuePairTest = new HashMap<>();
+        nameValuePairTest.put("thread", "109238");
+        nameValuePairTest.put("something", "109212");
+
+        LogRecord[] records = new LogRecord[]{
+            new LogRecord.Builder()
+            .level("INFO")
+            .loggerName("org.lightfish")
+            .message("Lightfish is awesome")
+            .messageId("LF-AWE")
+            .monitoringTime(new Date(123456789l))
+            .nameValuePairs(nameValuePairTest)
+            .build()
+        };
+        JSONObject mockResponseObject = mockResponseObject(records);
+        when(mockClientResponse.getEntity(JSONObject.class)).thenReturn(mockResponseObject);
+
+        instance.setServerInstance("test");
+        DataPoint<List<LogRecord>> result = instance.collect();
+
+        assertGoodResults(records, result);
+        for (Entry<String, String> entry : nameValuePairTest.entrySet()) {
+            assertEquals(entry.getValue(), result.getValue().get(0).getNameValuePairs().get(entry.getKey()));
+        }
+    }
+
+    @Test
+    public void collect_many_logs() throws Exception {
+
+        LogRecord[] records = new LogRecord[]{
+            new LogRecord.Builder()
+            .level("INFO")
+            .loggerName("org.lightfish")
+            .message("Lightfish is awesome")
+            .messageId("LF-AWE")
+            .monitoringTime(new Date(123456789l))
+            .nameValuePairs(new HashMap<String, String>())
+            .build(),
+            new LogRecord.Builder()
+            .level("WARNING")
+            .loggerName("org.lightfish")
+            .message("Lightfish is spectacular")
+            .messageId("LF-AWE2")
+            .monitoringTime(new Date(123456790l))
+            .nameValuePairs(new HashMap<String, String>())
+            .build(),
+            new LogRecord.Builder()
+            .level("SEVER")
+            .loggerName("org.lightfish")
+            .message("Lightfish is spectacularly amazing!")
+            .messageId(null)
+            .monitoringTime(new Date(123456791l))
+            .nameValuePairs(new HashMap<String, String>())
+            .build()
+        };
+        JSONObject mockResponseObject = mockResponseObject(records);
+        when(mockClientResponse.getEntity(JSONObject.class)).thenReturn(mockResponseObject);
+
+        instance.setServerInstance("test");
+        DataPoint<List<LogRecord>> result = instance.collect();
+        assertGoodResults(records, result);
+
+    }
 
     private void assertGoodResults(LogRecord[] records, DataPoint<List<LogRecord>> result) {
         assertEquals(records.length, result.getValue().size());
@@ -242,6 +240,10 @@ public class LogCollectorTest {
             this.location = location;
         }
 
+        void setSessionToken(Instance<String> session){
+            this.sessionToken = session;
+        }
+        
         void setClient(Client client) {
             this.client = client;
         }

@@ -47,7 +47,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.lightfish.business.monitoring.control.SessionTokenProvider;
+import org.lightfish.business.monitoring.control.SessionTokenRetriever;
 import org.lightfish.business.monitoring.control.collectors.DataCollector;
 import org.lightfish.business.monitoring.control.collectors.DataPoint;
 import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionAction;
@@ -84,7 +84,7 @@ public class MonitoringController {
     Instance<String[]> serverInstances;
     @Inject
     Instance<Integer> collectionTimeout;
-    @Inject SessionTokenProvider sessionTokenProvider;
+    @Inject SessionTokenRetriever sessionTokenProvider;
     int nextInstanceIndex = 0;
     Map<String, SnapshotCollectionAction> currentCollectionActions = new HashMap<>();
     Map<String, Snapshot> currentSnapshots = new HashMap<>();
@@ -95,7 +95,7 @@ public class MonitoringController {
     private Instance<Integer> interval;
 
     public void startTimer() throws Exception{
-        getSessionToken();
+        sessionTokenProvider.retrieveSessionToken();
         
         ScheduleExpression expression = new ScheduleExpression();
         expression.minute("*").second("*/" + interval.get()).hour("*");
@@ -103,10 +103,6 @@ public class MonitoringController {
         
     }
     
-    private void getSessionToken() throws Exception{
-        sessionTokenProvider.retrieveSessionToken();
-    }
-
     private void handleCompletedFutures(Boolean wait) {
         List<Snapshot> handledSnapshots = new ArrayList<>();
 

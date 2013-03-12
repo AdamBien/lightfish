@@ -2,6 +2,7 @@ package org.lightfish.business.monitoring.control.collectors;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.ClientResponse.Status;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.WebResource.Builder;
@@ -13,7 +14,7 @@ import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.lightfish.business.authenticator.GlassfishAuthenticator;
+import org.lightfish.business.monitoring.control.SessionTokenRetriever;
 
 /**
  *
@@ -26,6 +27,8 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
     protected Instance<String> location;
     @Inject
     protected Instance<String> sessionToken;
+    @Inject
+    protected SessionTokenRetriever tokenProvider;
     private String serverInstance;
 
     @Override
@@ -60,7 +63,7 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
         ClientResponse result = getClientResponse(uri);
         return getJSONObject(result, name).getInt(key);
     }
-    
+
     protected String getString(String uri, String name, String key) throws JSONException {
         ClientResponse result = getClientResponse(uri);
         return getJSONObject(result, name).getString(key);
@@ -106,19 +109,34 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
         }
         return protocol;
     }
-    
-    protected String getLocation(){
+
+    protected String getLocation() {
         return location.get();
     }
 
     protected ClientResponse getClientResponse(String uri) throws UniformInterfaceException {
+        return getClientResponse(uri, 0);
+    }
+
+    protected ClientResponse getClientResponse(String uri, int retries) throws UniformInterfaceException {
         String fullUri = getBaseURI() + uri;
         WebResource resource = client.resource(fullUri);
-        Builder builder = resource.accept(MediaType.APPLICATION_JSON).header("X-Requested-By", "");
-        if(sessionToken!=null && sessionToken.get()!=null && !sessionToken.get().isEmpty()){
+        Builder builder = resource.accept(MediaType.APPLICATION_JSON);
+        if (sessionToken != null && sessionToken.get() != null && !sessionToken.get().isEmpty()) {
             builder.cookie(new Cookie("gfresttoken", sessionToken.get()));
         }
-        
-        return builder.get(ClientResponse.class);
+
+        try {
+            return builder.get(ClientResponse.class);
+        } catch (UniformInterfaceException uie) {
+            if (uie.getResponse().getClientResponseStatus().equals(Status.UNAUTHORIZED)) {
+                tokenProvider.retrieveSessionToken();
+                if (retries < 1) {
+                    return getClientResponse(uri, ++retries);
+                }
+            }
+            throw uie;
+
+        }
     }
 }
