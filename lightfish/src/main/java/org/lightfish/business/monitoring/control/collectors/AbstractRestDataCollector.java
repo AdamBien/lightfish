@@ -3,6 +3,8 @@ package org.lightfish.business.monitoring.control.collectors;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.WebResource.Builder;
 import java.util.Iterator;
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
@@ -18,17 +20,16 @@ import org.lightfish.business.authenticator.GlassfishAuthenticator;
  */
 public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<TYPE> {
 
-    private Client client;
+    protected Client client;
     @Inject
-    Instance<String> location;
+    protected Instance<String> location;
     @Inject
-    Instance<String> username;
+    protected Instance<String> username;
     @Inject
-    Instance<String> password;
+    protected Instance<String> password;
+    private String serverInstance;
     @Inject
-    String serverInstance;
-    @Inject
-    Instance<GlassfishAuthenticator> authenticator;
+    protected Instance<GlassfishAuthenticator> authenticator;
 
     @Override
     public String getServerInstance() {
@@ -97,21 +98,27 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
                 getJSONObject(name);
     }
 
-    private String getBaseURI() {
+    protected String getBaseURI() {
         return getProtocol() + location.get() + "/monitoring/domain/" + serverInstance + "/";
     }
 
-    private String getProtocol() {
+    protected String getProtocol() {
         String protocol = "http://";
         if (username != null && username.get() != null && !username.get().isEmpty()) {
             protocol = "https://";
         }
         return protocol;
     }
+    
+    protected String getLocation(){
+        return location.get();
+    }
 
     protected ClientResponse getClientResponse(String uri) throws UniformInterfaceException {
         authenticator.get().addAuthenticator(client, username.get(), password.get());
         String fullUri = getBaseURI() + uri;
-        return client.resource(fullUri).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+        WebResource resource = client.resource(fullUri);
+        Builder builder = resource.accept(MediaType.APPLICATION_JSON);
+        return builder.get(ClientResponse.class);
     }
 }

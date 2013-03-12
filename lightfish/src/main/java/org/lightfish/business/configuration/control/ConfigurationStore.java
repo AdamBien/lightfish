@@ -40,6 +40,7 @@ public class ConfigurationStore {
         configuration.put("maxParallelThreads", "0");
         configuration.put("collectionTimeout", "10");
         configuration.put("dataCollectionRetries", "1");
+        configuration.put("defaultMaxLogResults", "40");
         em.persist(configuration);
         return configuration;
     }

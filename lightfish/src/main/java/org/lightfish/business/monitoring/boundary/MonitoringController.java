@@ -39,6 +39,8 @@ import javax.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -50,6 +52,7 @@ import org.lightfish.business.monitoring.control.collectors.ParallelDataCollecti
 import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionExecutor;
 import org.lightfish.business.monitoring.entity.Application;
 import org.lightfish.business.monitoring.entity.ConnectionPool;
+import org.lightfish.business.monitoring.entity.LogRecord;
 
 /**
  *
@@ -222,6 +225,7 @@ public class MonitoringController {
         //List<Application> applications = new ArrayList<>();
         Map<String, Application> applications = new HashMap<>();
         Map<String, ConnectionPool> pools = new HashMap<>();
+        Set<LogRecord> logs = new TreeSet<>();
         for (Snapshot current : snapshots) {
             usedHeapSize += current.getUsedHeapSize();
             threadCount += current.getThreadCount();
@@ -234,8 +238,8 @@ public class MonitoringController {
             activeSessions += current.getActiveSessions();
             expiredSessions += current.getExpiredSessions();
             for (Application application : current.getApps()) {
-                Application combinedApp = new Application(application.getApplicationName(), application.getComponents());
-                applications.put(application.getApplicationName(), combinedApp);
+                //Application combinedApp = new Application(application.getApplicationName(), application.getComponents());
+                applications.put(application.getApplicationName(), application);
             }
 
             for (ConnectionPool currentPool : current.getPools()) {
@@ -250,7 +254,8 @@ public class MonitoringController {
                 combinedPool.setNumpotentialconnleak(currentPool.getNumpotentialconnleak() + combinedPool.getNumpotentialconnleak());
                 combinedPool.setWaitqueuelength(currentPool.getWaitqueuelength() + combinedPool.getWaitqueuelength());
             }
-
+            
+            logs.addAll(current.getLogRecords());
         }
 
         Snapshot combined = new Snapshot.Builder()
@@ -265,6 +270,7 @@ public class MonitoringController {
                 .totalErrors(totalErrors)
                 .usedHeapSize(usedHeapSize)
                 .instanceName(COMBINED_SNAPSHOT_NAME)
+                .logs(new ArrayList<>(logs))
                 .build();
         combined.setApps(new ArrayList(applications.values()));
         combined.setPools(new ArrayList(pools.values()));
