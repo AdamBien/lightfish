@@ -9,6 +9,7 @@ import java.util.Iterator;
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -24,12 +25,8 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
     @Inject
     protected Instance<String> location;
     @Inject
-    protected Instance<String> username;
-    @Inject
-    protected Instance<String> password;
+    protected Instance<String> sessionToken;
     private String serverInstance;
-    @Inject
-    protected Instance<GlassfishAuthenticator> authenticator;
 
     @Override
     public String getServerInstance() {
@@ -104,7 +101,7 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
 
     protected String getProtocol() {
         String protocol = "http://";
-        if (username != null && username.get() != null && !username.get().isEmpty()) {
+        if (sessionToken != null && sessionToken.get() != null && !sessionToken.get().isEmpty()) {
             protocol = "https://";
         }
         return protocol;
@@ -115,10 +112,13 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
     }
 
     protected ClientResponse getClientResponse(String uri) throws UniformInterfaceException {
-        authenticator.get().addAuthenticator(client, username.get(), password.get());
         String fullUri = getBaseURI() + uri;
         WebResource resource = client.resource(fullUri);
-        Builder builder = resource.accept(MediaType.APPLICATION_JSON);
+        Builder builder = resource.accept(MediaType.APPLICATION_JSON).header("X-Requested-By", "");
+        if(sessionToken!=null && sessionToken.get()!=null && !sessionToken.get().isEmpty()){
+            builder.cookie(new Cookie("gfresttoken", sessionToken.get()));
+        }
+        
         return builder.get(ClientResponse.class);
     }
 }

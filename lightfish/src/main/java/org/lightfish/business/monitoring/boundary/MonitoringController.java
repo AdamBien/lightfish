@@ -47,9 +47,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.lightfish.business.monitoring.control.SessionTokenProvider;
+import org.lightfish.business.monitoring.control.collectors.DataCollector;
 import org.lightfish.business.monitoring.control.collectors.DataPoint;
 import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionAction;
 import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionExecutor;
+import org.lightfish.business.monitoring.control.collectors.authentication.Authentication;
 import org.lightfish.business.monitoring.entity.Application;
 import org.lightfish.business.monitoring.entity.ConnectionPool;
 import org.lightfish.business.monitoring.entity.LogRecord;
@@ -81,6 +84,7 @@ public class MonitoringController {
     Instance<String[]> serverInstances;
     @Inject
     Instance<Integer> collectionTimeout;
+    @Inject SessionTokenProvider sessionTokenProvider;
     int nextInstanceIndex = 0;
     Map<String, SnapshotCollectionAction> currentCollectionActions = new HashMap<>();
     Map<String, Snapshot> currentSnapshots = new HashMap<>();
@@ -90,10 +94,17 @@ public class MonitoringController {
     @Inject
     private Instance<Integer> interval;
 
-    public void startTimer() {
+    public void startTimer() throws Exception{
+        getSessionToken();
+        
         ScheduleExpression expression = new ScheduleExpression();
         expression.minute("*").second("*/" + interval.get()).hour("*");
         this.timer = this.timerService.createCalendarTimer(expression);
+        
+    }
+    
+    private void getSessionToken() throws Exception{
+        sessionTokenProvider.retrieveSessionToken();
     }
 
     private void handleCompletedFutures(Boolean wait) {
@@ -104,17 +115,17 @@ public class MonitoringController {
             Entry<String, SnapshotCollectionAction> entry = it.next();
             try {
                 DataPoint<Snapshot> dataPoint = null;
-                if(wait){
+                if (wait) {
                     dataPoint = entry.getValue().getFuture().get();
-                }else{
+                } else {
                     dataPoint = entry.getValue().getFuture().get(0, TimeUnit.NANOSECONDS);
                 }
-                
+
                 LOG.log(Level.FINE, "Handling completed snapshot for {0}", entry.getKey());
                 it.remove();
                 if (dataPoint == null) {
-                    LOG.log(Level.WARNING, "An exception occured while retrieving data for "+ 
-                            entry.getKey(),entry.getValue().getAction().getThrownException());
+                    LOG.log(Level.WARNING, "An exception occured while retrieving data for "
+                            + entry.getKey(), entry.getValue().getAction().getThrownException());
                     continue;
                 }
 
@@ -138,7 +149,7 @@ public class MonitoringController {
             }
 
             em.flush();
-            
+
             for (Snapshot snapshot : handledSnapshots) {
                 fireHeartbeat(snapshot);
             }
@@ -175,9 +186,9 @@ public class MonitoringController {
 
     private void startNextInstanceCollection(int index) {
         String currentServerInstance = null;
-        try{
+        try {
             currentServerInstance = serverInstances.get()[index];
-        }catch(ArrayIndexOutOfBoundsException oobEx){
+        } catch (ArrayIndexOutOfBoundsException oobEx) {
             LOG.warning("It appears you changed the server instances you are monitoring while the timer is running, this is not recommended...");
             return;
         }
@@ -188,17 +199,17 @@ public class MonitoringController {
 
         LOG.log(Level.INFO, "Starting data collection for {0}", currentServerInstance);
         Future<DataPoint<Snapshot>> future = action.compute(collector);
-        currentCollectionActions.put(currentServerInstance, 
+        currentCollectionActions.put(currentServerInstance,
                 new SnapshotCollectionAction(Calendar.getInstance().getTimeInMillis(), future, action));
     }
-    
+
     @Timeout
     public void gatherAndPersist() {
         handleCompletedFutures(false);
         handleTimedOutFutures();
 
         startNextInstanceCollection(nextInstanceIndex++);
-        
+
         if (nextInstanceIndex >= serverInstances.get().length) {
             if (!currentCollectionActions.isEmpty()) {
                 handleCompletedFutures(true);
@@ -254,7 +265,7 @@ public class MonitoringController {
                 combinedPool.setNumpotentialconnleak(currentPool.getNumpotentialconnleak() + combinedPool.getNumpotentialconnleak());
                 combinedPool.setWaitqueuelength(currentPool.getWaitqueuelength() + combinedPool.getWaitqueuelength());
             }
-            
+
             logs.addAll(current.getLogRecords());
         }
 
@@ -314,7 +325,8 @@ public class MonitoringController {
         return (this.timer != null);
     }
 
-    private class SnapshotCollectionAction{
+    private class SnapshotCollectionAction {
+
         private Long started;
         private Future<DataPoint<Snapshot>> future;
         private ParallelDataCollectionAction action;
@@ -336,6 +348,5 @@ public class MonitoringController {
         public ParallelDataCollectionAction getAction() {
             return action;
         }
-
     }
 }
