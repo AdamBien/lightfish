@@ -238,8 +238,8 @@ public class MonitoringController {
             activeSessions += current.getActiveSessions();
             expiredSessions += current.getExpiredSessions();
             for (Application application : current.getApps()) {
-                //Application combinedApp = new Application(application.getApplicationName(), application.getComponents());
-                applications.put(application.getApplicationName(), application);
+                Application combinedApp = new Application(application.getApplicationName(), application.getComponents());
+                applications.put(application.getApplicationName(), combinedApp);
             }
 
             for (ConnectionPool currentPool : current.getPools()) {
@@ -255,7 +255,7 @@ public class MonitoringController {
                 combinedPool.setWaitqueuelength(currentPool.getWaitqueuelength() + combinedPool.getWaitqueuelength());
             }
             
-            logs.addAll(current.getLogRecords());
+            //logs.addAll(current.getLogRecords());
         }
 
         Snapshot combined = new Snapshot.Builder()
