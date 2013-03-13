@@ -38,6 +38,8 @@ public class ConfigurationStore {
         configuration.put("password", "");
         configuration.put("serverInstances", "server");
         configuration.put("maxParallelThreads", "0");
+        configuration.put("collectionTimeout", "10");
+        configuration.put("dataCollectionRetries", "1");
         em.persist(configuration);
         return configuration;
     }
