@@ -405,7 +405,7 @@ lightfish.view = {
                 logsLoadingElem.attr('id', logsElemId + "-loading");
                 
                 
-                $.getJSON("/lightfish/resources/logs/for/snapshot/" + snapshotId,null,function(data){
+                $.getJSON(lightfish.view.config.baseUri + "/resources/logs/for/snapshot/" + snapshotId,null,function(data){
                     if(data!=null){
                         for(var logIndex in data.logRecord){
                         
