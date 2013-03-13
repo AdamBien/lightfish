@@ -2,15 +2,19 @@ package org.lightfish.business.monitoring.control.collectors;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.ClientResponse.Status;
 import com.sun.jersey.api.client.UniformInterfaceException;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.WebResource.Builder;
 import java.util.Iterator;
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.lightfish.business.authenticator.GlassfishAuthenticator;
+import org.lightfish.business.monitoring.control.SessionTokenRetriever;
 
 /**
  *
@@ -18,17 +22,14 @@ import org.lightfish.business.authenticator.GlassfishAuthenticator;
  */
 public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<TYPE> {
 
-    private Client client;
+    protected Client client;
     @Inject
-    Instance<String> location;
+    protected Instance<String> location;
     @Inject
-    Instance<String> username;
+    protected Instance<String> sessionToken;
     @Inject
-    Instance<String> password;
-    @Inject
-    String serverInstance;
-    @Inject
-    Instance<GlassfishAuthenticator> authenticator;
+    protected SessionTokenRetriever tokenProvider;
+    private String serverInstance;
 
     @Override
     public String getServerInstance() {
@@ -62,7 +63,7 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
         ClientResponse result = getClientResponse(uri);
         return getJSONObject(result, name).getInt(key);
     }
-    
+
     protected String getString(String uri, String name, String key) throws JSONException {
         ClientResponse result = getClientResponse(uri);
         return getJSONObject(result, name).getString(key);
@@ -97,21 +98,45 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
                 getJSONObject(name);
     }
 
-    private String getBaseURI() {
+    protected String getBaseURI() {
         return getProtocol() + location.get() + "/monitoring/domain/" + serverInstance + "/";
     }
 
-    private String getProtocol() {
+    protected String getProtocol() {
         String protocol = "http://";
-        if (username != null && username.get() != null && !username.get().isEmpty()) {
+        if (sessionToken != null && sessionToken.get() != null && !sessionToken.get().isEmpty()) {
             protocol = "https://";
         }
         return protocol;
     }
 
+    protected String getLocation() {
+        return location.get();
+    }
+
     protected ClientResponse getClientResponse(String uri) throws UniformInterfaceException {
-        authenticator.get().addAuthenticator(client, username.get(), password.get());
+        return getClientResponse(uri, 0);
+    }
+
+    protected ClientResponse getClientResponse(String uri, int retries) throws UniformInterfaceException {
         String fullUri = getBaseURI() + uri;
-        return client.resource(fullUri).accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+        WebResource resource = client.resource(fullUri);
+        Builder builder = resource.accept(MediaType.APPLICATION_JSON);
+        if (sessionToken != null && sessionToken.get() != null && !sessionToken.get().isEmpty()) {
+            builder.cookie(new Cookie("gfresttoken", sessionToken.get()));
+        }
+
+        try {
+            return builder.get(ClientResponse.class);
+        } catch (UniformInterfaceException uie) {
+            if (uie.getResponse().getClientResponseStatus().equals(Status.UNAUTHORIZED)) {
+                tokenProvider.retrieveSessionToken();
+                if (retries < 1) {
+                    return getClientResponse(uri, ++retries);
+                }
+            }
+            throw uie;
+
+        }
     }
 }

@@ -1,9 +1,11 @@
 package org.lightfish.business.monitoring.control.collectors;
 
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.lightfish.business.monitoring.entity.Application;
 import org.lightfish.business.monitoring.entity.ConnectionPool;
+import org.lightfish.business.monitoring.entity.LogRecord;
 import org.lightfish.business.monitoring.entity.Snapshot;
 
 /**
@@ -55,8 +57,11 @@ public class DataPointToSnapshotMapper {
             case "peakThreadCount":
                 snapshot.setPeakThreadCount((Integer) dataPoint.getValue());
                 break;
+            case "logs":
+                snapshot.setLogRecords((List<LogRecord>)dataPoint.getValue());
+                break;
             default:
-                LOG.info("Data Point " + dataPoint.getName() + " could not be mapped to Snapshot");
+                LOG.log(Level.INFO, "Data Point {0} could not be mapped to Snapshot", dataPoint.getName());
                 break;
         }
     }

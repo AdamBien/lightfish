@@ -30,7 +30,7 @@
                 <li><a href="#performance"><span>Performance</span></a></li>
                 <li><a href="#sessions"><span>Sessions</span></a></li>
                 <li><a href="#applications"><span>Applications</span></a></li>
-                <li><a href="#logs"><span>Live Logs</span></a></li>
+                <li><a href="#snapshots"><span>Snapshots</span></a></li>
             </ul>
             <div class="chart-group" id="system">
                 <h1>Threads and Memory</h1>
@@ -117,18 +117,18 @@
                 <small class="help-block" style="margin-top:1em;">This information is loaded when the page loads and is only refreshed if you refresh the page.</small>
                 <div style="clear:both" />
             </div>
-            <div id="logs">
-                <div id="logHeader">
+            <div id="snapshots">
+                <div id="snapshotHeader">
                 </div>
-                <div id="logContainer">
+                <div id="snapshotContainer">
 
                 </div>
                 <div id="followControl">
                     <a href="javascript:void(0)" id="toggleFollow">Stop Following</a>
                 </div>
-                <div id="log-template" class="log-line" style="display:none">
-                    <div class="log-datum log-data-time"></div>
-                    <div class="log-datum log-data-id"></div>
+                <div id="snapshot-template" class="snapshot-line" style="display:none">
+                    <div class="snapshot-datum snapshot-data-time"></div>
+                    <div class="snapshot-datum snapshot-data-id"></div>
                 </div>
             </div>
         </div>
@@ -174,11 +174,11 @@
                 <h5>Transactions</h5>
                 <div class="snapshot-datum-group clearfix">
                     <div class="snapshot-datum-entry">
-                        <label class="snapshot-datum-label">Commit Count (Cumulative)</label>
+                        <label class="snapshot-datum-label">Commits (cumulative)</label>
                         <div id="snapshot-datum-txCommitCount" class="snapshot-datum-value"></div>
                     </div>
                     <div class="snapshot-datum-entry">
-                        <label class="snapshot-datum-label">Rollback Count (Cumulative)</label>
+                        <label class="snapshot-datum-label">Rollbacks (cumulative)</label>
                         <div id="snapshot-datum-txRollbackCount" class="snapshot-datum-value"></div>
                     </div>
                     <div class="snapshot-datum-entry">
@@ -222,6 +222,10 @@
                 </div>
                 <h5>Resources</h5>
                 <div id="snapshot-datum-pools"></div>
+                <h5>Logs</h5>
+                <div id="snapshot-datum-logs">
+                    <div id="snapshot-datum-logs-loading" class="loading"></div>
+                </div>
             </div>
             <div id="snapshot-dialog-pool-template" class="clearfix">
                 <h6 id="snapshot-datum-pool-name"></h6>
@@ -244,6 +248,14 @@
                     </div>
                 </div>
             </div>
+            <div id="snapshot-dialog-log-record-template" class="clearfix">
+                <div id="snapshot-datum-log-monitoringTime" class="datum-log-time"></div>
+                <div id="snapshot-datum-log-level" class="datum-log-level"></div>
+                <div class="datum-log-logger-holder">
+                <div id="snapshot-datum-log-loggerName" class="datum-log-logger"></div>
+                </div>
+                <div id="snapshot-datum-log-message" class="datum-log-message"></div>
+            </div>
         </div>
 
         <script type="text/javascript">
@@ -251,8 +263,8 @@
                 lightfish.view.config.baseUri = '${facesContext.externalContext.getRequestContextPath()}';
          
             });
-            lightfish.view.config.refreshInterval = ${lightView.interval};
-            _Chart.chartOptions.xaxis.tickSize = [${lightView.interval} * 8, 'second'];
+            lightfish.view.config.refreshInterval = ${lightView.interval} * (${lightView.monitoredInstancesLength} + 1);
+            _Chart.chartOptions.xaxis.tickSize = [lightfish.view.config.refreshInterval * 6, 'second'];
         </script>
     </ui:define>
 </ui:composition>

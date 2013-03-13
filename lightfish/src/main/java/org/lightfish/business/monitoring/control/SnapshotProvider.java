@@ -15,16 +15,13 @@
  */
 package org.lightfish.business.monitoring.control;
 
-import com.sun.jersey.api.client.Client;
 import java.util.ArrayList;
 import java.util.Date;
 import org.lightfish.business.monitoring.entity.Snapshot;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.List;
 import javax.enterprise.inject.Instance;
-import org.lightfish.business.authenticator.GlassfishAuthenticator;
 import java.util.logging.Logger;
 import org.lightfish.business.monitoring.control.collectors.DataCollector;
 import org.lightfish.business.monitoring.control.collectors.DataPoint;
@@ -47,6 +44,8 @@ public class SnapshotProvider {
     @Inject
     DataPointToSnapshotMapper mapper;
     @Inject
+    Instance<Integer> dataCollectionRetries;
+    @Inject
     ParallelDataCollectionExecutor parallelExecutor;
 
     public Snapshot fetchSnapshot(String instanceName) throws Exception {
@@ -68,11 +67,24 @@ public class SnapshotProvider {
 
     private Snapshot serialDataCollection(String instanceName) throws Exception {
         Snapshot snapshot = new Snapshot.Builder().build();
+        DataCollectionBehaviour dataCollectionBehaviour = new DataCollectionBehaviour(mapper, snapshot);
         for (DataCollector collector : retrieveDataCollectorList(instanceName)) {
-            DataPoint dataPoint = collector.collect();
-            mapper.mapDataPointToSnapshot(dataPoint, snapshot);
+            DataPoint dataPoint = serialDataCollect(collector, 0);
+            dataCollectionBehaviour.perform(dataPoint);
         }
         return snapshot;
+    }
+
+    private DataPoint serialDataCollect(DataCollector collector, int attempt) throws Exception {
+        try {
+            return collector.collect();
+        } catch (Exception ex) {
+            if (attempt < dataCollectionRetries.get()) {
+                return serialDataCollect(collector, ++attempt);
+            } else {
+                throw ex;
+            }
+        }
     }
 
     private Snapshot parallelDataCollection(String instanceName) throws Exception {
@@ -87,7 +99,7 @@ public class SnapshotProvider {
         for (DataCollector collector : dataCollectors) {
             collector.setServerInstance(instanceName);
             dataCollectorList.add(collector);
-            
+
         }
         return dataCollectorList;
     }
@@ -104,7 +116,9 @@ public class SnapshotProvider {
 
         @Override
         public void perform(DataPoint dataPoint) throws Exception {
-            mapper.mapDataPointToSnapshot(dataPoint, snapshot);
+            if (dataPoint != null) {
+                mapper.mapDataPointToSnapshot(dataPoint, snapshot);
+            }
         }
     }
 }

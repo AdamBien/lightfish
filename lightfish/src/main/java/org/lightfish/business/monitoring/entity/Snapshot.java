@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -35,7 +36,7 @@ public class Snapshot {
     @Id
     @GeneratedValue
     private long id;
-    @Temporal(TemporalType.TIME)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date monitoringTime;
     private String instanceName;
     private long usedHeapSize;
@@ -53,6 +54,9 @@ public class Snapshot {
     private List<ConnectionPool> pools;
     @OneToMany(cascade = CascadeType.PERSIST)
     private List<Application> apps;
+    @XmlTransient
+    @OneToMany(cascade = CascadeType.PERSIST)
+    private List<LogRecord> logRecords;
 
     public Snapshot() {
         this.monitoringTime = new Date();
@@ -188,6 +192,13 @@ public class Snapshot {
         this.instanceName = instanceName;
     }
 
+    public List<LogRecord> getLogRecords() {
+        return logRecords;
+    }
+
+    public void setLogRecords(List<LogRecord> logRecords) {
+        this.logRecords = logRecords;
+    }
 
     public static class Builder {
 
@@ -258,6 +269,12 @@ public class Snapshot {
             return this;
         }
 
+        public Builder logs(List<LogRecord> logs) {
+            snapshot.logRecords = logs;
+            return this;
+        }
+
+        
         public Builder instanceName(String instanceName) {
             snapshot.instanceName = instanceName;
             return this;
@@ -272,6 +289,7 @@ public class Snapshot {
     public String toString() {
         return "Snapshot{"
                 + "id=" + id
+                + ", instanceName=" + instanceName
                 + ", monitoringTime=" + monitoringTime
                 + ", usedHeapSize=" + usedHeapSize
                 + ", threadCount=" + threadCount
