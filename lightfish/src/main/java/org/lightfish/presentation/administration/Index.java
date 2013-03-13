@@ -104,7 +104,7 @@ public class Index {
         return null;
     }
     
-    public Object start(){
+    public Object start() throws Exception{
         this.controller.startTimer();
         return null;
     }

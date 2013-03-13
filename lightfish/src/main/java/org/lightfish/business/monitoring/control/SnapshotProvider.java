@@ -43,7 +43,8 @@ public class SnapshotProvider {
     Instance<DataCollector> dataCollectors;
     @Inject
     DataPointToSnapshotMapper mapper;
-    @Inject Instance<Integer> dataCollectionRetries;
+    @Inject
+    Instance<Integer> dataCollectionRetries;
     @Inject
     ParallelDataCollectionExecutor parallelExecutor;
 
@@ -66,20 +67,21 @@ public class SnapshotProvider {
 
     private Snapshot serialDataCollection(String instanceName) throws Exception {
         Snapshot snapshot = new Snapshot.Builder().build();
+        DataCollectionBehaviour dataCollectionBehaviour = new DataCollectionBehaviour(mapper, snapshot);
         for (DataCollector collector : retrieveDataCollectorList(instanceName)) {
             DataPoint dataPoint = serialDataCollect(collector, 0);
-            mapper.mapDataPointToSnapshot(dataPoint, snapshot);
+            dataCollectionBehaviour.perform(dataPoint);
         }
         return snapshot;
     }
-    
-    private DataPoint serialDataCollect(DataCollector collector, int attempt) throws Exception{
-        try{
+
+    private DataPoint serialDataCollect(DataCollector collector, int attempt) throws Exception {
+        try {
             return collector.collect();
-        }catch(Exception ex){
-            if(attempt < dataCollectionRetries.get()){
+        } catch (Exception ex) {
+            if (attempt < dataCollectionRetries.get()) {
                 return serialDataCollect(collector, ++attempt);
-            }else{
+            } else {
                 throw ex;
             }
         }
@@ -97,7 +99,7 @@ public class SnapshotProvider {
         for (DataCollector collector : dataCollectors) {
             collector.setServerInstance(instanceName);
             dataCollectorList.add(collector);
-            
+
         }
         return dataCollectorList;
     }
@@ -114,7 +116,9 @@ public class SnapshotProvider {
 
         @Override
         public void perform(DataPoint dataPoint) throws Exception {
-            mapper.mapDataPointToSnapshot(dataPoint, snapshot);
+            if (dataPoint != null) {
+                mapper.mapDataPointToSnapshot(dataPoint, snapshot);
+            }
         }
     }
 }

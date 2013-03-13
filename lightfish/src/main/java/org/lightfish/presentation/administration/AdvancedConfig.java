@@ -33,6 +33,7 @@ import org.lightfish.business.monitoring.boundary.DomainInformation;
 public class AdvancedConfig {
     public static final String SERVER_INSTANCES = "serverInstances";
     public static final String DATA_COLLECTION_RETRIES = "dataCollectionRetries";
+    public static final String COLLECT_LOGS = "collectLogs";
     public static final String PARALLEL_DATA_COLLECTION = "parallelDataCollection";
     public static final String PARALLEL_DATA_COLLECTION_THREADS = "maxParallelThreads";
     @Inject
@@ -63,6 +64,14 @@ public class AdvancedConfig {
     
     public void setDataCollectionRetries(Integer dataCollectionRetries){
         this.configurator.setValue(DATA_COLLECTION_RETRIES,dataCollectionRetries);
+    }
+    
+    public Boolean getCollectLogs(){
+        return Boolean.valueOf(this.configurator.getValue(COLLECT_LOGS));
+    }
+    
+    public void setCollectLogs(Boolean collectLogs){
+        this.configurator.setValue(COLLECT_LOGS,collectLogs);
     }
     
     public Boolean getParallelDataCollection(){

@@ -40,7 +40,7 @@ public class Serializer {
     @PostConstruct
     public void initialize(){
         try {
-            JAXBContext jaxb = JAXBContext.newInstance(Snapshot.class,Escalations.class, Escalation.class);
+            JAXBContext jaxb = JAXBContext.newInstance(Snapshot.class,Escalations.class,Escalation.class);
             this.marshaller = jaxb.createMarshaller();
         } catch (JAXBException ex) {
             throw new IllegalStateException("Cannot initialize JAXB context " + ex);
