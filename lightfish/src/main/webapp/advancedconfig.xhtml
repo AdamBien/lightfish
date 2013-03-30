@@ -46,6 +46,14 @@
                             if the data collection fails at any point.</span>
                     </div>
                 </div>   
+                <div class="control-group">
+                    <label class="control-label">Collect Log Entries</label>
+                    <div class="controls">
+                        <h:selectBooleanCheckbox value="#{advancedConfig.collectLogs}" />
+                        <span class="help-block">If enabled the system will also collect new log entries 
+                            from each instances' logs.</span>
+                    </div>
+                </div> 
                 <legend>Experimental</legend>
                 <div class="control-group">
                     <label class="control-label">Parallel Data Collection</label>
