@@ -61,7 +61,7 @@ var _Chart = {
                 if(val<10){
                     return val.toFixed(2);
                 }else if(val<100){
-                    return val.toFixed(3);
+                    return val.toFixed(0);
                 }else{
                     return val.toFixed(0);
                 }
