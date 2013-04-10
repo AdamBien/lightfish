@@ -12,10 +12,11 @@ import org.lightfish.business.escalation.boundary.notification.transmitter.Trans
  */
 @Entity
 @NamedQueries({
-    @NamedQuery(name="notifier.all",query="select n from Notifier n;"),
-    @NamedQuery(name="notifier.nonsystem",query="select n from Notifier n where n.system = false;")
+    @NamedQuery(name = "notifier.all", query = "select n from Notifier n"),
+    @NamedQuery(name = "notifier.nonsystem", query = "select n from Notifier n where n.system = false")
 })
 public class Notifier {
+
     @Id
     private String name;
     private String transmitterId;
@@ -53,7 +54,6 @@ public class Notifier {
     public void setSystem(boolean system) {
         this.system = system;
     }
-    
 
     @Override
     public String toString() {
@@ -82,14 +82,13 @@ public class Notifier {
             this.config.transmitterId = typeId;
             return this;
         }
-        
+
         public Builder system(boolean system) {
             this.config.system = system;
             return this;
         }
-        
-        
-        public Notifier build(){
+
+        public Notifier build() {
             return this.config;
         }
     }
