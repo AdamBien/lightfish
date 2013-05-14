@@ -9,7 +9,7 @@ case $BUILDSTAGE in
       			mvn -f multilight/pom.xml test-compile
       			;;            
       		test )
-      			mvn -f multilight/pom.xml test -fn
+      			mvn -f multilight/pom.xml test -fae
       			;;
    		esac
        	;;
@@ -20,7 +20,7 @@ case $BUILDSTAGE in
       			mvn -f multilight/pom.xml test-compile
       			;;            
    	 		test )
-      			mvn clean failsafe:integration-test failsafe:verify -fn
+      			mvn clean failsafe:integration-test failsafe:verify -fae
       			;;
       	esac
       	;;
@@ -37,7 +37,7 @@ case $BUILDSTAGE in
       			cd lightfish-st/target/dependency
       			unzip glassfish-3.1.2.2.zip
       			glassfish3/bin/asadmin start-domain
-      			glassfish3/bin/asadmin start-database
+      			glassfish3/bin/asadmin start-database --jvmoptions -Xmx128m
       			glassfish3/bin/asadmin deploy ../../../lightfish/target/lightfish.war 
       			;;
 
