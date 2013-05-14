@@ -1,0 +1,55 @@
+#!/usr/bin/env sh
+
+ACTION=$1
+
+case $BUILDSTAGE in
+    unittest )
+      	case $ACTION in
+      		install )
+      			mvn -f multilight/pom.xml test-compile
+      			;;            
+      		test )
+      			mvn -f multilight/pom.xml test -fn
+      			;;
+   		esac
+       	;;
+
+    integrationtest )
+      	case $ACTION in
+      		install )
+      			mvn -f multilight/pom.xml test-compile
+      			;;            
+   	 		test )
+      			mvn clean failsafe:integration-test failsafe:verify -fn
+      			;;
+      	esac
+      	;;
+
+    systemtest )
+	  	case $ACTION in
+	    	install ) 
+	        	mvn -f multilight/pom.xml -Djarsigner.skip clean install -DskipTests
+	        	mvn -f lightfish-st/pom.xml test-compile
+	        	;;
+
+	    	before_script )	
+            	mvn -f lightfish-st/pom.xml org.apache.maven.plugins:maven-dependency-plugin:2.7:copy -Dartifact=org.glassfish.main.distributions:glassfish:3.1.2.2:zip
+      			cd lightfish-st/target/dependency
+      			unzip glassfish-3.1.2.2.zip
+      			glassfish3/bin/asadmin start-domain
+      			glassfish3/bin/asadmin start-database
+      			glassfish3/bin/asadmin deploy ../../../lightfish/target/lightfish.war 
+      			;;
+
+      		test )
+            	mvn -f lightfish-st/pom.xml test
+            	;;
+
+        	after_script )
+				cd lightfish-st/target/dependency/glassfish3/bin
+				./asadmin stop-domain
+				./asadmin stop-database
+				;;
+      	esac
+	  	;;
+esac

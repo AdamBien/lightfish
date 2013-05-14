@@ -1,0 +1,11 @@
+language: java
+jdk:
+  - oraclejdk7
+install: .travisci/script install
+before_script: .travisci/script before_script
+script: .travisci/script test
+after_script: .travisci/script after_script
+env:
+  - BUILDSTAGE=unittest
+  - BUILDSTAGE=integrationtest
+  - BUILDSTAGE=systemtest
