@@ -20,7 +20,7 @@ case $BUILDSTAGE in
       			mvn -f multilight/pom.xml test-compile
       			;;            
    	 		test )
-      			mvn clean failsafe:integration-test failsafe:verify -fae
+      			mvn -f multilight/pom.xml failsafe:integration-test failsafe:verify -fae
       			;;
       	esac
       	;;
@@ -53,3 +53,4 @@ case $BUILDSTAGE in
       	esac
 	  	;;
 esac
+exit $?
