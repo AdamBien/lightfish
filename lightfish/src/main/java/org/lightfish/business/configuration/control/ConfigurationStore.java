@@ -1,5 +1,6 @@
 package org.lightfish.business.configuration.control;
 
+import javax.ejb.Stateless;
 import org.lightfish.business.configuration.entity.Configuration;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -8,6 +9,7 @@ import javax.persistence.PersistenceContext;
  *
  * @author rveldpau
  */
+@Stateless
 public class ConfigurationStore {
 
     @PersistenceContext
@@ -18,14 +20,14 @@ public class ConfigurationStore {
         if (configuration == null) {
             configuration = createDefault();
         }
-        
+
         return configuration;
     }
 
-    public void save(Configuration configuration){
+    public void save(Configuration configuration) {
         em.merge(configuration);
     }
-    
+
     private Configuration createDefault() {
         Configuration configuration = new Configuration();
         configuration.put("location", "localhost:4848");
