@@ -4,15 +4,19 @@
  */
 package org.lightfish.business.authenticator;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
-import javax.net.ssl.*;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import javax.ws.rs.client.Client;
 import org.lightfish.business.monitoring.control.SnapshotProvider;
 
 /**
@@ -42,7 +46,8 @@ public class GlassfishAuthenticator {
     }};
 
     public void addAuthenticator(Client client, String username, String password) {
-        client.addFilter(new HTTPBasicAuthFilter(username, password));
+        //TODO migration
+        // client.addFilter(new HTTPBasicAuthFilter(username, password));
         /*
          * Bypass certificates
          */

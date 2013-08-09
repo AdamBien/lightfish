@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.logging.Logger;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import org.codehaus.jettison.json.JSONException;
 import org.lightfish.business.monitoring.control.SnapshotProvider;
 import org.lightfish.business.monitoring.control.collectors.AbstractRestDataCollector;
 import org.lightfish.business.monitoring.control.collectors.DataCollector;
@@ -56,7 +55,7 @@ public class ApplicationCollector extends AbstractRestDataCollector<List<Applica
         return new DataPoint<>("applications", applications);
     }
 
-    private String[] applications() throws JSONException {
+    private String[] applications() {
         return getStringArray(APPLICATIONS, "childResources");
     }
 
@@ -74,7 +73,7 @@ public class ApplicationCollector extends AbstractRestDataCollector<List<Applica
         collectors.addAll(applicationCollectors);
 
         List<Application> applications = new ArrayList<>(collectors.size());
-        
+
         parallelExecutor.execute(new DataCollectionBehaviour(applications), collectors);
 
         return applications;

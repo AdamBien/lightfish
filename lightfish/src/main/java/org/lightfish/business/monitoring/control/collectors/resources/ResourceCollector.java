@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import org.codehaus.jettison.json.JSONException;
 import org.lightfish.business.monitoring.control.collectors.AbstractRestDataCollector;
 import org.lightfish.business.monitoring.control.collectors.DataCollector;
 import org.lightfish.business.monitoring.control.collectors.DataPoint;
@@ -48,7 +47,6 @@ public class ResourceCollector extends AbstractRestDataCollector<List<Connection
             resources = serialRetrieveResources(collectors);
         }
 
-
         return new DataPoint<>("resources", resources);
     }
 
@@ -68,11 +66,11 @@ public class ResourceCollector extends AbstractRestDataCollector<List<Connection
         List<ConnectionPool> resources = new ArrayList<>(collectors.size());
 
         parallelExecutor.execute(new DataCollectionBehaviour(resources), collectors);
-        
+
         return resources;
     }
 
-    private String[] resources() throws JSONException {
+    private String[] resources() {
         return getStringArray(RESOURCES, "childResources");
     }
 

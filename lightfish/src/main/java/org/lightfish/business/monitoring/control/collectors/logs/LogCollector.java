@@ -1,6 +1,5 @@
 package org.lightfish.business.monitoring.control.collectors.logs;
 
-import com.sun.jersey.api.client.ClientResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,8 +9,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONObject;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.ws.rs.core.Response;
 import org.lightfish.business.configuration.boundary.Configurator;
 import org.lightfish.business.monitoring.control.collectors.AbstractRestDataCollector;
 import org.lightfish.business.monitoring.control.collectors.DataPoint;
@@ -42,7 +42,7 @@ public class LogCollector extends AbstractRestDataCollector<List<LogRecord>> {
         if (!collectLogs.get()) {
             return null;
         }
-        
+
         StringBuilder uriBuilder = new StringBuilder(VIEW_LOG_BASE_URI);
         uriBuilder.append("?instanceName=")
                 .append(getServerInstance())
@@ -51,12 +51,12 @@ public class LogCollector extends AbstractRestDataCollector<List<LogRecord>> {
                 .append("&toTime=")
                 .append(System.currentTimeMillis() + 1000)
                 .append("&maximumNumberOfResults=1000");
-        ClientResponse response = getClientResponse(uriBuilder.toString());
-        JSONObject result = response.getEntity(JSONObject.class);
-        JSONArray recordsArray = result.getJSONArray("records");
-        List<LogRecord> records = new ArrayList<>(recordsArray.length());
-        for (int i = 0; i < recordsArray.length(); i++) {
-            JSONObject currentRecord = recordsArray.getJSONObject(i);
+        Response response = getResponse(uriBuilder.toString());
+        JsonObject result = response.readEntity(JsonObject.class);
+        JsonArray recordsArray = result.getJsonArray("records");
+        List<LogRecord> records = new ArrayList<>(recordsArray.size());
+        for (int i = 0; i < recordsArray.size(); i++) {
+            JsonObject currentRecord = recordsArray.getJsonObject(i);
             String message = currentRecord.getString("Message");
             if (message.length() > 4000) {
                 message = message.substring(0, 3996) + "...";
@@ -67,8 +67,8 @@ public class LogCollector extends AbstractRestDataCollector<List<LogRecord>> {
                     .level(currentRecord.getString("loggedLevel"))
                     .loggerName(currentRecord.getString("loggerName"))
                     .message(message)
-                    .messageId(currentRecord.optString("messageID"))
-                    .monitoringTime(new Date(currentRecord.getLong("loggedDateTimeInMS")))
+                    .messageId(currentRecord.getString("messageID", ""))
+                    .monitoringTime(new Date(currentRecord.getJsonNumber("loggedDateTimeInMS").longValue()))
                     .nameValuePairs(splitNameValuePairs(currentRecord.getString("nameValuePairs")))
                     .build());
         }

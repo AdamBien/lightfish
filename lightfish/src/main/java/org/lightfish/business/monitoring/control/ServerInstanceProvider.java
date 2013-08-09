@@ -1,20 +1,12 @@
 package org.lightfish.business.monitoring.control;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.UniformInterfaceException;
-import com.sun.jersey.api.client.WebResource;
-import java.util.ArrayList;
-import java.util.List;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-
-import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.json.JsonObject;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
-import org.codehaus.jettison.json.JSONArray;
 import org.lightfish.business.authenticator.GlassfishAuthenticator;
-import org.lightfish.business.monitoring.entity.Domain;
 import org.lightfish.business.monitoring.entity.ServerInstance;
 
 /**
@@ -22,6 +14,7 @@ import org.lightfish.business.monitoring.entity.ServerInstance;
  */
 public class ServerInstanceProvider {
 
+    @Inject
     protected Client client;
     @Inject
     Instance<String> location;
@@ -31,24 +24,19 @@ public class ServerInstanceProvider {
     Instance<String> password;
     @Inject
     Instance<GlassfishAuthenticator> authenticator;
-    private WebResource managementResource;
+    private WebTarget managementResource;
 
-    @PostConstruct
-    public void initializeClient() {
-        this.client = Client.create();
-    }
-
-    String getConfigRef(String instanceName) throws JSONException {
-        this.managementResource = this.client.resource(getInstanceUri());
-        JSONObject serverResult = getJSONObject(instanceName);
-        JSONObject extraProperties = serverResult.getJSONObject("extraProperties");
-        JSONObject entity = extraProperties.getJSONObject("entity");
+    String getConfigRef(String instanceName) {
+        this.managementResource = this.client.target(getInstanceUri());
+        JsonObject serverResult = getJSONObject(instanceName);
+        JsonObject extraProperties = serverResult.getJsonObject("extraProperties");
+        JsonObject entity = extraProperties.getJsonObject("entity");
         String result = entity.getString("configRef");
         return result;
     }
 
-    JSONObject getJSONObject(String name) throws UniformInterfaceException {
-        JSONObject result = this.managementResource.path(name).accept(MediaType.APPLICATION_JSON).get(JSONObject.class);
+    JsonObject getJSONObject(String name) {
+        JsonObject result = this.managementResource.path(name).request(MediaType.APPLICATION_JSON).get(JsonObject.class);
         return result;
     }
 
@@ -58,13 +46,7 @@ public class ServerInstanceProvider {
 
     public ServerInstance fetchServerInstanceInfo(String instanceName) {
         authenticator.get().addAuthenticator(client, username.get(), password.get());
-        String configRef = null;
-        try {
-            configRef = getConfigRef(instanceName);
-
-        } catch (Exception e) {
-            throw new IllegalStateException("Cannot fetch domain information because of: " + e);
-        }
+        String configRef = getConfigRef(instanceName);
         return new ServerInstance.Builder().name(instanceName).configRef(configRef).build();
     }
 

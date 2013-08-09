@@ -1,8 +1,6 @@
 package org.lightfish.business.escalation.boundary.notification.transmitters.email;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import org.hibernate.validator.constraints.Email;
 import org.lightfish.business.escalation.boundary.notification.transmitter.TransmitterConfiguration;
 import org.lightfish.business.escalation.boundary.notification.transmitter.TransmitterType;
 
@@ -18,9 +16,9 @@ public class EmailTransmitterConfiguration implements TransmitterConfiguration {
     @NotNull
     private String host;
     private int port = 25;
-    @NotNull @Email
+    @NotNull
     private String from;
-    @NotNull 
+    @NotNull
     private String to;
     private boolean authorizationRequired;
     private String userName;
@@ -89,7 +87,7 @@ public class EmailTransmitterConfiguration implements TransmitterConfiguration {
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
     public static class Builder {
 
         private EmailTransmitterConfiguration config;

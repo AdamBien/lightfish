@@ -1,25 +1,18 @@
-    package org.lightfish.business.monitoring.control;
+package org.lightfish.business.monitoring.control;
 
-import javax.enterprise.inject.Instance;
-import org.codehaus.jettison.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
-
 
 /**
  *
  * @author Adam Bien, blog.adam-bien.com
  */
 public class SnapshotProviderIT {
-    
+
     SnapshotProvider dataProvider;
-    
+
     @Before
-    public void initialize(){
+    public void initialize() {
         this.dataProvider = new SnapshotProvider();
 //        this.dataProvider.location = mock(Instance.class);
 //        when(this.dataProvider.location.get()).thenReturn("localhost:4848");
@@ -27,12 +20,12 @@ public class SnapshotProviderIT {
     }
 
     @Test
-    public void fetchHeap() throws JSONException {
+    public void fetchHeap() {
 //        long usedHeapSize = this.dataProvider.usedHeapSize();
 //        System.out.println("Used heap size: " + usedHeapSize);
 //        assertTrue(usedHeapSize > 0);
     }
-    
+
 //    @Test
 //    public void threadCount() throws JSONException{
 //        int threadCount = this.dataProvider.threadCount();
@@ -46,7 +39,7 @@ public class SnapshotProviderIT {
 //        System.out.println("Peak Thread count: " + peakThreadCount);
 //        assertTrue(peakThreadCount > 0);
 //    }
-//    
+//
 //    @Test
 //    public void totalErrors() throws JSONException{
 //        int totalErrors = this.dataProvider.totalErrors();
@@ -74,7 +67,7 @@ public class SnapshotProviderIT {
 //        System.out.println("# rolledBackTX: " + rolledBackTX);
 //        assertTrue(rolledBackTX != -1);
 //    }
-//    
+//
 //    @Test
 //    public void queuedConnections() throws JSONException{
 //        int queuedConnections = this.dataProvider.queuedConnections();
@@ -122,9 +115,8 @@ public class SnapshotProviderIT {
 //        }
 //
 //    }
-
     private String toString(String[] applications) {
-        String retVal ="";
+        String retVal = "";
         for (String string : applications) {
             retVal += string + " ";
         }

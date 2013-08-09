@@ -1,29 +1,29 @@
 package org.lightfish.business.monitoring.control;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.UniformInterfaceException;
-import com.sun.jersey.api.client.WebResource;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.lightfish.business.authenticator.GlassfishAuthenticator;
 import org.lightfish.business.configuration.boundary.Configurator;
 
 /**
- * Retrieves a session token and stores it in the configuration. This is to avoid 
- * the need to re-authenticate with every call.
- * 
+ * Retrieves a session token and stores it in the configuration. This is to
+ * avoid the need to re-authenticate with every call.
+ *
  * @author rveldpau
  */
 @Singleton
 public class SessionTokenRetriever {
+
     private static final Logger LOG = Logger.getLogger(SessionTokenRetriever.class.getName());
+    @Inject
     protected Client client;
     @Inject
     Instance<String> location;
@@ -36,31 +36,22 @@ public class SessionTokenRetriever {
     @Inject
     Configurator configurator;
 
-    @PostConstruct
-    public void initializeClient() {
-        this.client = Client.create();
-    }
-
     String getSessionsUri() {
         return getProtocol() + location.get() + "/management/";
     }
 
-    public void retrieveSessionToken() throws UniformInterfaceException {
-        authenticator.get().addAuthenticator(client, username.get(), password.get());
-        WebResource managementResource = this.client.resource(getSessionsUri());
-        JSONObject result = managementResource
+    public void retrieveSessionToken() {
+        //TODO: support authentication with JAX-RS 2.0
+        //authenticator.get().addAuthenticator(client, username.get(), password.get());
+        WebTarget managementResource = this.client.target(getSessionsUri());
+        JsonObject result = managementResource
                 .path("sessions")
-                .accept(MediaType.APPLICATION_JSON)
+                .request(MediaType.APPLICATION_JSON)
                 .header("X-Requested-By", "")
-                .post(JSONObject.class);
-        try {
-            JSONObject extraProps = result.getJSONObject("extraProperties");
-            String token = extraProps.getString("token");
-            configurator.setValue("sessionToken", token);
-        } catch (JSONException ex) {
-            LOG.log(Level.WARNING, "Failed to authenticate", ex);
-        }
-
+                .post(Entity.entity(Json.createObjectBuilder().build(), MediaType.APPLICATION_JSON), JsonObject.class);
+        JsonObject extraProps = result.getJsonObject("extraProperties");
+        String token = extraProps.getString("token");
+        configurator.setValue("sessionToken", token);
 
     }
 

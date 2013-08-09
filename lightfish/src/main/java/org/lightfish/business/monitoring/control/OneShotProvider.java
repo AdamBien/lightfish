@@ -1,23 +1,20 @@
 package org.lightfish.business.monitoring.control;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.UniformInterfaceException;
-import com.sun.jersey.api.client.WebResource;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.lightfish.business.monitoring.entity.OneShot;
-
-import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.json.JsonObject;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import org.lightfish.business.authenticator.GlassfishAuthenticator;
+import org.lightfish.business.monitoring.entity.OneShot;
 
 /**
  * User: blog.adam-bien.com Date: 30.01.12 Time: 19:40
  */
 public class OneShotProvider {
 
+    @Inject
     protected Client client;
     @Inject
     Instance<String> location;
@@ -27,28 +24,22 @@ public class OneShotProvider {
     Instance<String> password;
     @Inject
     Instance<GlassfishAuthenticator> authenticator;
-    private WebResource managementResource;
+    private WebTarget managementResource;
 
-    @PostConstruct
-    public void initializeClient() {
-        this.client = Client.create();
-    }
-
-    String getVersion() throws JSONException {
-        this.managementResource = this.client.resource(getManagementURI());
-        JSONObject result = getJSONObject("version");
+    String getVersion() {
+        this.managementResource = this.client.target(getManagementURI());
+        JsonObject result = getJsonObject("version");
         return result.getString("message");
     }
 
-    String getUpTime() throws JSONException {
-        this.managementResource = this.client.resource(getManagementURI());
-        JSONObject result = getJSONObject("uptime");
+    String getUpTime() {
+        this.managementResource = this.client.target(getManagementURI());
+        JsonObject result = getJsonObject("uptime");
         return result.getString("message");
     }
 
-    JSONObject getJSONObject(String name) throws UniformInterfaceException {
-        JSONObject result = this.managementResource.path(name).accept(MediaType.APPLICATION_JSON).get(JSONObject.class);
-        return result;
+    JsonObject getJsonObject(String name) {
+        return this.managementResource.path(name).request(MediaType.APPLICATION_JSON).get(JsonObject.class);
     }
 
     String getManagementURI() {
@@ -56,7 +47,8 @@ public class OneShotProvider {
     }
 
     public OneShot fetchOneShot() {
-        authenticator.get().addAuthenticator(client, username.get(), password.get());
+        //TODO migrate authenticator
+        //authenticator.get().addAuthenticator(client, username.get(), password.get());
         String version = null;
         String uptime = null;
         try {

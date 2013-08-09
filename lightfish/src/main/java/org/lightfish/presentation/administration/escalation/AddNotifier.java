@@ -16,14 +16,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.hibernate.validator.constraints.Length;
-import org.lightfish.business.escalation.boundary.notification.EscalationNotificationBroker;
-import org.lightfish.business.escalation.entity.Notifier;
 import org.lightfish.business.escalation.boundary.notification.NotifierStore;
 import org.lightfish.business.escalation.boundary.notification.transmitter.Transmitter;
 import org.lightfish.business.escalation.boundary.notification.transmitter.TransmitterConfiguration;
-import org.lightfish.business.escalation.boundary.notification.transmitter.TransmitterType;
 import org.lightfish.business.escalation.boundary.notification.transmitter.TransmitterTypeAnnotationLiteral;
+import org.lightfish.business.escalation.entity.Notifier;
 
 /**
  *
@@ -35,8 +32,8 @@ public class AddNotifier implements Serializable {
 
     @Inject
     Conversation conversation;
-    @Inject transient 
-    NotifierStore notificationStore;
+    @Inject
+    transient NotifierStore notificationStore;
     @Inject
     @Any
     Instance<TransmitterConfiguration> transmitterConfigurationInstance;
@@ -84,7 +81,7 @@ public class AddNotifier implements Serializable {
     public List<Transmitter> getTransmitterTypes() {
         List<Transmitter> transmitters = new ArrayList<>();
         for (Transmitter transmitter : transmitterInstance) {
-            if(!transmitter.isSystem()){
+            if (!transmitter.isSystem()) {
                 transmitters.add(transmitter);
             }
         }
@@ -101,38 +98,38 @@ public class AddNotifier implements Serializable {
     }
 
     public String configure() {
-        Instance<TransmitterConfiguration> specificTransmitterConfigInstance =
-                transmitterConfigurationInstance.select(
+        Instance<TransmitterConfiguration> specificTransmitterConfigInstance
+                = transmitterConfigurationInstance.select(
                 new TransmitterTypeAnnotationLiteral.Builder().value(this.notifierId).build());
 
         if (specificTransmitterConfigInstance.isAmbiguous() || specificTransmitterConfigInstance.isUnsatisfied()) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-                    "No configuration available for specified transmitter type.", 
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "No configuration available for specified transmitter type.",
                     "Could not find the configuration for the specified transmitter type, it is either unsatisifed or ambiguous.");
             FacesContext.getCurrentInstance().addMessage(null, message);
             return null;
         }
-        
+
         this.transmitterConfiguration = specificTransmitterConfigInstance.get();
-        
+
         return "addConfiguration";
     }
-    
-    public String cancel(){
-        if(!conversation.isTransient()){
+
+    public String cancel() {
+        if (!conversation.isTransient()) {
             conversation.end();
         }
         return "/escalation/configuration?faces-redirect=true";
     }
-    
-    public String save(){
+
+    public String save() {
         Notifier config = new Notifier.Builder()
                 .name(name)
                 .configuration(transmitterConfiguration)
                 .transmitterId(notifierId)
                 .build();
         notificationStore.save(config);
-        if(!conversation.isTransient()){
+        if (!conversation.isTransient()) {
             conversation.end();
         }
         return "/escalation/configuration?faces-redirect=true";
