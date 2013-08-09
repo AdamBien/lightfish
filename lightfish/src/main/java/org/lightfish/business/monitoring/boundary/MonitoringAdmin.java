@@ -23,7 +23,6 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -84,8 +83,14 @@ public class MonitoringAdmin {
 
     boolean postForms(MultivaluedMap form) {
         for (String instanceName : serverInstances.get()) {
-            Response response = this.client.target(this.baseUri).path(getEnableMonitoringURI_312(instanceName)).request(MediaType.APPLICATION_FORM_URLENCODED).header("X-Requested-By", "LightFish").post(Entity.form(form));
-            int status = response.getStatus();
+            Response response = null;
+            int status = -1;
+            try {
+                response = this.client.target(this.baseUri).path(getEnableMonitoringURI_312(instanceName)).request().header("X-Requested-By", "LightFish").post(Entity.form(form));
+                status = response.getStatus();
+            } catch (Exception ex) {
+                LOG.severe("Problem sending request: " + ex);
+            }
             LOG.log(Level.INFO, "Got status: {0} for path: {1}  form: {2}", new Object[]{status, getEnableMonitoringURI_312(instanceName), form});
             if (200 != response.getStatus()) {
                 return false;
