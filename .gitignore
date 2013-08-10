@@ -15,3 +15,4 @@ lightfish/deploy.sh
 /lightfish/derby.log
 nb-configuration.xml
 *.bak
+/lightfish/release.sh
