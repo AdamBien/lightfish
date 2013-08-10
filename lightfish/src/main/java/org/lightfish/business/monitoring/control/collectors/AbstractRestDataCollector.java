@@ -1,6 +1,7 @@
 package org.lightfish.business.monitoring.control.collectors;
 
 import java.util.Iterator;
+import java.util.logging.Logger;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.json.JsonObject;
@@ -27,6 +28,8 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
     @Inject
     protected SessionTokenRetriever tokenProvider;
     private String serverInstance;
+
+    private static final Logger LOG = Logger.getLogger(AbstractRestDataCollector.class.getName());
 
     @Override
     public String getServerInstance() {
@@ -85,9 +88,11 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
 
     protected JsonObject getJsonObject(Response result, String name) {
         JsonObject response = result.readEntity(JsonObject.class);
-        return response.getJsonObject("extraProperties").
+        JsonObject retVal = response.getJsonObject("extraProperties").
                 getJsonObject("entity").
                 getJsonObject(name);
+        LOG.info("Retrieved JsonObject: " + retVal + " for " + result + " " + name);
+        return retVal;
     }
 
     protected String getBaseURI() {

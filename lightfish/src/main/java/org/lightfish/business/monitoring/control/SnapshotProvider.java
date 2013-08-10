@@ -17,18 +17,18 @@ package org.lightfish.business.monitoring.control;
 
 import java.util.ArrayList;
 import java.util.Date;
-import org.lightfish.business.monitoring.entity.Snapshot;
-
-import javax.inject.Inject;
 import java.util.List;
-import javax.enterprise.inject.Instance;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import org.lightfish.business.monitoring.control.collectors.DataCollector;
 import org.lightfish.business.monitoring.control.collectors.DataPoint;
 import org.lightfish.business.monitoring.control.collectors.DataPointToSnapshotMapper;
 import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionActionBehaviour;
 import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionExecutor;
 import org.lightfish.business.monitoring.control.collectors.SnapshotDataCollector;
+import org.lightfish.business.monitoring.entity.Snapshot;
 
 /**
  * @author Adam Bien, blog.adam-bien.com / Rob Veldpaus
@@ -40,13 +40,23 @@ public class SnapshotProvider {
     Instance<Boolean> parallelDataCollection;
     @Inject
     @SnapshotDataCollector
-    Instance<DataCollector> dataCollectors;
+    Instance<DataCollector<?>> dataCollectors;
     @Inject
     DataPointToSnapshotMapper mapper;
     @Inject
     Instance<Integer> dataCollectionRetries;
     @Inject
     ParallelDataCollectionExecutor parallelExecutor;
+
+    @PostConstruct
+    public void init() {
+        if (dataCollectors.isUnsatisfied()) {
+            LOG.warning("No DataCollector found!");
+        }
+        for (DataCollector collector : dataCollectors) {
+            LOG.info("Loaded DataCollector: " + collector);
+        }
+    }
 
     public Snapshot fetchSnapshot(String instanceName) throws Exception {
         Snapshot snapshot = null;
@@ -59,7 +69,7 @@ public class SnapshotProvider {
         }
 
         long elapsed = new Date().getTime() - start.getTime();
-        LOG.fine("Data collection took " + elapsed);
+        LOG.fine("Data collection of " + snapshot + " took " + elapsed);
 
         return snapshot;
 

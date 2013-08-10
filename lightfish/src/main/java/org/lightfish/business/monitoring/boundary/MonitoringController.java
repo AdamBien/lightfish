@@ -20,22 +20,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import org.lightfish.business.monitoring.entity.Snapshot;
-
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import javax.ejb.*;
-import javax.enterprise.event.Event;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -47,15 +31,32 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import javax.ejb.ScheduleExpression;
+import javax.ejb.Singleton;
+import javax.ejb.Timeout;
+import javax.ejb.Timer;
+import javax.ejb.TimerService;
+import javax.enterprise.event.Event;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import org.lightfish.business.monitoring.control.SessionTokenRetriever;
-import org.lightfish.business.monitoring.control.collectors.DataCollector;
 import org.lightfish.business.monitoring.control.collectors.DataPoint;
 import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionAction;
 import org.lightfish.business.monitoring.control.collectors.ParallelDataCollectionExecutor;
-import org.lightfish.business.monitoring.control.collectors.authentication.Authentication;
 import org.lightfish.business.monitoring.entity.Application;
 import org.lightfish.business.monitoring.entity.ConnectionPool;
 import org.lightfish.business.monitoring.entity.LogRecord;
+import org.lightfish.business.monitoring.entity.Snapshot;
 
 /**
  *
@@ -84,7 +85,8 @@ public class MonitoringController {
     Instance<String[]> serverInstances;
     @Inject
     Instance<Integer> collectionTimeout;
-    @Inject SessionTokenRetriever sessionTokenProvider;
+    @Inject
+    SessionTokenRetriever sessionTokenProvider;
     int nextInstanceIndex = 0;
     Map<String, SnapshotCollectionAction> currentCollectionActions = new HashMap<>();
     Map<String, Snapshot> currentSnapshots = new HashMap<>();
@@ -94,15 +96,15 @@ public class MonitoringController {
     @Inject
     private Instance<Integer> interval;
 
-    public void startTimer() throws Exception{
+    public void startTimer() throws Exception {
         sessionTokenProvider.retrieveSessionToken();
-        
+
         ScheduleExpression expression = new ScheduleExpression();
         expression.minute("*").second("*/" + interval.get()).hour("*");
         this.timer = this.timerService.createCalendarTimer(expression);
-        
+
     }
-    
+
     private void handleCompletedFutures(Boolean wait) {
         List<Snapshot> handledSnapshots = new ArrayList<>();
 
@@ -184,6 +186,7 @@ public class MonitoringController {
         String currentServerInstance = null;
         try {
             currentServerInstance = serverInstances.get()[index];
+            LOG.info("Monitoring instance: " + currentServerInstance);
         } catch (ArrayIndexOutOfBoundsException oobEx) {
             LOG.warning("It appears you changed the server instances you are monitoring while the timer is running, this is not recommended...");
             return;
@@ -208,7 +211,10 @@ public class MonitoringController {
 
         if (nextInstanceIndex >= serverInstances.get().length) {
             if (!currentCollectionActions.isEmpty()) {
+                LOG.info("Waiting for completed futures");
                 handleCompletedFutures(true);
+            } else {
+                LOG.info("Nothing todo, no data to collect");
             }
             handleRoundCompletion();
             nextInstanceIndex = 0;
@@ -261,7 +267,7 @@ public class MonitoringController {
                 combinedPool.setNumpotentialconnleak(currentPool.getNumpotentialconnleak() + combinedPool.getNumpotentialconnleak());
                 combinedPool.setWaitqueuelength(currentPool.getWaitqueuelength() + combinedPool.getWaitqueuelength());
             }
-            
+
             //logs.addAll(current.getLogRecords());
         }
 
