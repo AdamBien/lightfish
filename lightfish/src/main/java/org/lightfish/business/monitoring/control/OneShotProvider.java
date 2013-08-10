@@ -1,5 +1,6 @@
 package org.lightfish.business.monitoring.control;
 
+import java.util.logging.Logger;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.json.JsonObject;
@@ -25,6 +26,8 @@ public class OneShotProvider {
     @Inject
     Instance<GlassfishAuthenticator> authenticator;
     private WebTarget managementResource;
+
+    private Logger LOG = Logger.getLogger(OneShotProvider.class.getName());
 
     String getVersion() {
         this.managementResource = this.client.target(getManagementURI());
@@ -64,6 +67,9 @@ public class OneShotProvider {
         String protocol = "http://";
         if (username != null && username.get() != null && !username.get().isEmpty()) {
             protocol = "https://";
+            LOG.info("User name is not empty, returning https");
+        } else {
+            LOG.info("Using " + protocol);
         }
         return protocol;
     }
