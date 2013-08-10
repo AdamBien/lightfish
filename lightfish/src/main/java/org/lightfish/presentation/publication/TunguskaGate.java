@@ -57,6 +57,9 @@ public class TunguskaGate extends HttpServlet {
     }
 
     String extractChannel(String uri) {
+        if (uri.endsWith("live")) {
+            return "";
+        }
         int lastIndexOf = uri.lastIndexOf("/");
         return uri.substring(lastIndexOf + 1);
     }
