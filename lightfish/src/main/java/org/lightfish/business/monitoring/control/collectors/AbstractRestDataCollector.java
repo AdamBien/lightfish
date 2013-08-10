@@ -101,8 +101,10 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
 
     protected String getProtocol() {
         String protocol = "http://";
+        //TODO Error, if username == null, use http anyway
         if (sessionToken != null && sessionToken.get() != null && !sessionToken.get().isEmpty()) {
-            protocol = "https://";
+            LOG.info("Session token != null using http anyway");
+            protocol = "http://";
         }
         return protocol;
     }
