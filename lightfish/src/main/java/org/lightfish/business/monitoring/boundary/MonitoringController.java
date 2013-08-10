@@ -33,6 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import javax.ejb.EJBException;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
 import javax.ejb.Timeout;
@@ -75,7 +76,7 @@ public class MonitoringController {
     @Inject
     ParallelDataCollectionExecutor parallelCollector;
     @Inject
-    Instance<ParallelDataCollectionAction> parallelAction;
+    ParallelDataCollectionAction parallelAction;
     @PersistenceContext
     EntityManager em;
     @Inject
@@ -105,6 +106,27 @@ public class MonitoringController {
 
     }
 
+    @Timeout
+    public void gatherAndPersist() {
+        handleCompletedFutures(false);
+        handleTimedOutFutures();
+
+        startNextInstanceCollection(nextInstanceIndex++);
+
+        if (nextInstanceIndex >= serverInstances.get().length) {
+            if (!currentCollectionActions.isEmpty()) {
+                LOG.info("Waiting for completed futures");
+                handleCompletedFutures(true);
+            } else {
+                LOG.info("Nothing todo, no data to collect");
+            }
+            handleRoundCompletion();
+            nextInstanceIndex = 0;
+        }
+
+        LOG.info(".");
+    }
+
     private void handleCompletedFutures(Boolean wait) {
         List<Snapshot> handledSnapshots = new ArrayList<>();
 
@@ -122,8 +144,7 @@ public class MonitoringController {
                 LOG.log(Level.FINE, "Handling completed snapshot for {0}", entry.getKey());
                 it.remove();
                 if (dataPoint == null) {
-                    LOG.log(Level.WARNING, "An exception occured while retrieving data for "
-                            + entry.getKey(), entry.getValue().getAction().getThrownException());
+                    LOG.log(Level.WARNING, "An exception occured while retrieving data for " + entry);
                     continue;
                 }
 
@@ -131,7 +152,7 @@ public class MonitoringController {
                 currentSnapshots.put(entry.getKey(), dataPoint.getValue());
 
                 LOG.log(Level.FINER, "Persisting {0}", dataPoint.getValue());
-                em.persist(dataPoint.getValue());
+                //em.persist(dataPoint.getValue());
 
                 handledSnapshots.add(dataPoint.getValue());
 
@@ -146,8 +167,7 @@ public class MonitoringController {
                 LOG.log(Level.FINEST, "The snapshot collection for " + entry.getKey() + " has not completed", ex);
             }
 
-            em.flush();
-
+            //  em.flush();
             for (Snapshot snapshot : handledSnapshots) {
                 fireHeartbeat(snapshot);
             }
@@ -175,7 +195,7 @@ public class MonitoringController {
     private void handleRoundCompletion() {
         LOG.info("All snapshots collected for this round!");
         Snapshot combinedSnapshot = combineSnapshots(currentSnapshots.values());
-        em.persist(combinedSnapshot);
+        // em.persist(combinedSnapshot);
         fireHeartbeat(combinedSnapshot);
 
         currentSnapshots.clear();
@@ -192,35 +212,13 @@ public class MonitoringController {
             return;
         }
 
-        ParallelDataCollectionAction action = parallelAction.get();
         SnapshotCollector collector = snapshotCollectorInstance.get();
         collector.setServerInstance(currentServerInstance);
 
         LOG.log(Level.INFO, "Starting data collection for {0}", currentServerInstance);
-        Future<DataPoint<Snapshot>> future = action.compute(collector);
+        Future<DataPoint<Snapshot>> future = parallelAction.compute(collector);
         currentCollectionActions.put(currentServerInstance,
-                new SnapshotCollectionAction(Calendar.getInstance().getTimeInMillis(), future, action));
-    }
-
-    @Timeout
-    public void gatherAndPersist() {
-        handleCompletedFutures(false);
-        handleTimedOutFutures();
-
-        startNextInstanceCollection(nextInstanceIndex++);
-
-        if (nextInstanceIndex >= serverInstances.get().length) {
-            if (!currentCollectionActions.isEmpty()) {
-                LOG.info("Waiting for completed futures");
-                handleCompletedFutures(true);
-            } else {
-                LOG.info("Nothing todo, no data to collect");
-            }
-            handleRoundCompletion();
-            nextInstanceIndex = 0;
-        }
-
-        LOG.info(".");
+                new SnapshotCollectionAction(future));
     }
 
     private Snapshot combineSnapshots(Collection<Snapshot> snapshots) {
@@ -306,7 +304,7 @@ public class MonitoringController {
         if (timer != null) {
             try {
                 this.timer.cancel();
-            } catch (Exception e) {
+            } catch (IllegalStateException | EJBException e) {
                 LOG.log(Level.SEVERE, "Cannot cancel timer " + this.timer, e);
             } finally {
                 this.timer = null;
@@ -331,12 +329,10 @@ public class MonitoringController {
 
         private Long started;
         private Future<DataPoint<Snapshot>> future;
-        private ParallelDataCollectionAction action;
 
-        public SnapshotCollectionAction(Long started, Future<DataPoint<Snapshot>> future, ParallelDataCollectionAction action) {
-            this.started = started;
+        public SnapshotCollectionAction(Future<DataPoint<Snapshot>> future) {
+            this.started = Calendar.getInstance().getTimeInMillis();
             this.future = future;
-            this.action = action;
         }
 
         public Long getStarted() {
@@ -345,10 +341,6 @@ public class MonitoringController {
 
         public Future<DataPoint<Snapshot>> getFuture() {
             return future;
-        }
-
-        public ParallelDataCollectionAction getAction() {
-            return action;
         }
     }
 }
