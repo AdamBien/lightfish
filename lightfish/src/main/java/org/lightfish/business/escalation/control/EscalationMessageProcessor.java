@@ -1,15 +1,12 @@
 package org.lightfish.business.escalation.control;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.PostConstruct;
+import javax.el.ELProcessor;
 import javax.inject.Inject;
-import org.apache.commons.beanutils.BeanUtilsBean2;
-import org.lightfish.business.escalation.entity.Escalation;
 import org.lightfish.business.monitoring.entity.Snapshot;
-import org.pegdown.PegDownProcessor;
 
 /**
  *
@@ -20,6 +17,13 @@ public class EscalationMessageProcessor {
     @Inject
     Logger LOG;
     private static final String defaultMessage = "An escalation has occured.";
+
+    private ELProcessor processor;
+
+    @PostConstruct
+    public void init() {
+        processor = new ELProcessor();
+    }
 
     public String processBasicMessage(String template, Snapshot snapshot) {
         if (template == null || template.trim().isEmpty()) {
@@ -48,10 +52,10 @@ public class EscalationMessageProcessor {
                 Object value = pullValueFromEscalation(memberName, snapshot);
                 if (value != null) {
                     variableMatcher.appendReplacement(buffer, value.toString());
-                }else{
+                } else {
                     variableMatcher.appendReplacement(buffer, memberName);
                 }
-                
+
             } while (variableMatcher.find());
             return buffer.toString();
         } else {
@@ -60,20 +64,11 @@ public class EscalationMessageProcessor {
     }
 
     private Object pullValueFromEscalation(String memberName, Snapshot snapshot) {
-        try {
-            BeanUtilsBean2 beanUtil = new BeanUtilsBean2();
-            return beanUtil.getNestedProperty(snapshot, memberName);
-        } catch (IllegalAccessException ex) {
-            LOG.log(Level.SEVERE, ex.toString(), ex);
-        } catch (InvocationTargetException ex) {
-            LOG.log(Level.SEVERE, ex.toString(), ex);
-        } catch (NoSuchMethodException ex) {
-            LOG.log(Level.SEVERE, ex.toString(), ex);
-        }
-        return null;
+        processor.defineBean("snapshot", snapshot);
+        return processor.getValue("snapshot." + memberName, Object.class);
     }
-    
-    private String processMarkdown(String text){
-        return new PegDownProcessor().markdownToHtml(text);
+
+    private String processMarkdown(String text) {
+        return text;
     }
 }
