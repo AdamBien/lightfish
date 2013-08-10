@@ -3,13 +3,13 @@ package org.lightfish.business.escalation.control;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.lightfish.business.monitoring.entity.ConnectionPool;
 import org.lightfish.business.monitoring.entity.Snapshot;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 /**
  *
@@ -22,6 +22,7 @@ public class EscalationMessageProcessorTest {
     @Before
     public void setUp() {
         instance = new EscalationMessageProcessor();
+        instance.init();
         instance.LOG = Logger.getGlobal();
     }
 
@@ -49,7 +50,6 @@ public class EscalationMessageProcessorTest {
         List<ConnectionPool> pools = new ArrayList<>();
         pools.add(new ConnectionPool("anything", 42, 24, 1, 1));
 
-
         Snapshot snapshot = new Snapshot.Builder().pools(pools).build();
         String result = instance.processBasicMessage(template, snapshot);
         assertEquals(expected, result);
@@ -57,7 +57,7 @@ public class EscalationMessageProcessorTest {
 
     /*
      * The following test does not run properly although it is valid. There appear
-     * to be dependency issues for PegDown. If you switch to PegDown 1.1.0 this 
+     * to be dependency issues for PegDown. If you switch to PegDown 1.1.0 this
      * test runs fine, however, the application when deployed in Glassfish fails.
      */
     @Test
@@ -75,5 +75,5 @@ public class EscalationMessageProcessorTest {
         System.out.println(result);
         assertEquals(expected, result);
     }
-    
+
 }
