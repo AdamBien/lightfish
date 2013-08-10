@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -33,6 +35,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.EJBException;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
@@ -66,6 +70,7 @@ import org.lightfish.business.monitoring.entity.Snapshot;
 @Singleton
 @Path("snapshots")
 @Produces(MediaType.APPLICATION_JSON)
+@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class MonitoringController {
 
     public static final String COMBINED_SNAPSHOT_NAME = "__all__";
@@ -89,8 +94,8 @@ public class MonitoringController {
     @Inject
     SessionTokenRetriever sessionTokenProvider;
     int nextInstanceIndex = 0;
-    Map<String, SnapshotCollectionAction> currentCollectionActions = new HashMap<>();
-    Map<String, Snapshot> currentSnapshots = new HashMap<>();
+    ConcurrentMap<String, SnapshotCollectionAction> currentCollectionActions = new ConcurrentHashMap<>();
+    ConcurrentMap<String, Snapshot> currentSnapshots = new ConcurrentHashMap<>();
     @Resource
     TimerService timerService;
     private Timer timer;
@@ -327,11 +332,12 @@ public class MonitoringController {
 
     private class SnapshotCollectionAction {
 
-        private Long started;
+        private final Long started;
         private Future<DataPoint<Snapshot>> future;
 
         public SnapshotCollectionAction(Future<DataPoint<Snapshot>> future) {
             this.started = Calendar.getInstance().getTimeInMillis();
+            LOG.info("Got future: " + future);
             this.future = future;
         }
 

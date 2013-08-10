@@ -15,26 +15,22 @@
  */
 package org.lightfish.business.heartbeat.boundary;
 
-import org.lightfish.business.heartbeat.control.Serializer;
-import org.lightfish.business.monitoring.boundary.Severity;
-import org.lightfish.business.monitoring.entity.Snapshot;
-import org.lightfish.presentation.publication.BrowserWindow;
-
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.Singleton;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import org.lightfish.business.monitoring.control.collectors.SnapshotDataCollector;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
+import javax.ejb.Singleton;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import org.lightfish.business.heartbeat.control.Serializer;
+import org.lightfish.business.monitoring.boundary.Severity;
+import org.lightfish.business.monitoring.entity.Snapshot;
 import org.lightfish.presentation.publication.AsyncMultiWriter;
+import org.lightfish.presentation.publication.BrowserWindow;
 
 /**
  *
@@ -45,23 +41,23 @@ import org.lightfish.presentation.publication.AsyncMultiWriter;
 public class SnapshotEventBroker {
 
     private ConcurrentLinkedQueue<BrowserWindow> browsers = new ConcurrentLinkedQueue<>();
-    @Inject
-    Logger LOG;
+
+    private static final Logger LOG = Logger.getLogger(SnapshotEventBroker.class.getName());
+
     @Inject
     Serializer serializer;
 
-    public void onBrowserRequest(@Observes @SnapshotDataCollector BrowserWindow browserWindow) {
+    public void onBrowserRequest(@Observes BrowserWindow browserWindow) {
         LOG.log(Level.FINE, "Added {0} to watch channel {1}", new Object[]{browserWindow.hashCode(), browserWindow.getChannel()});
         browsers.add(browserWindow);
     }
 
-    @Lock(LockType.WRITE)
     public void onNewSnapshot(@Observes @Severity(Severity.Level.HEARTBEAT) Snapshot snapshot) {
         List<BrowserWindow> currentBrowsers = new ArrayList<>(browsers);
         List<BrowserWindow> staging = new ArrayList<>(browsers.size());
         AsyncMultiWriter multiWriter = new AsyncMultiWriter();
         for (BrowserWindow browserWindow : currentBrowsers) {
-            if(browserWindow.getChannel()==null || browserWindow.getChannel().trim().isEmpty()){
+            if (browserWindow.getChannel() == null || browserWindow.getChannel().trim().isEmpty()) {
                 LOG.log(Level.INFO, "Found a browser window({0}) with no channel", browserWindow.hashCode());
             }
             if (snapshot.getInstanceName().equals(browserWindow.getChannel())) {
@@ -70,13 +66,13 @@ public class SnapshotEventBroker {
                 staging.add(browserWindow);
             }
         }
-        
+
         browsers.removeAll(staging);
-        
+
         LOG.finest("Serializing snapshot to all staged browser windows");
         serializer.serialize(snapshot, multiWriter);
-        
-        for(BrowserWindow browserWindow:staging){
+
+        for (BrowserWindow browserWindow : staging) {
             LOG.log(Level.FINEST, "Sending {0}", browserWindow.hashCode());
             browserWindow.send();
         }

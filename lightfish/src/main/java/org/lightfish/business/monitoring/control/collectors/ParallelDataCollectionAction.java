@@ -1,6 +1,5 @@
 package org.lightfish.business.monitoring.control.collectors;
 
-import java.io.Serializable;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,15 +14,15 @@ import javax.inject.Inject;
  * @author Rob Veldpaus
  */
 @Stateless
-public class ParallelDataCollectionAction implements Serializable{
-    
+public class ParallelDataCollectionAction {
+
     private static final Logger LOG = Logger.getLogger(ParallelDataCollectionAction.class.getName());
-    transient 
-    private Exception thrownException = null;
-    @Inject Instance<Integer> dataCollectionRetries;
-    
+    transient private Exception thrownException = null;
+    @Inject
+    Instance<Integer> dataCollectionRetries;
+
     @Asynchronous
-    public <TYPE> Future<DataPoint<TYPE>> compute(DataCollector<TYPE> collector){
+    public <TYPE> Future<DataPoint<TYPE>> compute(DataCollector<TYPE> collector) {
         try {
             LOG.log(Level.FINER, "Starting data collection for {0}", collector);
             return new AsyncResult<>(innerCompute(collector, 0));
@@ -34,22 +33,22 @@ public class ParallelDataCollectionAction implements Serializable{
         return new AsyncResult<>(null);
     }
 
-    private <TYPE> DataPoint<TYPE> innerCompute(DataCollector<TYPE> collector, int attempt) throws Exception{
-        try{
+    private <TYPE> DataPoint<TYPE> innerCompute(DataCollector<TYPE> collector, int attempt) throws Exception {
+        try {
             DataPoint<TYPE> dataPoint = collector.collect();
             return dataPoint;
-        }catch(Exception ex){
-            if(attempt < dataCollectionRetries.get()){
+        } catch (Exception ex) {
+            if (attempt < dataCollectionRetries.get()) {
                 LOG.log(Level.WARNING, "Data collection on {0} failed, retrying...", collector);
                 return innerCompute(collector, ++attempt);
-            }else{
+            } else {
                 throw ex;
             }
         }
     }
-    
+
     public Exception getThrownException() {
         return thrownException;
     }
-    
+
 }
