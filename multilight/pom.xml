@@ -55,6 +55,5 @@
         <connection>scm:git:git@github.com:AdamBien/lightfish.git</connection>
         <url>scm:git:git@github.com:AdamBien/lightfish.git</url>
         <developerConnection>scm:git:git@github.com:AdamBien/lightfish.git</developerConnection>
-        <tag>multi-light-1.0</tag>
     </scm>
 </project>

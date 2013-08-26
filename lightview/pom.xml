@@ -4,9 +4,8 @@
 
     <groupId>org.lightview</groupId>
     <artifactId>lightview</artifactId>
-    <version>1.1</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
-
     <name>lightview</name>
     <url>http://adam-bien.com</url>
     <build>
@@ -52,7 +51,7 @@
         <profile>
             <id>default</id>
             <activation>
-                <activeByDefault>true</activeByDefault>                
+                <activeByDefault>true</activeByDefault>
             </activation>
             <build>
                 <plugins>
@@ -148,7 +147,7 @@
                                     <goal>verify</goal>
                                 </goals>
                             </execution>
-                        </executions>                
+                        </executions>
                         <configuration>
                             <keystore>~/work/devprogs/tools/keystore/samples</keystore>
                             <alias>lightview</alias>
@@ -166,13 +165,13 @@
                 <property>
                     <name>acceptanceTest</name>
                 </property>
-            </activation>  
+            </activation>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.2.1</version>            
+                        <version>1.2.1</version>
                         <executions>
                             <execution>
                                 <id>lightview-app</id>
