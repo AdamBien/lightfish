@@ -20,7 +20,7 @@
     <modules>
         <module>../lightview</module>
         <module>../lightfish</module>
-        <module>..lightfish-st</module>
+        <module>../lightfish-st</module>
     </modules>
     <build>
         <plugins>
