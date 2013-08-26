@@ -17,7 +17,7 @@ import org.junit.Test;
  *
  * @author adam bien, adam-bien.com
  */
-public class ScriptingResourceTest {
+public class ScriptingResourceIT {
 
     private Client client;
     private String baseURI = "http://localhost:8080/lightfish/resources/scripts";
