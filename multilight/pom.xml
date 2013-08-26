@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.lightfish</groupId>
     <artifactId>multi-light</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>lightfish</name>
     <organization>
@@ -58,6 +58,6 @@
         <connection>scm:git:git@github.com:AdamBien/lightfish.git</connection>
         <url>https://github.com/AdamBien/lightfish</url>
         <developerConnection>scm:git:https://github.com/AdamBien/lightfish.git</developerConnection>
-        <tag>v1.2.0</tag>
+        <tag>HEAD</tag>
     </scm>
 </project>
