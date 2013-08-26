@@ -95,7 +95,7 @@
                                         <argument>-srcdir</argument>
                                         <argument>${project.build.directory}/classes</argument>
                                         <argument>-outdir</argument>
-                                        <argument>../lightfish/src/main/webapp</argument>
+                                        <argument>./target</argument>
                                         <argument>-outfile</argument>
                                         <argument>${project.name}-app</argument>
                                         <argument>-v</argument>
@@ -119,7 +119,7 @@
                                         <argument>-appclass</argument>
                                         <argument>org.lightview.App</argument>
                                         <argument>-srcfiles</argument>
-                                        <argument>../lightfish/src/main/webapp/${project.name}-app.jar</argument>
+                                        <argument>./target/${project.name}-app.jar</argument>
                                         <argument>-outdir</argument>
                                         <argument>./target/installer</argument>
                                         <argument>-outfile</argument>
@@ -129,32 +129,6 @@
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jarsigner-plugin</artifactId>
-                        <version>1.2</version>
-                        <executions>
-                            <execution>
-                                <id>sign</id>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>verify</id>
-                                <goals>
-                                    <goal>verify</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <keystore>~/work/devprogs/tools/keystore/samples</keystore>
-                            <alias>lightview</alias>
-                            <storepass>samples</storepass>
-                            <keypass>lightview</keypass>
-                            <archive>../lightfish/src/main/webapp/${project.name}-app.jar</archive>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -185,7 +159,7 @@
                                         <argument>-Djavafx.verbose=true</argument>
                                         <argument>-Djavafx.runtime.path=${fx.home}/rt</argument>
                                         <argument>-jar</argument>
-                                        <argument>../lightfish/src/main/webapp/lightview-app.jar</argument>
+                                        <argument>./target/lightview-app.jar</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
