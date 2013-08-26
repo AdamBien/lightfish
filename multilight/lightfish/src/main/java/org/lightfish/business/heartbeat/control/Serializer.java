@@ -15,7 +15,7 @@ limitations under the License.
 */
 package org.lightfish.business.heartbeat.control;
 
-import org.lightfish.business.monitoring.entity.Snapshot;
+import org.lightfish.business.servermonitoring.entity.Snapshot;
 
 import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBContext;

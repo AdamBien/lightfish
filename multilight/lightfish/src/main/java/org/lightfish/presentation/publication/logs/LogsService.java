@@ -14,9 +14,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import org.lightfish.business.monitoring.boundary.MonitoringController;
-import org.lightfish.business.monitoring.control.LogStore;
-import org.lightfish.business.monitoring.entity.LogRecord;
+import org.lightfish.business.servermonitoring.boundary.MonitoringController;
+import org.lightfish.business.servermonitoring.control.LogStore;
+import org.lightfish.business.servermonitoring.entity.LogRecord;
 
 /**
  *

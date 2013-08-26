@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.el.ELProcessor;
 import javax.inject.Inject;
-import org.lightfish.business.monitoring.entity.Snapshot;
+import org.lightfish.business.servermonitoring.entity.Snapshot;
 
 /**
  *

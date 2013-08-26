@@ -11,7 +11,7 @@ import org.lightfish.business.escalation.entity.Escalation;
 import org.lightfish.business.heartbeat.boundary.SnapshotEventBroker;
 import org.lightfish.business.heartbeat.control.Serializer;
 import org.lightfish.business.logging.Log;
-import org.lightfish.business.monitoring.entity.Snapshot;
+import org.lightfish.business.servermonitoring.entity.Snapshot;
 import org.lightfish.presentation.publication.BrowserWindow;
 import static org.mockito.Mockito.*;
 /**

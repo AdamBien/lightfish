@@ -7,8 +7,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.lightfish.business.monitoring.entity.ConnectionPool;
-import org.lightfish.business.monitoring.entity.Snapshot;
+import org.lightfish.business.servermonitoring.entity.ConnectionPool;
+import org.lightfish.business.servermonitoring.entity.Snapshot;
 import static org.mockito.Mockito.mock;
 
 /**

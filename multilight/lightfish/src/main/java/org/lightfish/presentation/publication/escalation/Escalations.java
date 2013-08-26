@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.lightfish.business.escalation.entity.Escalation;
-import org.lightfish.business.monitoring.entity.Snapshot;
+import org.lightfish.business.servermonitoring.entity.Snapshot;
 
 /**
  *

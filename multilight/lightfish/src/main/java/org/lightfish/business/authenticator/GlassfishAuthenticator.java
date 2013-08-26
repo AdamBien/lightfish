@@ -17,7 +17,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.ws.rs.client.Client;
-import org.lightfish.business.monitoring.control.SnapshotProvider;
+import org.lightfish.business.servermonitoring.control.SnapshotProvider;
 
 /**
  *

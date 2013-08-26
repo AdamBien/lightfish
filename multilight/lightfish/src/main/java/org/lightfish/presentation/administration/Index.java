@@ -16,15 +16,15 @@ limitations under the License.
 package org.lightfish.presentation.administration;
 
 import org.lightfish.business.configuration.boundary.Configurator;
-import org.lightfish.business.monitoring.boundary.MonitoringAdmin;
-import org.lightfish.business.monitoring.boundary.MonitoringController;
+import org.lightfish.business.servermonitoring.boundary.MonitoringAdmin;
+import org.lightfish.business.servermonitoring.boundary.MonitoringController;
 
 import javax.enterprise.inject.Model;
 import javax.inject.Inject;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
-import org.lightfish.business.monitoring.boundary.ServerInformation;
-import org.lightfish.business.monitoring.entity.OneShot;
+import org.lightfish.business.servermonitoring.boundary.ServerInformation;
+import org.lightfish.business.servermonitoring.entity.OneShot;
 
 /**
  *

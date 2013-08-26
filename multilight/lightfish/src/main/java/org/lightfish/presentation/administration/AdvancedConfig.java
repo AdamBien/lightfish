@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.lightfish.business.monitoring.boundary.DomainInformation;
+import org.lightfish.business.servermonitoring.boundary.DomainInformation;
 
 /**
  *

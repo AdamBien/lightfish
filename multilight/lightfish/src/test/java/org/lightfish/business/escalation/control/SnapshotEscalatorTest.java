@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.lightfish.business.escalation.entity.Escalation;
 import org.lightfish.business.escalation.entity.Script;
 import org.lightfish.business.logging.Log;
-import org.lightfish.business.monitoring.entity.Snapshot;
+import org.lightfish.business.servermonitoring.entity.Snapshot;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;

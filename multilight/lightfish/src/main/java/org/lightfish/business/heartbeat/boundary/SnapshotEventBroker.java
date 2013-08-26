@@ -27,8 +27,8 @@ import javax.ejb.Singleton;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import org.lightfish.business.heartbeat.control.Serializer;
-import org.lightfish.business.monitoring.boundary.Severity;
-import org.lightfish.business.monitoring.entity.Snapshot;
+import org.lightfish.business.servermonitoring.boundary.Severity;
+import org.lightfish.business.servermonitoring.entity.Snapshot;
 import org.lightfish.presentation.publication.AsyncMultiWriter;
 import org.lightfish.presentation.publication.BrowserWindow;
 

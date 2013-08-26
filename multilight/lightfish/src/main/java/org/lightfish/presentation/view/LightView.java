@@ -20,8 +20,8 @@ import org.lightfish.business.configuration.boundary.Configurator;
 
 import javax.enterprise.inject.Model;
 import javax.inject.Inject;
-import org.lightfish.business.monitoring.control.SnapshotProvider;
-import org.lightfish.business.monitoring.entity.Snapshot;
+import org.lightfish.business.servermonitoring.control.SnapshotProvider;
+import org.lightfish.business.servermonitoring.entity.Snapshot;
 
 /**
  *
