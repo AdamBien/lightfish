@@ -57,7 +57,7 @@
     <scm>
         <connection>scm:git:git@github.com:AdamBien/lightfish.git</connection>
         <url>https://github.com/AdamBien/lightfish</url>
-        <developerConnection>scm:git:git@github.com:AdamBien/lightfish.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/AdamBien/lightfish.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 </project>
