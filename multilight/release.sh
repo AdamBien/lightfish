@@ -1,2 +1,2 @@
 #!/bin/bash
-mvn -B release:clean release:prepare
+mvn -e -B release:clean release:prepare
