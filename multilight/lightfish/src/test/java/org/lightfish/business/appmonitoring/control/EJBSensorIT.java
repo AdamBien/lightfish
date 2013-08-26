@@ -28,9 +28,17 @@ public class EJBSensorIT {
     }
 
     @Test
-    public void fetch() {
+    public void fetchMethodStatistics() {
         when(this.cut.location.get()).thenReturn("localhost:4848");
-        JsonObject methodStatistics = this.cut.fetch("lightfish", "Configurator", "getString-javax.enterprise.inject.spi.InjectionPoint");
+        JsonObject methodStatistics = this.cut.fetchMethodStatistics("lightfish", "Configurator", "getString-javax.enterprise.inject.spi.InjectionPoint");
+        Assert.assertNotNull(methodStatistics);
+        System.out.println("---- " + methodStatistics);
+    }
+
+    @Test
+    public void fetchApplications() {
+        when(this.cut.location.get()).thenReturn("localhost:4848");
+        JsonObject methodStatistics = this.cut.fetchApplicationComponents("lightfish");
         Assert.assertNotNull(methodStatistics);
         System.out.println("---- " + methodStatistics);
     }

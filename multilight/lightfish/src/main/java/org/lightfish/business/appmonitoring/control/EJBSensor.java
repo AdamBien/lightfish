@@ -22,23 +22,34 @@ public class EJBSensor {
     @Inject
     Client client;
 
-    public JsonObject fetch(String applicationName, String ejbName, String methodName) {
+    public JsonObject fetchApplicationComponents(String applicationName) {
+        JsonObject applications = client.target(getUri()).path(applicationName).request(MediaType.APPLICATION_JSON).get(JsonObject.class);
+        return preprocessChildResource(applications);
+
+    }
+
+    public JsonObject fetchMethodStatistics(String applicationName, String ejbName, String methodName) {
         WebTarget target = client.target(getUri() + "{application}/{bean}/bean-methods/{method}");
         JsonObject rawStatistics = target.resolveTemplate("application", applicationName).
                 resolveTemplate("bean", ejbName).
                 resolveTemplate("method", methodName).
                 request(MediaType.APPLICATION_JSON).get(JsonObject.class);
 
-        return preprocess(rawStatistics);
+        return preprocessEntity(rawStatistics);
     }
 
     public String getUri() {
         return "http://" + location.get() + "/monitoring/domain/server/applications/";
     }
 
-    JsonObject preprocess(JsonObject statistics) {
-        JsonObject extraProperties = statistics.getJsonObject("extraProperties");
+    JsonObject preprocessEntity(JsonObject entityResource) {
+        JsonObject extraProperties = entityResource.getJsonObject("extraProperties");
         return extraProperties.getJsonObject("entity");
+    }
+
+    JsonObject preprocessChildResource(JsonObject childResource) {
+        JsonObject extraProperties = childResource.getJsonObject("extraProperties");
+        return extraProperties.getJsonObject("childResources");
     }
 
 }
