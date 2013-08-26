@@ -4,7 +4,7 @@
     <artifactId>multi-light</artifactId>
     <version>1.2.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>lightfish</name>
+    <name>multi-light</name>
     <organization>
         <name>lightfish</name>
         <url>http://lightfish.adam-bien.com</url>
