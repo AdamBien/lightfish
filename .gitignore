@@ -19,3 +19,5 @@ nb-configuration.xml
 *.releaseBackup
 
 *.properties
+
+*.xml~
