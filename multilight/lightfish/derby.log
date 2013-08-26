@@ -1,0 +1,144 @@
+----------------------------------------------------------------
+2012-03-25 03:28:28.160 GMT:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.6.2.1 - (999685): instance a816c00e-0136-47e5-db8e-000004bcd7c0 
+on database directory memory:/Users/abien/work/workspaces/lightfish/lightfish/testDB  with class loader sun.misc.Launcher$AppClassLoader@10393e97 
+Loaded from file:/Users/abien/.m2/repository/org/glassfish/extras/glassfish-embedded-all/3.1/glassfish-embedded-all-3.1.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_04-ea-b17
+Database Class Loader started - derby.database.classpath=''
+Tue Feb 05 18:49:23 CET 2013 : Security manager installed using the Basic server security policy.
+Tue Feb 05 18:49:24 CET 2013 : Apache Derby Network Server - 10.8.1.2 - (1095077) started and ready to accept connections on port 1527
+Tue Feb 05 18:49:24 CET 2013 : Apache Derby Network Server - 10.8.1.2 - (1095077) started and ready to accept connections on port 1527
+----------------------------------------------------------------
+Tue Feb 05 18:49:27 CET 2013:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.1.2 - (1095077): instance a816c00e-013c-ab79-fc40-fffff3084a46 
+on database directory /Users/abien/work/workspaces/lightfish/lightfish/lightfish  with class loader sun.misc.Launcher$AppClassLoader@65fe28a7 
+Loaded from file:/Users/abien/work/servers/glassfish3.1.2.2/javadb/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_12-ea-b08
+user.dir=/Users/abien/work/workspaces/lightfish/lightfish
+derby.system.home=/Users/abien/work/workspaces/lightfish/lightfish
+Database Class Loader started - derby.database.classpath=''
+Tue Feb 05 19:03:12 CET 2013 Thread[DRDAConnThread_3,5,main] (XID = 795), (SESSIONID = 31), (DATABASE = lightfish), (DRDAID = ��������.����-4399734000877198518{18}), Cleanup action starting
+Tue Feb 05 19:03:12 CET 2013 Thread[DRDAConnThread_3,5,main] (XID = 795), (SESSIONID = 31), (DATABASE = lightfish), (DRDAID = ��������.����-4399734000877198518{18}), Failed Statement is: null with 1 parameters begin parameter #1: 1 :end parameter 
+ERROR XSLAQ: cannot create log file at directory /Users/abien/work/workspaces/lightfish/lightfish/lightfish/log.
+	at org.apache.derby.iapi.error.StandardException.newException(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.LogToFile.getLogDirectory(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.LogToFile.getLogFileName(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.LogToFile.switchLogFile(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.LogToFile.flush(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.LogToFile.flush(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.FileLogger.flush(Unknown Source)
+	at org.apache.derby.impl.store.raw.xact.Xact.prepareCommit(Unknown Source)
+	at org.apache.derby.impl.store.raw.xact.Xact.commit(Unknown Source)
+	at org.apache.derby.impl.store.raw.xact.Xact.commit(Unknown Source)
+	at org.apache.derby.impl.store.access.RAMTransaction.commit(Unknown Source)
+	at org.apache.derby.impl.sql.conn.GenericLanguageConnectionContext.doCommit(Unknown Source)
+	at org.apache.derby.impl.sql.conn.GenericLanguageConnectionContext.userCommit(Unknown Source)
+	at org.apache.derby.impl.jdbc.TransactionResourceImpl.commit(Unknown Source)
+	at org.apache.derby.impl.jdbc.EmbedConnection.commit(Unknown Source)
+	at org.apache.derby.impl.drda.Database.commit(Unknown Source)
+	at org.apache.derby.impl.drda.DRDAConnThread.processCommands(Unknown Source)
+	at org.apache.derby.impl.drda.DRDAConnThread.run(Unknown Source)
+
+------------  BEGIN SHUTDOWN ERROR STACK -------------
+
+ERROR XSLAQ: cannot create log file at directory /Users/abien/work/workspaces/lightfish/lightfish/lightfish/log.
+	at org.apache.derby.iapi.error.StandardException.newException(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.LogToFile.getLogDirectory(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.LogToFile.getLogFileName(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.LogToFile.switchLogFile(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.LogToFile.checkpointWithTran(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.LogToFile.checkpoint(Unknown Source)
+	at org.apache.derby.impl.store.raw.RawStore.stop(Unknown Source)
+	at org.apache.derby.impl.services.monitor.TopService.stop(Unknown Source)
+	at org.apache.derby.impl.services.monitor.TopService.shutdown(Unknown Source)
+	at org.apache.derby.impl.services.monitor.BaseMonitor.shutdown(Unknown Source)
+	at org.apache.derby.impl.db.DatabaseContextImpl.cleanupOnError(Unknown Source)
+	at org.apache.derby.iapi.services.context.ContextManager.cleanupOnError(Unknown Source)
+	at org.apache.derby.impl.jdbc.TransactionResourceImpl.cleanupOnError(Unknown Source)
+	at org.apache.derby.impl.jdbc.TransactionResourceImpl.handleException(Unknown Source)
+	at org.apache.derby.impl.jdbc.EmbedConnection.handleException(Unknown Source)
+	at org.apache.derby.impl.jdbc.EmbedConnection.commit(Unknown Source)
+	at org.apache.derby.impl.drda.Database.commit(Unknown Source)
+	at org.apache.derby.impl.drda.DRDAConnThread.processCommands(Unknown Source)
+	at org.apache.derby.impl.drda.DRDAConnThread.run(Unknown Source)
+
+
+------------  END SHUTDOWN ERROR STACK -------------
+
+
+------------  BEGIN SHUTDOWN ERROR STACK -------------
+
+ERROR XSLAQ: cannot create log file at directory /Users/abien/work/workspaces/lightfish/lightfish/lightfish/log.
+	at org.apache.derby.iapi.error.StandardException.newException(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.LogToFile.getLogDirectory(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.LogToFile.getLogFileName(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.LogToFile.switchLogFile(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.LogToFile.checkpointWithTran(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.LogToFile.checkpoint(Unknown Source)
+	at org.apache.derby.impl.store.raw.RawStore.stop(Unknown Source)
+	at org.apache.derby.impl.services.monitor.TopService.stop(Unknown Source)
+	at org.apache.derby.impl.services.monitor.TopService.shutdown(Unknown Source)
+	at org.apache.derby.impl.services.monitor.BaseMonitor.shutdown(Unknown Source)
+	at org.apache.derby.impl.db.DatabaseContextImpl.cleanupOnError(Unknown Source)
+	at org.apache.derby.iapi.services.context.ContextManager.cleanupOnError(Unknown Source)
+	at org.apache.derby.impl.jdbc.TransactionResourceImpl.cleanupOnError(Unknown Source)
+	at org.apache.derby.impl.jdbc.TransactionResourceImpl.handleException(Unknown Source)
+	at org.apache.derby.impl.jdbc.EmbedConnection.handleException(Unknown Source)
+	at org.apache.derby.impl.jdbc.EmbedConnection.commit(Unknown Source)
+	at org.apache.derby.impl.drda.Database.commit(Unknown Source)
+	at org.apache.derby.impl.drda.DRDAConnThread.processCommands(Unknown Source)
+	at org.apache.derby.impl.drda.DRDAConnThread.run(Unknown Source)
+
+
+------------  END SHUTDOWN ERROR STACK -------------
+
+
+------------  BEGIN SHUTDOWN ERROR STACK -------------
+
+ERROR XSLAQ: cannot create log file at directory /Users/abien/work/workspaces/lightfish/lightfish/lightfish/log.
+	at org.apache.derby.iapi.error.StandardException.newException(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.LogToFile.getLogDirectory(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.LogToFile.getLogFileName(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.LogToFile.switchLogFile(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.LogToFile.checkpointWithTran(Unknown Source)
+	at org.apache.derby.impl.store.raw.log.LogToFile.checkpoint(Unknown Source)
+	at org.apache.derby.impl.store.raw.RawStore.stop(Unknown Source)
+	at org.apache.derby.impl.services.monitor.TopService.stop(Unknown Source)
+	at org.apache.derby.impl.services.monitor.TopService.shutdown(Unknown Source)
+	at org.apache.derby.impl.services.monitor.BaseMonitor.shutdown(Unknown Source)
+	at org.apache.derby.impl.db.DatabaseContextImpl.cleanupOnError(Unknown Source)
+	at org.apache.derby.iapi.services.context.ContextManager.cleanupOnError(Unknown Source)
+	at org.apache.derby.impl.jdbc.TransactionResourceImpl.cleanupOnError(Unknown Source)
+	at org.apache.derby.impl.jdbc.TransactionResourceImpl.handleException(Unknown Source)
+	at org.apache.derby.impl.jdbc.EmbedConnection.handleException(Unknown Source)
+	at org.apache.derby.impl.jdbc.EmbedConnection.commit(Unknown Source)
+	at org.apache.derby.impl.drda.Database.commit(Unknown Source)
+	at org.apache.derby.impl.drda.DRDAConnThread.processCommands(Unknown Source)
+	at org.apache.derby.impl.drda.DRDAConnThread.run(Unknown Source)
+
+
+------------  END SHUTDOWN ERROR STACK -------------
+
+----------------------------------------------------------------
+Tue Feb 05 19:03:12 CET 2013:
+Shutting down instance a816c00e-013c-ab79-fc40-fffff3084a46 on database directory /Users/abien/work/workspaces/lightfish/lightfish/lightfish with class loader sun.misc.Launcher$AppClassLoader@65fe28a7 
+(Skipping thread dump because of insufficient permissions:
+java.security.AccessControlException: access denied ("java.lang.RuntimePermission" "getStackTrace"))
+
+
+Cleanup action completed
+Tue Feb 05 19:08:43 CET 2013 : Security manager installed using the Basic server security policy.
+Tue Feb 05 19:08:43 CET 2013 : Apache Derby Network Server - 10.8.1.2 - (1095077) started and ready to accept connections on port 1527
+Tue Feb 05 19:08:43 CET 2013 : Apache Derby Network Server - 10.8.1.2 - (1095077) started and ready to accept connections on port 1527
+----------------------------------------------------------------
+Tue Feb 05 19:09:11 CET 2013:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.1.2 - (1095077): instance a816c00e-013c-ab8b-ad39-fffff3084a46 
+on database directory /Users/abien/work/workspaces/lightfish/lightfish/lightfish  with class loader sun.misc.Launcher$AppClassLoader@65fe28a7 
+Loaded from file:/Users/abien/work/servers/glassfish3.1.2.2/javadb/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_12-ea-b08
+user.dir=/Users/abien/work/workspaces/lightfish/lightfish
+derby.system.home=/Users/abien/work/workspaces/lightfish/lightfish
+Database Class Loader started - derby.database.classpath=''

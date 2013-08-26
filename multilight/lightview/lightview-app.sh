@@ -1,0 +1,2 @@
+#!/bin/bash
+/Library/Java/JavaVirtualMachines/jdk1.7.0_21.jdk/Contents/Home/bin/java -Djavafx.verbose=true -Djavafx.runtime.path=/Library/Java/JavaVirtualMachines/jdk1.7.0_10.jdk/Contents/Home/jre -jar ../lightfish/src/main/webapp/lightview-app.jar
