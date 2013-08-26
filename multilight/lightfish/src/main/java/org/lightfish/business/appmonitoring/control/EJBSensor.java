@@ -22,6 +22,11 @@ public class EJBSensor {
     @Inject
     Client client;
 
+    public JsonObject fetchApplications() {
+        JsonObject applications = client.target(getUri()).request(MediaType.APPLICATION_JSON).get(JsonObject.class);
+        return preprocessChildResource(applications);
+    }
+
     public JsonObject fetchApplicationComponents(String applicationName) {
         JsonObject applications = client.target(getUri()).path(applicationName).request(MediaType.APPLICATION_JSON).get(JsonObject.class);
         return preprocessChildResource(applications);

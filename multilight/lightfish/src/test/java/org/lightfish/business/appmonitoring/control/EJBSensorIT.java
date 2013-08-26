@@ -36,9 +36,17 @@ public class EJBSensorIT {
     }
 
     @Test
-    public void fetchApplications() {
+    public void fetchApplicationComponents() {
         when(this.cut.location.get()).thenReturn("localhost:4848");
         JsonObject methodStatistics = this.cut.fetchApplicationComponents("lightfish");
+        Assert.assertNotNull(methodStatistics);
+        System.out.println("---- " + methodStatistics);
+    }
+
+    @Test
+    public void fetchApplications() {
+        when(this.cut.location.get()).thenReturn("localhost:4848");
+        JsonObject methodStatistics = this.cut.fetchApplications();
         Assert.assertNotNull(methodStatistics);
         System.out.println("---- " + methodStatistics);
     }
