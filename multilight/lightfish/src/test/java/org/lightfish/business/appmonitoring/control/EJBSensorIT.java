@@ -6,7 +6,6 @@ package org.lightfish.business.appmonitoring.control;
 import javax.enterprise.inject.Instance;
 import javax.json.JsonObject;
 import javax.ws.rs.client.ClientBuilder;
-import org.glassfish.jersey.jsonp.JsonProcessingFeature;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +24,7 @@ public class EJBSensorIT {
     public void init() {
         this.cut = new EJBSensor();
         this.cut.location = Mockito.mock(Instance.class);
-        this.cut.client = ClientBuilder.newClient().register(JsonProcessingFeature.class);
+        this.cut.client = ClientBuilder.newClient();
     }
 
     @Test

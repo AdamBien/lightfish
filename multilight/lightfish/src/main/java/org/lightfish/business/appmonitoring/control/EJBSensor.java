@@ -24,14 +24,21 @@ public class EJBSensor {
 
     public JsonObject fetch(String applicationName, String ejbName, String methodName) {
         WebTarget target = client.target(getUri() + "{application}/{bean}/bean-methods/{method}");
-        return target.resolveTemplate("application", applicationName).
+        JsonObject rawStatistics = target.resolveTemplate("application", applicationName).
                 resolveTemplate("bean", ejbName).
                 resolveTemplate("method", methodName).
                 request(MediaType.APPLICATION_JSON).get(JsonObject.class);
+
+        return preprocess(rawStatistics);
     }
 
     public String getUri() {
         return "http://" + location.get() + "/monitoring/domain/server/applications/";
+    }
+
+    JsonObject preprocess(JsonObject statistics) {
+        JsonObject extraProperties = statistics.getJsonObject("extraProperties");
+        return extraProperties.getJsonObject("entity");
     }
 
 }
