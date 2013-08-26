@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.lightfish</groupId>
     <artifactId>multi-light</artifactId>
-    <version>1.0</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
     <name>multi-light</name>
     <organization>
@@ -20,6 +20,7 @@
     <modules>
         <module>../lightview</module>
         <module>../lightfish</module>
+        <module>..lightfish-st</module>
     </modules>
     <build>
         <plugins>
