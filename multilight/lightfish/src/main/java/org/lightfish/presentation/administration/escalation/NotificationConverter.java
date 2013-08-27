@@ -17,7 +17,7 @@ import org.lightfish.business.escalation.boundary.notification.NotifierStore;
  */
 @FacesConverter("notificationConverter")
 public class NotificationConverter implements Converter {
-    private static final Logger LOG = Logger.getLogger(NotificationConverter.class.getName());
+    @Inject Logger LOG;
     
     @Override
     public Object getAsObject(FacesContext fc, UIComponent uic, String string) {

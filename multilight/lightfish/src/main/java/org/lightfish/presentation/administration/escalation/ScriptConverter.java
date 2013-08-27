@@ -17,7 +17,7 @@ import org.lightfish.beanlocator.CdiUtil;
  */
 @FacesConverter("scriptConverter")
 public class ScriptConverter implements Converter {
-    private static final Logger LOG = Logger.getLogger(ScriptConverter.class.getName());
+    @Inject Logger LOG;
     
     @Override
     public Object getAsObject(FacesContext fc, UIComponent uic, String string) {

@@ -14,7 +14,7 @@ import org.lightfish.business.servermonitoring.entity.LogRecord;
  * @author rveldpau
  */
 public class LogStore {
-    private static final Logger LOG = Logger.getLogger(LogStore.class.getName());
+    @Inject Logger LOG;
     
     @PersistenceContext
     EntityManager em;

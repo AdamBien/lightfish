@@ -20,7 +20,7 @@ public class ParallelDataCollectionExecutor {
 
     @Inject
     Instance<Integer> maxParallelThreads;
-    private static final Logger LOG = Logger.getLogger(ParallelDataCollectionExecutor.class.getName());
+    @Inject Logger LOG;
     @Inject
     Instance<ParallelDataCollectionAction> actionInstance;
 

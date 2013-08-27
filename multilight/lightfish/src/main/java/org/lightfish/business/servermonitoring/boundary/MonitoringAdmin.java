@@ -39,7 +39,7 @@ public class MonitoringAdmin {
     private static final String OFF = "OFF";
     private static final String ON = "HIGH";
 
-    private static final Logger LOG = Logger.getLogger(MonitoringAdmin.class.getName());
+    @Inject Logger LOG;
 
     @Inject
     String location;

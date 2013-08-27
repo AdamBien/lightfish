@@ -42,7 +42,7 @@ public class SnapshotEventBroker {
 
     private ConcurrentLinkedQueue<BrowserWindow> browsers = new ConcurrentLinkedQueue<>();
 
-    private static final Logger LOG = Logger.getLogger(SnapshotEventBroker.class.getName());
+    @Inject Logger LOG;
 
     @Inject
     Serializer serializer;

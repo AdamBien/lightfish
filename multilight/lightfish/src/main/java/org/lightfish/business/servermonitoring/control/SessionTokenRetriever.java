@@ -22,7 +22,7 @@ import org.lightfish.business.configuration.boundary.Configurator;
 @Singleton
 public class SessionTokenRetriever {
 
-    private static final Logger LOG = Logger.getLogger(SessionTokenRetriever.class.getName());
+    @Inject Logger LOG;
     @Inject
     protected Client client;
     @Inject

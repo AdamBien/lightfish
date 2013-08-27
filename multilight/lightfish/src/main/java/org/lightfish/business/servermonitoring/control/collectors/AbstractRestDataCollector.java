@@ -29,7 +29,7 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
     protected SessionTokenRetriever tokenProvider;
     private String serverInstance;
 
-    private static final Logger LOG = Logger.getLogger(AbstractRestDataCollector.class.getName());
+    @Inject Logger LOG;
 
     @Override
     public String getServerInstance() {

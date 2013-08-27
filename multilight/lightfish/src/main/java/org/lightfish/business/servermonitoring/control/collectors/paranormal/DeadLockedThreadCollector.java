@@ -14,7 +14,7 @@ public class DeadLockedThreadCollector extends AbstractRestDataCollector<String>
 
     private static final String DEADLOCKED_THREADS = "jvm/thread-system/deadlockedthreads";
 
-    private static final Logger LOG = Logger.getLogger(DeadLockedThreadCollector.class.getName());
+    @Inject Logger LOG;
 
     @Override
     public DataPoint<String> collect() {

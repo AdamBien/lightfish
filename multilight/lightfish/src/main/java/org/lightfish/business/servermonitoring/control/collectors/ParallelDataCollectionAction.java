@@ -16,7 +16,7 @@ import javax.inject.Inject;
 @Stateless
 public class ParallelDataCollectionAction {
 
-    private static final Logger LOG = Logger.getLogger(ParallelDataCollectionAction.class.getName());
+    @Inject Logger LOG;
     transient private Exception thrownException = null;
     @Inject
     Instance<Integer> dataCollectionRetries;
