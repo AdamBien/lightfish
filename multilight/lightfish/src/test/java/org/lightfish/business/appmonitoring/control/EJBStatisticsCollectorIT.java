@@ -16,20 +16,20 @@ import static org.mockito.Mockito.when;
  *
  * @author adam-bien.com
  */
-public class EJBSensorIT {
+public class EJBStatisticsCollectorIT {
 
-    EJBSensor cut;
+    EJBStatisticsCollector cut;
 
     @Before
     public void init() {
-        this.cut = new EJBSensor();
+        this.cut = new EJBStatisticsCollector();
         this.cut.location = Mockito.mock(Instance.class);
         this.cut.client = ClientBuilder.newClient();
+        when(this.cut.location.get()).thenReturn("localhost:4848");
     }
 
     @Test
     public void fetchMethodStatistics() {
-        when(this.cut.location.get()).thenReturn("localhost:4848");
         JsonObject methodStatistics = this.cut.fetchMethodStatistics("lightfish", "Configurator", "getString-javax.enterprise.inject.spi.InjectionPoint");
         Assert.assertNotNull(methodStatistics);
         System.out.println("---- " + methodStatistics);
@@ -37,7 +37,6 @@ public class EJBSensorIT {
 
     @Test
     public void fetchApplicationComponents() {
-        when(this.cut.location.get()).thenReturn("localhost:4848");
         JsonObject methodStatistics = this.cut.fetchApplicationComponents("lightfish");
         Assert.assertNotNull(methodStatistics);
         System.out.println("---- " + methodStatistics);
@@ -45,10 +44,16 @@ public class EJBSensorIT {
 
     @Test
     public void fetchApplications() {
-        when(this.cut.location.get()).thenReturn("localhost:4848");
         JsonObject methodStatistics = this.cut.fetchApplications();
         Assert.assertNotNull(methodStatistics);
         System.out.println("---- " + methodStatistics);
+    }
+
+    @Test
+    public void fetchMethods() {
+        JsonObject methodsOfBean = this.cut.fetchMethods("lightfish", "Configurator");
+        Assert.assertNotNull(methodsOfBean);
+        System.out.println(methodsOfBean);
     }
 
 }

@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
  *
  * @author adam-bien.com
  */
-public class EJBSensor {
+public class EJBStatisticsCollector {
 
     @Inject
     Instance<String> location;
@@ -30,6 +30,14 @@ public class EJBSensor {
     public JsonObject fetchApplicationComponents(String applicationName) {
         JsonObject applications = client.target(getUri()).path(applicationName).request(MediaType.APPLICATION_JSON).get(JsonObject.class);
         return preprocessChildResource(applications);
+    }
+
+    public JsonObject fetchMethods(String applicationName, String ejbName) {
+        WebTarget target = client.target(getUri() + "{application}/{bean}/bean-methods/");
+        JsonObject rawStatistics = target.resolveTemplate("application", applicationName).
+                resolveTemplate("bean", ejbName).
+                request(MediaType.APPLICATION_JSON).get(JsonObject.class);
+        return preprocessChildResource(rawStatistics);
 
     }
 
