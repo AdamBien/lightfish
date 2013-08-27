@@ -1,10 +1,13 @@
 
 LightFish is Licensed under the Apache License, Version 2.0
 
-Installation:
+#Installation:
+
 Download the lightfish.war from [https://github.com/AdamBien/lightfish/releases](https://github.com/AdamBien/lightfish/releases)
+
 or
-0. Setup JAVA_HOME to point to JDK 1.7 installation (lightfish was compiled on 1.7)
+
+0. Setup JAVA_HOME to point to JDK 1.7 installation (lightfish uses JDK 1.7 features)
 1. `git clone https://github.com/AdamBien/lightfish.git`
 2. Perform `mvn clean install`in the multi-light folder
 
