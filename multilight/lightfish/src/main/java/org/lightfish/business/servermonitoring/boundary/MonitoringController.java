@@ -54,6 +54,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import org.lightfish.business.servermonitoring.control.BeatListener;
 import org.lightfish.business.servermonitoring.control.SessionTokenRetriever;
 import org.lightfish.business.servermonitoring.control.collectors.DataPoint;
 import org.lightfish.business.servermonitoring.control.collectors.ParallelDataCollectionAction;
@@ -88,6 +89,8 @@ public class MonitoringController {
     @Severity(Severity.Level.HEARTBEAT)
     Event<Snapshot> heartBeat;
     @Inject
+    Instance<BeatListener> beatListeners;
+    @Inject
     Instance<String[]> serverInstances;
     @Inject
     Instance<Integer> collectionTimeout;
@@ -115,6 +118,7 @@ public class MonitoringController {
     public void gatherAndPersist() {
         handleCompletedFutures(false);
         handleTimedOutFutures();
+        notifyBeatListeners();
 
         startNextInstanceCollection(nextInstanceIndex++);
 
@@ -328,6 +332,12 @@ public class MonitoringController {
 
     public boolean isRunning() {
         return (this.timer != null);
+    }
+
+    void notifyBeatListeners() {
+        for (BeatListener listener : this.beatListeners) {
+            listener.onBeat();
+        }
     }
 
     private class SnapshotCollectionAction {
