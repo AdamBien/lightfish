@@ -1,12 +1,16 @@
 package org.lightfish.business.escalation.entity;
 
 import java.util.List;
-import javax.persistence.*;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.matchers.JUnitMatchers.*;
+import org.junit.Test;
 
 /**
  *
@@ -36,8 +40,8 @@ public class ScriptIT {
         tx.commit();
         tx.begin();
         List<Script> actual = em.createNamedQuery(Script.findAllActive).getResultList();
-        assertThat(actual, hasItems(active1,active2));
-        assertThat(actual.size(),is(2));
+        assertThat(actual, hasItems(active1, active2));
+        assertThat(actual.size(), is(2));
         tx.commit();
     }
 
