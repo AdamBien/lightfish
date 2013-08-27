@@ -38,7 +38,13 @@ public class EJBStatisticsCollector {
                 resolveTemplate("bean", ejbName).
                 request(MediaType.APPLICATION_JSON).get(JsonObject.class);
         return preprocessChildResource(rawStatistics);
+    }
 
+    public JsonObject fetchApplicationStatistics(String applicationName) {
+        WebTarget target = client.target(getUri() + "{application}/server/");
+        JsonObject rawStatistics = target.resolveTemplate("application", applicationName).
+                request(MediaType.APPLICATION_JSON).get(JsonObject.class);
+        return preprocessEntity(rawStatistics);
     }
 
     public JsonObject fetchMethodStatistics(String applicationName, String ejbName, String methodName) {
