@@ -30,8 +30,7 @@ public class CdiUtil {
 
         Bean<TYPE> handlerBean = (Bean<TYPE>) beanManager.getBeans(clazz).iterator().next();
         CreationalContext<TYPE> ctx = beanManager.createCreationalContext(handlerBean);
-        TYPE handler = (TYPE) beanManager.getReference(handlerBean, clazz, ctx);
-        return handler;
+        return (TYPE) beanManager.getReference(handlerBean, clazz, ctx);
 
     }
 

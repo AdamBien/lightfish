@@ -42,7 +42,6 @@ public class CometTransmitterDelegate {
     Serializer serializer;
     @Resource
     TimerService timerService;
-    private Timer timer;
     @Inject
     private Instance<Integer> interval;
     @Inject
@@ -57,7 +56,7 @@ public class CometTransmitterDelegate {
     private void startTimer() {
         ScheduleExpression expression = new ScheduleExpression();
         expression.minute("*").second("*/" + interval.get()).hour("*");
-        this.timer = this.timerService.createCalendarTimer(expression);
+        timerService.createCalendarTimer(expression);
     }
 
     private void persistDefaultConfiguration() {

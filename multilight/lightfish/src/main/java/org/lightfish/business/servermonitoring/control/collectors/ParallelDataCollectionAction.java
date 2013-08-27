@@ -35,8 +35,7 @@ public class ParallelDataCollectionAction {
 
     private <TYPE> DataPoint<TYPE> innerCompute(DataCollector<TYPE> collector, int attempt) throws Exception {
         try {
-            DataPoint<TYPE> dataPoint = collector.collect();
-            return dataPoint;
+            return collector.collect();
         } catch (Exception ex) {
             if (attempt < dataCollectionRetries.get()) {
                 LOG.log(Level.WARNING, "Data collection on {0} failed, retrying...", collector);

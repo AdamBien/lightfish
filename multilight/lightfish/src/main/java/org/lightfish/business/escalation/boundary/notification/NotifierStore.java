@@ -1,6 +1,7 @@
 package org.lightfish.business.escalation.boundary.notification;
 
 import org.lightfish.business.escalation.entity.Notifier;
+
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -9,7 +10,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
 /**
- *
  * @author rveldpau
  */
 @Stateless
@@ -19,7 +19,7 @@ public class NotifierStore {
     EntityManager em;
 
     public List<Notifier> all(boolean includeSystem) {
-        String queryName = includeSystem?"notifier.all":"notifier.nonsystem";
+        String queryName = includeSystem ? "notifier.all" : "notifier.nonsystem";
         return em.createNamedQuery(queryName, Notifier.class).getResultList();
     }
 

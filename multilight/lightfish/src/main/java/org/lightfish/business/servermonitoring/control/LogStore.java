@@ -24,8 +24,7 @@ public class LogStore {
     public List<LogRecord> logsForSnapshot(long snapshotId){
         TypedQuery<LogRecord> query = em.createNamedQuery(LogRecord.QUERY_BY_SNAPSHOT_ID, LogRecord.class);
         query.setParameter("id", snapshotId);
-        List<LogRecord> resultList = query.getResultList();
-        return resultList;
+        return query.getResultList();
     }
     
     public List<LogRecord> logsFromDate(String instance, Date fromDate, Integer maxResults){

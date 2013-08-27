@@ -44,7 +44,7 @@ public class ApplicationCollector extends AbstractRestDataCollector<List<Applica
             collectors.add(collector);
         }
 
-        List<Application> applications = null;
+        List<Application> applications;
 
         if (parallelDataCollection.get()) {
             applications = parallelRetrieveApplications(collectors);

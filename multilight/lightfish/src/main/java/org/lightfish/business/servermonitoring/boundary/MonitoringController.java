@@ -143,7 +143,7 @@ public class MonitoringController {
         while (it.hasNext()) {
             Entry<String, SnapshotCollectionAction> entry = it.next();
             try {
-                DataPoint<Snapshot> dataPoint = null;
+                DataPoint<Snapshot> dataPoint;
                 if (wait) {
                     dataPoint = entry.getValue().getFuture().get();
                 } else {
