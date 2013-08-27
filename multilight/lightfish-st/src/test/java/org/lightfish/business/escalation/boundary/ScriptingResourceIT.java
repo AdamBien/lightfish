@@ -4,6 +4,7 @@ import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import static javax.ws.rs.client.Entity.entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -23,7 +24,7 @@ public class ScriptingResourceIT {
 
     private Client client;
     private String baseURI = "http://localhost:8080/lightfish/resources/scripts";
-    private Target target;
+    private WebTarget target;
 
     @Before
     public void init() {
