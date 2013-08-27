@@ -3,6 +3,7 @@ package org.lightfish.business.servermonitoring.control;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -14,7 +15,8 @@ import org.lightfish.business.servermonitoring.entity.LogRecord;
  * @author rveldpau
  */
 public class LogStore {
-    @Inject Logger LOG;
+    @Inject
+    Logger LOG;
     
     @PersistenceContext
     EntityManager em;

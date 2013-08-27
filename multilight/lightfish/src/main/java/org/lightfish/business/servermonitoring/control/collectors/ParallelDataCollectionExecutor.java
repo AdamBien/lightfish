@@ -12,7 +12,6 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 /**
- *
  * @author rveldpau
  */
 @Stateless
@@ -20,22 +19,23 @@ public class ParallelDataCollectionExecutor {
 
     @Inject
     Instance<Integer> maxParallelThreads;
-    @Inject Logger LOG;
+    @Inject
+    Logger LOG;
     @Inject
     Instance<ParallelDataCollectionAction> actionInstance;
 
     public void execute(ParallelDataCollectionActionBehaviour behaviour, Collection<DataCollector> collectors) throws Exception {
         int maxThreads = maxParallelThreads.get();
-        if(maxThreads<=0){
+        if (maxThreads <= 0) {
             maxThreads = collectors.size();
         }
         List<DataCollector> remainingCollectors = new ArrayList<>(collectors);
         List<DataCollector> collectorsBeingProcessed = new ArrayList<>(maxThreads);
-        
+
         Map<Future<DataPoint>, ParallelDataCollectionAction> futureMap = new HashMap<>(collectors.size());
 
         while (!remainingCollectors.isEmpty()) {
-            
+
             for (int i = 0; i < maxThreads && i < remainingCollectors.size(); i++) {
                 DataCollector collector = remainingCollectors.get(i);
                 ParallelDataCollectionAction action = actionInstance.get();
@@ -54,7 +54,7 @@ public class ParallelDataCollectionExecutor {
                 }
                 behaviour.perform(dataPoint);
             }
-            
+
             remainingCollectors.removeAll(collectorsBeingProcessed);
             futureMap.clear();
             collectorsBeingProcessed.clear();

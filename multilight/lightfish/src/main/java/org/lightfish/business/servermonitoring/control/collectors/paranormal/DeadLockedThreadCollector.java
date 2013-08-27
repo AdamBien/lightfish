@@ -5,6 +5,8 @@ import org.lightfish.business.servermonitoring.control.collectors.AbstractRestDa
 import org.lightfish.business.servermonitoring.control.collectors.DataPoint;
 import org.lightfish.business.servermonitoring.control.collectors.SnapshotDataCollector;
 
+import javax.inject.Inject;
+
 /**
  *
  * @author Rob Veldpaus
@@ -14,7 +16,8 @@ public class DeadLockedThreadCollector extends AbstractRestDataCollector<String>
 
     private static final String DEADLOCKED_THREADS = "jvm/thread-system/deadlockedthreads";
 
-    @Inject Logger LOG;
+    @Inject
+    Logger LOG;
 
     @Override
     public DataPoint<String> collect() {
