@@ -46,7 +46,8 @@ public class ApplicationMonitoring {
         for (Map.Entry<String, JsonValue> entry : entrySet) {
             String beanName = entry.getKey();
             if (!"server".equals(beanName)) {
-                builder.add(beanName, getBeanStatistics(applicationName, beanName));
+                final JsonObject beanStatistics = getBeanStatistics(applicationName, beanName);
+                builder.add(beanName, beanStatistics);
             }
         }
         return builder.build();
@@ -55,6 +56,9 @@ public class ApplicationMonitoring {
     public JsonObject getBeanStatistics(String applicationName, String beanName) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
         JsonObject components = collector.fetchMethods(applicationName, beanName);
+        if (components == null) {
+            return builder.addNull("-- no methods --").build();
+        }
         Set<Map.Entry<String, JsonValue>> entrySet = components.entrySet();
         for (Map.Entry<String, JsonValue> component : entrySet) {
             String methodName = component.getKey();
