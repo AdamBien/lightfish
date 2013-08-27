@@ -1,26 +1,8 @@
-Copyright 2012 Adam Bien, adam-bien.com
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+LightFish is Licensed under the Apache License, Version 2.0
 
 Installation:
-Before attempting to run the application you must create a key store to sign the Ligthview JAR. The following instructions should work on Linux and Apple computers:
-1. Make the directory
-      mkdir -p ~/work/devprogs/tools/keystore
-2. Create the keystore and add the key
-      keytool -genkey -alias lightview -keyalg RSA -keystore samples -keysize 2048
 
-Open and "Run" the lightfish project with NetBeans - it will create the datasource for you and deploy the application and open the browser.
-Or:
 0. Setup JAVA_HOME to point to JDK installation
 1. mvn clean install multi-light project
 2. Drop the lightfish/target/lightfish.war into /glassfish3.1.X/glassfish/domains/domain1/autodeploy
@@ -28,6 +10,6 @@ Or:
 
 LightFish requires JDK 1.7. It was compiled with Java 7 features.
 
-LightFish should install the necessary connection pool and datasources on-the-fly. There is no setup needed. Tested with GlassFish 3.1.2.
+LightFish should install the necessary connection pool and datasources on-the-fly. There is no setup needed. Tested with GlassFish v4.0.1
 
-You can also download the lightfish.war from github.com/AdamBien
+You can also download the lightfish.war from (https://github.com/AdamBien/lightfish/releases)[https://github.com/AdamBien/lightfish/releases]
