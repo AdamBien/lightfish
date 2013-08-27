@@ -28,6 +28,10 @@ public class EJBStatisticsCollectorIT {
         when(this.cut.location.get()).thenReturn("localhost:4848");
     }
 
+    public EJBStatisticsCollector getCut() {
+        return cut;
+    }
+
     @Test
     public void fetchMethodStatistics() {
         JsonObject methodStatistics = this.cut.fetchMethodStatistics("lightfish", "Configurator", "getString-javax.enterprise.inject.spi.InjectionPoint");
