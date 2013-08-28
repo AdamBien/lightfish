@@ -6,6 +6,8 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
+
 import org.lightfish.business.escalation.entity.Script;
 import org.lightfish.beanlocator.BeanLocationException;
 import org.lightfish.beanlocator.CdiUtil;
@@ -17,7 +19,8 @@ import org.lightfish.business.escalation.boundary.notification.NotifierStore;
  */
 @FacesConverter("notificationConverter")
 public class NotificationConverter implements Converter {
-    private static final Logger LOG = Logger.getLogger(NotificationConverter.class.getName());
+    @Inject
+    Logger LOG;
     
     @Override
     public Object getAsObject(FacesContext fc, UIComponent uic, String string) {

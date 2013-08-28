@@ -28,7 +28,7 @@ import org.lightfish.business.servermonitoring.entity.LogRecord;
 @Consumes({MediaType.APPLICATION_XML,MediaType.APPLICATION_JSON})
 public class LogsService {
 
-    private static final Logger LOG = Logger.getLogger(LogsService.class.getName());
+    @Inject Logger LOG;
     @Inject
     Instance<Integer> defaultMaxLogResults;
 

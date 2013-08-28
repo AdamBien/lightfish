@@ -31,13 +31,11 @@ public class ServerInstanceProvider {
         JsonObject serverResult = getJSONObject(instanceName);
         JsonObject extraProperties = serverResult.getJsonObject("extraProperties");
         JsonObject entity = extraProperties.getJsonObject("entity");
-        String result = entity.getString("configRef");
-        return result;
+        return entity.getString("configRef");
     }
 
     JsonObject getJSONObject(String name) {
-        JsonObject result = this.managementResource.path(name).request(MediaType.APPLICATION_JSON).get(JsonObject.class);
-        return result;
+        return this.managementResource.path(name).request(MediaType.APPLICATION_JSON).get(JsonObject.class);
     }
 
     String getInstanceUri() {

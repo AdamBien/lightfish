@@ -22,6 +22,7 @@ public class ParallelDataCollectionActionTest {
     public void setUp() {
         action = new ParallelDataCollectionAction();
         action.dataCollectionRetries = mock(Instance.class);
+        action.LOG = mock(java.util.logging.Logger.class);
         when(action.dataCollectionRetries.get()).thenReturn(1);
     }
 

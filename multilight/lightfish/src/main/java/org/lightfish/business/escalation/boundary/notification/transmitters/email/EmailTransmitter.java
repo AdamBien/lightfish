@@ -141,8 +141,7 @@ public class EmailTransmitter implements Transmitter<EmailTransmitterConfigurati
     private static String emailTemplate = null;
 
     private String applyTemplate(Escalation escalation) {
-        String emailBody = getEmailTemplate().replaceAll("MESSAGE", escalation.getRichMessage());
-        return emailBody;
+        return getEmailTemplate().replaceAll("MESSAGE", escalation.getRichMessage());
     }
 
     private String getEmailTemplate() {

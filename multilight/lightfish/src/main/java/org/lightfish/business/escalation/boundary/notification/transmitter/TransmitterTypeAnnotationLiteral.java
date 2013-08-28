@@ -10,7 +10,6 @@ public class TransmitterTypeAnnotationLiteral extends AnnotationLiteral<Transmit
 
     private String value = null;
 
-    
     @Override
     public String value() {
         return value;

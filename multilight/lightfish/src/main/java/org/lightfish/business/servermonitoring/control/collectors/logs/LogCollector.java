@@ -25,7 +25,7 @@ import org.lightfish.business.servermonitoring.entity.LogRecord;
 @SnapshotDataCollector
 public class LogCollector extends AbstractRestDataCollector<List<LogRecord>> {
 
-    private static final Logger LOG = Logger.getLogger(LogCollector.class.getName());
+    @Inject Logger LOG;
     @Inject
     Configurator configurator;
     @Inject

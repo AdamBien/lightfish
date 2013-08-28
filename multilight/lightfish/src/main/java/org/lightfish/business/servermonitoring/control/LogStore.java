@@ -3,6 +3,7 @@ package org.lightfish.business.servermonitoring.control;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -14,7 +15,8 @@ import org.lightfish.business.servermonitoring.entity.LogRecord;
  * @author rveldpau
  */
 public class LogStore {
-    private static final Logger LOG = Logger.getLogger(LogStore.class.getName());
+    @Inject
+    Logger LOG;
     
     @PersistenceContext
     EntityManager em;
@@ -22,8 +24,7 @@ public class LogStore {
     public List<LogRecord> logsForSnapshot(long snapshotId){
         TypedQuery<LogRecord> query = em.createNamedQuery(LogRecord.QUERY_BY_SNAPSHOT_ID, LogRecord.class);
         query.setParameter("id", snapshotId);
-        List<LogRecord> resultList = query.getResultList();
-        return resultList;
+        return query.getResultList();
     }
     
     public List<LogRecord> logsFromDate(String instance, Date fromDate, Integer maxResults){
