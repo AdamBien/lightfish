@@ -69,6 +69,18 @@ public class EJBStatisticsCollector {
         return preprocessEntity(rawStatistics);
     }
 
+    public JsonObject fetchBeanPoolStatistics(String applicationName, String ejbName) {
+        WebTarget target = client.target(getUri() + "{application}/{bean}/bean-pool");
+        Response response = target.resolveTemplate("application", applicationName).
+                resolveTemplate("bean", ejbName).
+                request(MediaType.APPLICATION_JSON).get(Response.class);
+        if (response.getStatus() == 404) {
+            return null;
+        }
+        JsonObject rawStatistics = response.readEntity(JsonObject.class);
+        return preprocessEntity(rawStatistics);
+    }
+
     public String getUri() {
         return "http://" + location.get() + "/monitoring/domain/server/applications/";
     }

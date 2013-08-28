@@ -60,4 +60,18 @@ public class EJBStatisticsCollectorIT {
         System.out.println(methodsOfBean);
     }
 
+    @Test
+    public void fetchBeanPoolStatisticsForSingleton() {
+        JsonObject poolStatistics = this.cut.fetchBeanPoolStatistics("lightfish", "Configurator");
+        Assert.assertNull(poolStatistics);
+        System.out.println(poolStatistics);
+    }
+
+    @Test
+    public void fetchBeanPoolStatisticsForStateless() {
+        JsonObject poolStatistics = this.cut.fetchBeanPoolStatistics("lightfish", "ConfigurationStore");
+        Assert.assertNotNull(poolStatistics);
+        System.out.println(poolStatistics);
+    }
+
 }
