@@ -1,9 +1,11 @@
 package org.lightview.service;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.GenericType;
 import java.util.ArrayList;
 import java.util.List;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import org.lightview.model.Script;
 
@@ -18,25 +20,25 @@ public class ScriptManager {
 
     public ScriptManager(String baseURI) {
         this.uri = withResource(baseURI);
-        this.client = Client.create();
+        this.client = ClientBuilder.newClient();
     }
 
     public List<Script> getAllScripts() {
         GenericType<List<Script>> entities = new GenericType<List<Script>>() {
         };
         try {
-            return client.resource(this.uri).accept(MediaType.APPLICATION_XML).get(entities);
+            return client.target(this.uri).request(MediaType.APPLICATION_XML).get(entities);
         } catch (Exception e) {
             return new ArrayList<>();
         }
     }
 
     public void registerNewScript(Script script) {
-        client.resource(this.uri).accept(MediaType.APPLICATION_XML).put(script);
+        client.target(this.uri).request(MediaType.APPLICATION_XML).put(Entity.xml(script));
     }
 
     public void deleteScript(String scriptName) {
-        client.resource(this.uri).path(scriptName).delete();
+        client.target(this.uri).path(scriptName).request().delete();
     }
 
     private String withResource(String baseURI) {

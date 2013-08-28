@@ -15,7 +15,8 @@
  */
 package org.lightview.service;
 
-import com.sun.jersey.api.client.Client;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import org.lightview.model.Escalation;
 
@@ -30,10 +31,10 @@ public class EscalationFetcher {
 
     public EscalationFetcher(String url) {
         this.url = url;
-        this.client = Client.create();
+        this.client = ClientBuilder.newClient();
     }
 
     public Escalation getEscalation() {
-        return client.resource(this.url).accept(MediaType.APPLICATION_XML).get(Escalation.class);
+        return client.target(this.url).request(MediaType.APPLICATION_XML).get(Escalation.class);
     }
 }
