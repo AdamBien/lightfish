@@ -22,7 +22,7 @@ import org.lightfish.business.escalation.entity.Escalation;
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class EscalationNotificationBroker {
 
-    private static final Logger LOG = Logger.getLogger(EscalationNotificationBroker.class.getName());
+    @Inject Logger LOG;
     
     @Inject NotifierStore notifierStore;
     

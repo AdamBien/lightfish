@@ -45,8 +45,7 @@ public class DomainProvider {
     }
 
     JsonObject getJsonObject(String name) {
-        JsonObject result = this.managementResource.path(name).request(MediaType.APPLICATION_JSON).get(JsonObject.class);
-        return result;
+        return this.managementResource.path(name).request(MediaType.APPLICATION_JSON).get(JsonObject.class);
     }
 
     String getInstancesUri() {

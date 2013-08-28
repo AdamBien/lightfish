@@ -32,6 +32,6 @@ public @interface Severity {
     Level value();
     
     enum Level{
-        HEARTBEAT,ESCALATION;
+        HEARTBEAT,ESCALATION
     }
 }

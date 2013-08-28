@@ -18,7 +18,7 @@ import org.lightfish.business.servermonitoring.control.collectors.logs.LogCollec
 @Authentication
 public class SessionTokenCollector extends AbstractRestDataCollector<String> {
 
-    private static final Logger LOG = Logger.getLogger(LogCollector.class.getName());
+    @Inject Logger LOG;
     @Inject
     Instance<String> username;
     @Inject

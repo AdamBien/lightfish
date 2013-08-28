@@ -35,7 +35,7 @@ import org.lightfish.business.servermonitoring.entity.Snapshot;
  */
 public class SnapshotProvider {
 
-    private static final Logger LOG = Logger.getLogger(SnapshotProvider.class.getName());
+    @Inject Logger LOG;
     @Inject
     Instance<Boolean> parallelDataCollection;
     @Inject

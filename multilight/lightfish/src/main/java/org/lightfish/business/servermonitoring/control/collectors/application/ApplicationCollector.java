@@ -22,7 +22,7 @@ import org.lightfish.business.servermonitoring.entity.Application;
 public class ApplicationCollector extends AbstractRestDataCollector<List<Application>> {
 
     private static final String APPLICATIONS = "applications";
-    private static final Logger LOG = Logger.getLogger(SnapshotProvider.class.getName());
+    @Inject Logger LOG;
     @Inject
     @ApplicationDataCollector
     Instance<SpecificApplicationCollector> specificCollector;
@@ -44,7 +44,7 @@ public class ApplicationCollector extends AbstractRestDataCollector<List<Applica
             collectors.add(collector);
         }
 
-        List<Application> applications = null;
+        List<Application> applications;
 
         if (parallelDataCollection.get()) {
             applications = parallelRetrieveApplications(collectors);

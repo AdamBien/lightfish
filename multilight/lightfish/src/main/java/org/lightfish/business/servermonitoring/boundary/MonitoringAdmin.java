@@ -39,7 +39,7 @@ public class MonitoringAdmin {
     private static final String OFF = "OFF";
     private static final String ON = "HIGH";
 
-    private static final Logger LOG = Logger.getLogger(MonitoringAdmin.class.getName());
+    @Inject Logger LOG;
 
     @Inject
     String location;
@@ -92,7 +92,7 @@ public class MonitoringAdmin {
                 LOG.severe("Problem sending request: " + ex);
             }
             LOG.log(Level.INFO, "Got status: {0} for path: {1}  form: {2}", new Object[]{status, getEnableMonitoringURI_312(instanceName), form});
-            if (200 != response.getStatus()) {
+            if (response == null || 200 != response.getStatus()) {
                 return false;
             }
         }
