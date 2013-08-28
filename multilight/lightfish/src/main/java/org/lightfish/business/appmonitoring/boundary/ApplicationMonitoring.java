@@ -68,4 +68,8 @@ public class ApplicationMonitoring {
         return builder.build();
     }
 
+    public JsonObject getBeanPoolStatistics(String applicationName, String ejbName) {
+        return collector.fetchBeanPoolStatistics(applicationName, ejbName);
+    }
+
 }

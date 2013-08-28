@@ -25,6 +25,12 @@ public class EJBsResource {
     }
 
     @GET
+    @Path("{ejb-name}/pool")
+    public JsonObject getEJBPoolStatistics(@PathParam("application-name") String applicationName, @PathParam("ejb-name") String ejbName) {
+        return am.getBeanPoolStatistics(applicationName, ejbName);
+    }
+
+    @GET
     public JsonObject getEJBStatistics(@PathParam("application-name") String applicationName) {
         System.out.println("Application name: " + applicationName);
         return am.getBeanStatistics(applicationName);
