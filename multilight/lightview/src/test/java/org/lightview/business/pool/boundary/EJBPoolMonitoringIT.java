@@ -48,9 +48,15 @@ public class EJBPoolMonitoringIT {
     }
 
     @Test
-    public void totalBeansDestroyedForSingletong() {
+    public void totalBeansDestroyedForSingleton() {
         PoolStatistics poolStats = this.cut.getPoolStats("lightfish", "Configurator");
         Assert.assertThat(poolStats.getTotalBeansDestroyed(), is(-1));
+    }
+
+    @Test
+    public void currentThreadsWaitingForSingleton() {
+        PoolStatistics poolStats = this.cut.getPoolStats("lightfish", "Configurator");
+        Assert.assertThat(poolStats.getCurrentThreadsWaiting(), is(-1));
     }
 
 }

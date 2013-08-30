@@ -83,6 +83,9 @@ public class PoolStatistics {
     }
 
     JsonObject getThreadsStatistics() {
+        if (statistics == null) {
+            return null;
+        }
         return statistics.getJsonObject(THREADS_STATISTICS);
     }
 

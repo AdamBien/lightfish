@@ -53,8 +53,8 @@ public class EJBsPresenter implements Initializable {
         this.poolProperties = this.poolTableView.getItems();
         TableColumn currentThreadsWaiting = createColumn("currentThreadsWaiting", "Waiting Threads");
         TableColumn threadsWaitingHighwatermark = createColumn("threadsWaitingHighwatermark", "Waiting Threads High");
-        TableColumn totalbeanscreated = createColumn("totalbeanscreated", "Created Beans");
-        TableColumn totalbeansdestroyed = createColumn("totalbeansdestroyed", "Destroyed Beans");
+        TableColumn totalbeanscreated = createColumn("totalBeansCreated", "Created Beans");
+        TableColumn totalbeansdestroyed = createColumn("totalBeansDestroyed", "Destroyed Beans");
         this.poolTableView.getColumns().add(currentThreadsWaiting);
         this.poolTableView.getColumns().add(threadsWaitingHighwatermark);
         this.poolTableView.getColumns().add(totalbeanscreated);
