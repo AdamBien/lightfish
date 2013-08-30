@@ -57,7 +57,12 @@ public class BrowserWindow {
     public Writer getWriter() {
 
         try {
-            return this.asyncContext.getResponse().getWriter();
+            ServletResponse servletResponse = this.asyncContext.getResponse();
+            if (servletResponse != null) {
+                return servletResponse.getWriter();
+            } else {
+                return null;
+            }
         } catch (IOException ex) {
             throw new IllegalStateException("Cannot return writer: " + ex, ex);
         }

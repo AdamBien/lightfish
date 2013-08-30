@@ -42,7 +42,8 @@ public class SnapshotEventBroker {
 
     private ConcurrentLinkedQueue<BrowserWindow> browsers = new ConcurrentLinkedQueue<>();
 
-    @Inject Logger LOG;
+    @Inject
+    Logger LOG;
 
     @Inject
     Serializer serializer;
@@ -62,8 +63,13 @@ public class SnapshotEventBroker {
             }
             if (snapshot.getInstanceName().equals(browserWindow.getChannel())) {
                 LOG.log(Level.FINEST, "Staging {0}", browserWindow.hashCode());
-                multiWriter.addWriter(browserWindow.getWriter());
-                staging.add(browserWindow);
+                Writer writer = browserWindow.getWriter();
+                if (writer != null) {
+                    multiWriter.addWriter(writer);
+                    staging.add(browserWindow);
+                } else {
+                    browsers.remove(browserWindow);
+                }
             }
         }
 
