@@ -1,20 +1,22 @@
 /*
-Copyright 2012 Adam Bien, adam-bien.com
+ Copyright 2012 Adam Bien, adam-bien.com
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 package org.lightview.view;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -27,9 +29,6 @@ import javafx.scene.web.WebView;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 /**
  * @author Adam Bien <blog.adam-bien.com>
  */
@@ -41,11 +40,13 @@ public class Browser extends Collapsible {
     private WebView webView;
     private final static int HEIGHT = 280;
 
-    Browser() {}
+    public Browser() {
+    }
 
-    Node view() {
-        if(webView == null)
+    public Node view() {
+        if (webView == null) {
             initialize();
+        }
         return webView;
     }
 
@@ -56,7 +57,6 @@ public class Browser extends Collapsible {
         this.prefHeight = this.webView.getPrefHeight();
         this.registerListeners();
     }
-
 
     public StringProperty getURI() {
         return uri;
@@ -78,7 +78,7 @@ public class Browser extends Collapsible {
         loadWorker.progressProperty().addListener(new ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> observableValue, Number old, Number current) {
                 System.out.println("Load progress: " + current);
-                if(current.doubleValue() == 1.0){
+                if (current.doubleValue() == 1.0) {
                     postProcess(engine.getDocument());
                 }
             }
@@ -87,14 +87,14 @@ public class Browser extends Collapsible {
 
     void postProcess(Document lightFishAdminPage) {
         Element lightview = lightFishAdminPage.getElementById("lightview");
-        if(lightview == null){
+        if (lightview == null) {
             return;
         }
-        lightview.setAttribute("style","display: none");
+        lightview.setAttribute("style", "display: none");
     }
 
     boolean isValid(String newValue) {
-        if(newValue == null){
+        if (newValue == null) {
             return false;
         }
 
@@ -107,10 +107,10 @@ public class Browser extends Collapsible {
         return true;
     }
 
-    
     String skipLastSlash(String uri) {
-        if(!uri.endsWith("/"))
+        if (!uri.endsWith("/")) {
             return uri;
+        }
         return uri.substring(0, uri.lastIndexOf("/"));
     }
 
