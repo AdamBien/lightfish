@@ -1,34 +1,37 @@
-package org.lightview.view;
+package org.lightview.presentation.applications;
 
-import java.util.Collections;
-import java.util.List;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import javafx.collections.SetChangeListener.Change;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.HBox;
 import org.lightview.model.Application;
+import org.lightview.presentation.ejbs.EJBsPresenter;
+import org.lightview.presentation.ejbs.EJBsView;
 
 /**
  *
  * @author adam-bien.com
  */
-public class ApplicationList {
+public class ApplicationsPresenter implements Initializable {
 
     private ObservableSet<Application> applications;
-    private ListView<String> componentsList;
-    private final ObservableList<String> items;
+    private EJBsPresenter ejbPresenter;
+    private EJBsView ejbView;
 
-    public ApplicationList(ObservableSet<Application> applications) {
+    public ApplicationsPresenter(ObservableSet<Application> applications) {
         this.applications = applications;
-        this.componentsList = new ListView<>();
-        this.items = this.componentsList.getItems();
+        this.ejbView = new EJBsView();
+        this.ejbPresenter = (EJBsPresenter) ejbView.getPresenter();
     }
 
     public Node view() {
@@ -39,12 +42,12 @@ public class ApplicationList {
         selectionModel.selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String newSelection) {
-                items.clear();
-                items.addAll(getComponentsForApplication(newSelection));
+                ejbPresenter.showComponentsForApp(applications, newSelection);
+
             }
         });
         view.getChildren().add(applicationsList);
-        view.getChildren().add(componentsList);
+        view.getChildren().add(ejbView.getView());
 
         final ObservableList<String> items = applicationsList.getItems();
 
@@ -62,12 +65,9 @@ public class ApplicationList {
         return view;
     }
 
-    private List<String> getComponentsForApplication(String newSelection) {
-        for (Application application : applications) {
-            if(application.getApplicationName().equalsIgnoreCase(newSelection)){
-                return application.getComponents();
-            }
-        }
-        return Collections.EMPTY_LIST;
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
 }
