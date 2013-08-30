@@ -15,6 +15,9 @@ public class EJBPoolMonitoring {
 
     private Client client;
 
+    private String baseUri = "http://localhost:8080/";
+    private String URI = "{base-uri}lightfish/resources/applications/{application}/ejbs/{ejb}";
+
     @PostConstruct
     public void init() {
         this.client = ClientBuilder.newClient();
