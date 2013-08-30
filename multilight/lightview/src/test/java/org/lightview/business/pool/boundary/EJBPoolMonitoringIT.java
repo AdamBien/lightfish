@@ -3,6 +3,7 @@
  */
 package org.lightview.business.pool.boundary;
 
+import static org.hamcrest.CoreMatchers.is;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,24 +26,31 @@ public class EJBPoolMonitoringIT {
     @Test
     public void currentThreadsWaiting() {
         PoolStatistics poolStats = this.cut.getPoolStats("lightfish", "ConfigurationStore");
-        Assert.assertNotNull(poolStats.currentThreadsWaiting());
+        Assert.assertNotNull(poolStats.currentThreadsWaitingProperty());
     }
 
     @Test
     public void threadsWaitingHighwatermark() {
         PoolStatistics poolStats = this.cut.getPoolStats("lightfish", "ConfigurationStore");
-        Assert.assertNotNull(poolStats.threadsWaitingHighwatermark());
+        Assert.assertNotNull(poolStats.threadsWaitingHighwatermarkProperty());
     }
 
     @Test
     public void totalBeansCreated() {
         PoolStatistics poolStats = this.cut.getPoolStats("lightfish", "ConfigurationStore");
-        Assert.assertNotNull(poolStats.totalBeansCreated());
+        Assert.assertNotNull(poolStats.totalBeansCreatedProperty());
     }
 
     @Test
     public void totalBeansDestroyed() {
         PoolStatistics poolStats = this.cut.getPoolStats("lightfish", "ConfigurationStore");
-        Assert.assertNotNull(poolStats.totalBeansDestroyed());
+        Assert.assertNotNull(poolStats.totalBeansDestroyedProperty());
     }
+
+    @Test
+    public void totalBeansDestroyedForSingletong() {
+        PoolStatistics poolStats = this.cut.getPoolStats("lightfish", "Configurator");
+        Assert.assertThat(poolStats.getTotalBeansDestroyed(), is(-1));
+    }
+
 }

@@ -18,6 +18,7 @@ import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javax.inject.Inject;
 import org.lightview.business.pool.boundary.EJBPoolMonitoring;
 import org.lightview.business.pool.entity.PoolStatistics;
@@ -34,12 +35,6 @@ public class EJBsPresenter implements Initializable {
     @FXML
     TableView poolTableView;
 
-    @FXML
-    TableColumn propertyColumn;
-
-    @FXML
-    TableColumn valueColumn;
-
     private ObservableList<String> ejbs;
 
     private String monitoredApplication;
@@ -50,12 +45,24 @@ public class EJBsPresenter implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        this.ejbs = ejbsList.getItems();
+        prepareTable();
+        prepareList();
+    }
+
+    private void prepareTable() {
         this.poolProperties = this.poolTableView.getItems();
+        TableColumn currentThreadsWaiting = createColumn("currentThreadsWaiting", "Waiting Threads");
+        TableColumn threadsWaitingHighwatermark = createColumn("threadsWaitingHighwatermark", "Waiting Threads High");
+        TableColumn totalbeanscreated = createColumn("totalbeanscreated", "Created Beans");
+        TableColumn totalbeansdestroyed = createColumn("totalbeansdestroyed", "Destroyed Beans");
+        this.poolTableView.getColumns().add(currentThreadsWaiting);
+        this.poolTableView.getColumns().add(threadsWaitingHighwatermark);
+        this.poolTableView.getColumns().add(totalbeanscreated);
+        this.poolTableView.getColumns().add(totalbeansdestroyed);
+    }
 
-        this.propertyColumn.setEditable(false);
-
-        this.valueColumn.setEditable(false);
+    private void prepareList() {
+        this.ejbs = ejbsList.getItems();
 
         MultipleSelectionModel<String> selectionModel = this.ejbsList.getSelectionModel();
         selectionModel.setSelectionMode(SelectionMode.SINGLE);
@@ -65,7 +72,6 @@ public class EJBsPresenter implements Initializable {
             public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                 ejbSelected(newValue);
             }
-
         });
     }
 
@@ -92,4 +98,9 @@ public class EJBsPresenter implements Initializable {
         this.poolProperties.add(poolStats);
     }
 
+    private TableColumn createColumn(String name, String caption) {
+        TableColumn column = new TableColumn(caption);
+        column.setCellValueFactory(new PropertyValueFactory<PoolStatistics, String>(name));
+        return column;
+    }
 }

@@ -20,33 +20,66 @@ public class PoolStatistics {
     private final IntegerProperty currentThreadsWaiting = new SimpleIntegerProperty();
     private final IntegerProperty totalBeansCreated = new SimpleIntegerProperty();
     private final IntegerProperty totalBeansDestroyed = new SimpleIntegerProperty();
+    private IntegerProperty NOT_AVAILABLE = new SimpleIntegerProperty(-1);
 
     public PoolStatistics(JsonObject statistics) {
         this.statistics = statistics;
     }
 
-    public IntegerProperty currentThreadsWaiting() {
-        int value = getThreadsStatistics().getInt("current");
+    public IntegerProperty currentThreadsWaitingProperty() {
+        final JsonObject threadsStatistics = getThreadsStatistics();
+        if (threadsStatistics == null) {
+            return NOT_AVAILABLE;
+        }
+        int value = threadsStatistics.getInt("current");
         currentThreadsWaiting.set(value);
         return this.currentThreadsWaiting;
     }
 
-    public IntegerProperty threadsWaitingHighwatermark() {
-        int value = getThreadsStatistics().getInt("highwatermark");
+    public int getCurrentThreadsWaiting() {
+        return currentThreadsWaitingProperty().get();
+    }
+
+    public IntegerProperty threadsWaitingHighwatermarkProperty() {
+        final JsonObject threadsStatistics = getThreadsStatistics();
+        if (threadsStatistics == null) {
+            return NOT_AVAILABLE;
+        }
+        int value = threadsStatistics.getInt("highwatermark");
         currentThreadsWaiting.set(value);
         return this.currentThreadsWaiting;
     }
 
-    public IntegerProperty totalBeansCreated() {
-        int value = statistics.getJsonObject("totalbeanscreated").getInt("count");
+    public int getThreadsWaitingHighwatermark() {
+        return threadsWaitingHighwatermarkProperty().get();
+    }
+
+    public IntegerProperty totalBeansCreatedProperty() {
+        if (statistics == null) {
+            return NOT_AVAILABLE;
+        }
+        final JsonObject jsonObject = statistics.getJsonObject("totalbeanscreated");
+        int value = jsonObject.getInt("count");
         totalBeansCreated.set(value);
         return totalBeansCreated;
     }
 
-    public IntegerProperty totalBeansDestroyed() {
-        int value = statistics.getJsonObject("totalbeansdestroyed").getInt("count");
+    public int getTotalBeansCreated() {
+        return this.totalBeansCreatedProperty().get();
+    }
+
+    public IntegerProperty totalBeansDestroyedProperty() {
+        if (statistics == null) {
+            return NOT_AVAILABLE;
+        }
+        final JsonObject jsonObject = statistics.getJsonObject("totalbeansdestroyed");
+        int value = jsonObject.getInt("count");
         totalBeansDestroyed.set(value);
         return totalBeansDestroyed;
+    }
+
+    public int getTotalBeansDestroyed() {
+        return this.totalBeansCreatedProperty().get();
     }
 
     JsonObject getThreadsStatistics() {

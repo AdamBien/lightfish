@@ -17,12 +17,7 @@
         </AnchorPane>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
           <children>
-            <TableView id="pooView" fx:id="poolTableView" prefHeight="398.0" prefWidth="336.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-              <columns>
-                <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="181.0" text="Property" fx:id="propertyColumn" />
-                <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="187.0" text="Value" fx:id="valueColumn" />
-              </columns>
-            </TableView>
+            <TableView id="pooView" fx:id="poolTableView" prefHeight="398.0" prefWidth="336.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
           </children>
         </AnchorPane>
       </items>
