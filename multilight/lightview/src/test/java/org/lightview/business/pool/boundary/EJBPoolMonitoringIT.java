@@ -28,4 +28,10 @@ public class EJBPoolMonitoringIT {
         Assert.assertNotNull(poolStats.currentThreadsWaiting());
     }
 
+    @Test
+    public void threadsWaitingHighwatermark() {
+        PoolStatistics poolStats = this.cut.getPoolStats("lightfish", "ConfigurationStore");
+        Assert.assertNotNull(poolStats.threadsWaitingHighwatermark());
+    }
+
 }

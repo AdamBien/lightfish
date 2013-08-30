@@ -27,7 +27,12 @@ public class PoolStatistics {
         int value = getThreadsStatistics().getInt("current");
         currentThreadsWaiting.set(value);
         return this.currentThreadsWaiting;
+    }
 
+    public IntegerProperty threadsWaitingHighwatermark() {
+        int value = getThreadsStatistics().getInt("highwatermark");
+        currentThreadsWaiting.set(value);
+        return this.currentThreadsWaiting;
     }
 
     JsonObject getThreadsStatistics() {
