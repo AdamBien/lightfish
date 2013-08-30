@@ -34,4 +34,15 @@ public class EJBPoolMonitoringIT {
         Assert.assertNotNull(poolStats.threadsWaitingHighwatermark());
     }
 
+    @Test
+    public void totalBeansCreated() {
+        PoolStatistics poolStats = this.cut.getPoolStats("lightfish", "ConfigurationStore");
+        Assert.assertNotNull(poolStats.totalBeansCreated());
+    }
+
+    @Test
+    public void totalBeansDestroyed() {
+        PoolStatistics poolStats = this.cut.getPoolStats("lightfish", "ConfigurationStore");
+        Assert.assertNotNull(poolStats.totalBeansDestroyed());
+    }
 }
