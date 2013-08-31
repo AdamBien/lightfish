@@ -10,15 +10,13 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javax.inject.Inject;
 import org.lightview.business.pool.boundary.EJBPoolMonitoring;
 import org.lightview.business.pool.entity.PoolStatistics;
@@ -32,8 +30,6 @@ public class EJBsPresenter implements Initializable {
 
     @FXML
     ListView<String> ejbsList;
-    @FXML
-    TableView poolTableView;
 
     private ObservableList<String> ejbs;
 
@@ -45,20 +41,8 @@ public class EJBsPresenter implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        prepareTable();
+        this.poolProperties = FXCollections.observableArrayList();
         prepareList();
-    }
-
-    private void prepareTable() {
-        this.poolProperties = this.poolTableView.getItems();
-        TableColumn currentThreadsWaiting = createColumn("currentThreadsWaiting", "Waiting Threads");
-        TableColumn threadsWaitingHighwatermark = createColumn("threadsWaitingHighwatermark", "Waiting Threads High");
-        TableColumn totalbeanscreated = createColumn("totalBeansCreated", "Created Beans");
-        TableColumn totalbeansdestroyed = createColumn("totalBeansDestroyed", "Destroyed Beans");
-        this.poolTableView.getColumns().add(currentThreadsWaiting);
-        this.poolTableView.getColumns().add(threadsWaitingHighwatermark);
-        this.poolTableView.getColumns().add(totalbeanscreated);
-        this.poolTableView.getColumns().add(totalbeansdestroyed);
     }
 
     private void prepareList() {
@@ -98,9 +82,4 @@ public class EJBsPresenter implements Initializable {
         this.poolProperties.add(poolStats);
     }
 
-    private TableColumn createColumn(String name, String caption) {
-        TableColumn column = new TableColumn(caption);
-        column.setCellValueFactory(new PropertyValueFactory<PoolStatistics, String>(name));
-        return column;
-    }
 }

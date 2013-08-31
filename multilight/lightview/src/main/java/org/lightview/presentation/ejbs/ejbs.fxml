@@ -3,12 +3,13 @@
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.lightview.presentation.ejbs.EJBsPresenter">
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="876.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.lightview.presentation.ejbs.EJBsPresenter">
   <children>
-    <SplitPane dividerPositions="0.4331103678929766" focusTraversable="true" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <SplitPane dividerPositions="0.13844393592677345" focusTraversable="true" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <items>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
           <children>
@@ -17,7 +18,26 @@
         </AnchorPane>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
           <children>
-            <TableView id="pooView" fx:id="poolTableView" prefHeight="398.0" prefWidth="336.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+            <HBox prefHeight="398.0" prefWidth="336.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <children>
+                <LineChart id="LineChart" fx:id="currentThreadsWaiting">
+                  <xAxis>
+                    <CategoryAxis label="" side="BOTTOM" />
+                  </xAxis>
+                  <yAxis>
+                    <NumberAxis label="Count" side="LEFT" />
+                  </yAxis>
+                </LineChart>
+                <LineChart id="LineChart" fx:id="threadsWaitingHighwatermark">
+                  <xAxis>
+                    <CategoryAxis side="BOTTOM" />
+                  </xAxis>
+                  <yAxis>
+                    <NumberAxis side="LEFT" />
+                  </yAxis>
+                </LineChart>
+              </children>
+            </HBox>
           </children>
         </AnchorPane>
       </items>

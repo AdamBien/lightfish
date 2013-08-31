@@ -1,29 +1,33 @@
 /*
-Copyright 2012 Adam Bien, adam-bien.com
+ Copyright 2012 Adam Bien, adam-bien.com
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 package org.lightview.presenter;
 
-import javafx.beans.property.*;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import org.lightview.model.ConnectionPool;
 
 /**
- * User: blog.adam-bien.com
- * Date: 06.12.11
- * Time: 03:27
+ * User: blog.adam-bien.com Date: 06.12.11 Time: 03:27
  */
 public class ConnectionPoolBindings {
+
     private StringProperty jndiName;
 
     private IntegerProperty numconnfree;
@@ -79,14 +83,13 @@ public class ConnectionPoolBindings {
         this.numconnused.set(numconnused);
     }
 
-
     public static ConnectionPoolBindings from(ConnectionPool connectionPool) {
         ConnectionPoolBindings poolBindings = new ConnectionPoolBindings();
         poolBindings.update(connectionPool);
         return poolBindings;
     }
 
-    void update(ConnectionPool connectionPool) {
+    public void update(ConnectionPool connectionPool) {
         this.setJndiName(connectionPool.getJndiName());
         this.setNumconnfree(connectionPool.getNumconnfree());
         this.setNumpotentialconnleak(connectionPool.getNumpotentialconnleak());

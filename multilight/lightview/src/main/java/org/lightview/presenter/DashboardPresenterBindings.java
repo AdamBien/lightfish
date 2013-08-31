@@ -1,4 +1,3 @@
-
 package org.lightview.presenter;
 
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -12,30 +11,48 @@ import org.lightview.model.Application;
 import org.lightview.model.Snapshot;
 
 /**
- * User: blog.adam-bien.com
- * Date: 05.12.11
- * Time: 20:56
+ * User: blog.adam-bien.com Date: 05.12.11 Time: 20:56
  */
 public interface DashboardPresenterBindings {
+
     StringProperty getUriProperty();
+
     StringProperty getDeadlockedThreads();
+
     ReadOnlyLongProperty getId();
+
     ReadOnlyLongProperty getUsedHeapSizeInMB();
+
     ReadOnlyLongProperty getThreadCount();
+
     ReadOnlyIntegerProperty getPeakThreadCount();
+
     ReadOnlyIntegerProperty getBusyThreads();
+
     ReadOnlyIntegerProperty getQueuedConnections();
+
     ReadOnlyIntegerProperty getCommitCount();
+
     ReadOnlyIntegerProperty getRollbackCount();
+
     ReadOnlyIntegerProperty getTotalErrors();
+
     ReadOnlyIntegerProperty getActiveSessions();
+
     ReadOnlyIntegerProperty getExpiredSessions();
+
     ReadOnlyDoubleProperty getCommitsPerSecond();
+
     ReadOnlyDoubleProperty getRollbacksPerSecond();
+
     ObservableMap<String, ConnectionPoolBindings> getPools();
+
     ObservableList<Snapshot> getSnapshots();
+
     ObservableSet<Application> getApplications();
+
     String getBaseURI();
+
     EscalationsPresenterBindings getEscalationsPresenterBindings();
 
 }

@@ -13,30 +13,44 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-package org.lightview.presenter;
+package org.lightview.presentation.dashboard;
 
+import java.net.URL;
 import java.util.HashSet;
-import javafx.beans.property.*;
+import java.util.List;
+import java.util.ResourceBundle;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
+import javafx.collections.ObservableSet;
 import javafx.concurrent.Worker;
+import javafx.fxml.Initializable;
+import javax.inject.Inject;
+import org.lightview.model.Application;
 import org.lightview.model.ConnectionPool;
 import org.lightview.model.Snapshot;
+import org.lightview.presenter.ConnectionPoolBindings;
+import org.lightview.presenter.DashboardPresenterBindings;
+import org.lightview.presenter.EscalationsPresenter;
+import org.lightview.presenter.EscalationsPresenterBindings;
 import org.lightview.service.SnapshotProvider;
-
-import java.util.List;
-import javafx.collections.ObservableSet;
-import org.lightview.model.Application;
 
 /**
  * User: blog.adam-bien.com Date: 21.11.11 Time: 17:50
  */
-public class DashboardPresenter implements DashboardPresenterBindings {
+public class DashboardPresenter implements DashboardPresenterBindings, Initializable {
 
-    private StringProperty uri;
     private ObservableList<Snapshot> snapshots;
     private ObservableMap<String, ConnectionPoolBindings> pools;
     private ObservableSet<Application> apps;
@@ -60,13 +74,19 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     private Snapshot old;
     private long lastTimeStamp;
 
+    @Inject
+    DashboardModel dashboardModel;
+
     public DashboardPresenter(String baseURI) {
         this.baseURI = baseURI;
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
         this.snapshots = FXCollections.observableArrayList();
         this.apps = FXCollections.observableSet(new HashSet<Application>());
         this.pools = FXCollections.observableHashMap();
-        this.uri = new SimpleStringProperty();
-        this.escalationsPresenter = new EscalationsPresenter(uri);
+        this.escalationsPresenter = new EscalationsPresenter(this.dashboardModel.serverUriProperty());
         this.usedHeapSizeInMB = new SimpleLongProperty();
         this.threadCount = new SimpleLongProperty();
         this.peakThreadCount = new SimpleIntegerProperty();
@@ -85,7 +105,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     }
 
     public void initializeListeners() {
-        this.uri.addListener(new ChangeListener<String>() {
+        this.dashboardModel.serverUriProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String newUri) {
                 restartService();
@@ -101,32 +121,19 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         this.startFetching();
     }
 
-    public void setUri(String uri) {
-        this.uri.setValue(uri);
-    }
-
-    public String getUri() {
-        return this.uri.getValue();
-    }
-
-    @Override
-    public StringProperty getUriProperty() {
-        return this.uri;
-    }
-
     void startFetching() {
         this.service = new SnapshotProvider(appendLive(getUri()));
         service.start();
         service.valueProperty().addListener(
                 new ChangeListener<Snapshot>() {
-            @Override
-            public void changed(ObservableValue<? extends Snapshot> observable, Snapshot old, Snapshot newValue) {
-                if (newValue != null) {
-                    snapshots.add(newValue);
-                    onSnapshotArrival(newValue);
-                }
-            }
-        });
+                    @Override
+                    public void changed(ObservableValue<? extends Snapshot> observable, Snapshot old, Snapshot newValue) {
+                        if (newValue != null) {
+                            snapshots.add(newValue);
+                            onSnapshotArrival(newValue);
+                        }
+                    }
+                });
         registerRestarting();
     }
 
@@ -173,6 +180,7 @@ public class DashboardPresenter implements DashboardPresenterBindings {
         this.rollbacksPerSecond.set(getTPSValue(delta, old.getRolledBackTX(), snapshot.getRolledBackTX()));
         lastTimeStamp = current;
         this.old = snapshot;
+        this.dashboardModel.currentSnapshotProperty().set(snapshot);
     }
 
     public double getTPSValue(long delta, long oldValue, long newValue) {
@@ -290,4 +298,14 @@ public class DashboardPresenter implements DashboardPresenterBindings {
     public ObservableSet<Application> getApplications() {
         return this.apps;
     }
+
+    @Override
+    public StringProperty getUriProperty() {
+        return this.dashboardModel.serverUriProperty();
+    }
+
+    private String getUri() {
+        return getUriProperty().get();
+    }
+
 }
