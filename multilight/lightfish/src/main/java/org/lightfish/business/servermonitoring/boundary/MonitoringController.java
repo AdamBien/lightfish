@@ -161,7 +161,6 @@ public class MonitoringController {
                 currentSnapshots.put(entry.getKey(), dataPoint.getValue());
 
                 LOG.log(Level.FINER, "Persisting {0}", dataPoint.getValue());
-                //em.persist(dataPoint.getValue());
 
                 handledSnapshots.add(dataPoint.getValue());
 
@@ -204,7 +203,7 @@ public class MonitoringController {
     private void handleRoundCompletion() {
         LOG.info("All snapshots collected for this round!");
         Snapshot combinedSnapshot = combineSnapshots(currentSnapshots.values());
-        // em.persist(combinedSnapshot);
+        em.persist(combinedSnapshot);
         fireHeartbeat(combinedSnapshot);
 
         currentSnapshots.clear();
