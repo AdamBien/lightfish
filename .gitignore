@@ -17,7 +17,6 @@ nb-configuration.xml
 *.bak
 /lightfish/release.sh
 *.releaseBackup
-
 *.properties
-
 *.xml~
+*.iml

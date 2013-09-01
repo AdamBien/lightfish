@@ -10,13 +10,6 @@
     <url>http://adam-bien.com</url>
     <dependencies>
         <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>javafx</artifactId>
-            <version>2.0</version>
-            <systemPath>${java.home}/lib/jfxrt.jar</systemPath>
-            <scope>system</scope>
-        </dependency>
-        <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-client</artifactId>
             <version>2.0</version>
@@ -190,8 +183,8 @@
     </build>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
 </project>
