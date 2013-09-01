@@ -10,17 +10,19 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.layout.AnchorPane;
 import javax.inject.Inject;
 import org.lightview.business.pool.boundary.EJBPoolMonitoring;
 import org.lightview.business.pool.entity.PoolStatistics;
 import org.lightview.model.Application;
+import org.lightview.presentation.pool.PoolPresenter;
+import org.lightview.presentation.pool.PoolView;
 
 /**
  *
@@ -31,17 +33,19 @@ public class EJBsPresenter implements Initializable {
     @FXML
     ListView<String> ejbsList;
 
+    @FXML
+    AnchorPane statisticsPane;
+
     private ObservableList<String> ejbs;
 
     private String monitoredApplication;
 
     @Inject
     EJBPoolMonitoring poolMonitoring;
-    private ObservableList poolProperties;
+    private PoolView currentView;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        this.poolProperties = FXCollections.observableArrayList();
         prepareList();
     }
 
@@ -78,8 +82,18 @@ public class EJBsPresenter implements Initializable {
     void ejbSelected(String selectedEjb) {
         PoolStatistics poolStats = poolMonitoring.getPoolStats(this.monitoredApplication, selectedEjb);
         System.out.println("Selected EJB: " + selectedEjb + " from application: " + this.monitoredApplication + " with stats: " + poolStats);
-        this.poolProperties.clear();
-        this.poolProperties.add(poolStats);
+        activateStatistics(selectedEjb);
+
+    }
+
+    void activateStatistics(String ejb) {
+        this.currentView = new PoolView();
+        PoolPresenter presenter = (PoolPresenter) currentView.getPresenter();
+        presenter.monitor((PoolStatistics p)->
+            p.getTotalBeansCreated()
+        ,"Created beans", "Number of beans", this.monitoredApplication, ejb);
+        this.statisticsPane.getChildren().clear();
+        this.statisticsPane.getChildren().add(this.currentView.getView());
     }
 
 }
