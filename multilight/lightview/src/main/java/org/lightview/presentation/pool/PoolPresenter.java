@@ -71,7 +71,7 @@ public class PoolPresenter implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.series = new XYChart.Series<String, Number>();
-        yAxis.setTickLabelFormatter(new NumberAxis.DefaultFormatter(yAxis, "yUnit", null));
+        yAxis.setTickLabelFormatter(new NumberAxis.DefaultFormatter(yAxis, null, null));
         yAxis.setForceZeroInRange(true);
         lineChart.setLegendVisible(false);
         lineChart.getData().add(series);

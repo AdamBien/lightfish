@@ -10,13 +10,17 @@ import javafx.collections.SetChangeListener;
 import javafx.collections.SetChangeListener.Change;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import org.lightview.model.Application;
 import org.lightview.presentation.ejbs.EJBsPresenter;
 import org.lightview.presentation.ejbs.EJBsView;
+
+import static javafx.scene.layout.Priority.*;
 
 /**
  *
@@ -34,6 +38,10 @@ public class ApplicationsPresenter implements Initializable {
         this.ejbPresenter = (EJBsPresenter) ejbView.getPresenter();
     }
 
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+    }
+
     public Node view() {
         HBox view = new HBox();
         ListView<String> applicationsList = new ListView<>();
@@ -47,7 +55,8 @@ public class ApplicationsPresenter implements Initializable {
             }
         });
         view.getChildren().add(applicationsList);
-        view.getChildren().add(ejbView.getView());
+        final Parent ejbView = this.ejbView.getView();
+        view.getChildren().add(ejbView);
 
         final ObservableList<String> items = applicationsList.getItems();
 
@@ -63,11 +72,6 @@ public class ApplicationsPresenter implements Initializable {
             }
         });
         return view;
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

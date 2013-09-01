@@ -10,12 +10,12 @@
 
 <AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml" fx:controller="org.lightview.presentation.pool.PoolPresenter">
   <children>
-    <LineChart id="LineChart" fx:id="lineChart" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <LineChart id="LineChart" fx:id="lineChart" alternativeColumnFillVisible="false" alternativeRowFillVisible="true" createSymbols="true" horizontalGridLinesVisible="true" horizontalZeroLineVisible="true" legendSide="TOP" prefWidth="300.0" verticalGridLinesVisible="true" verticalZeroLineVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <xAxis>
         <CategoryAxis id="categoryAxis" fx:id="xAxis" side="BOTTOM" />
       </xAxis>
       <yAxis>
-        <NumberAxis id="numberAxis" fx:id="yAxis" side="LEFT" />
+        <NumberAxis id="numberAxis" fx:id="yAxis" side="LEFT" upperBound="50.0" />
       </yAxis>
     </LineChart>
   </children>

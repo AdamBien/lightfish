@@ -19,6 +19,7 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.AnchorPane;
 import javax.inject.Inject;
 
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import org.lightview.business.pool.boundary.EJBPoolMonitoring;
 import org.lightview.business.pool.entity.PoolStatistics;
@@ -36,7 +37,7 @@ public class EJBsPresenter implements Initializable {
     ListView<String> ejbsList;
 
     @FXML
-    HBox statisticsPane;
+    GridPane statisticsPane;
 
     private ObservableList<String> ejbs;
 
@@ -113,10 +114,10 @@ public class EJBsPresenter implements Initializable {
                 , "Total Threads Waiting High", "Number of beans", this.monitoredApplication, ejb);
 
         this.statisticsPane.getChildren().clear();
-        this.statisticsPane.getChildren().add(beansCreatedView.getView());
-        this.statisticsPane.getChildren().add(beansDestroyedView.getView());
-        this.statisticsPane.getChildren().add(totalThreadsWaitingView.getView());
-        this.statisticsPane.getChildren().add(totalThreadsWaitingHighView.getView());
+        this.statisticsPane.add(beansCreatedView.getView(),0,0);
+        this.statisticsPane.add(beansDestroyedView.getView(),0,1);
+        this.statisticsPane.add(totalThreadsWaitingView.getView(),1,0);
+        this.statisticsPane.add(totalThreadsWaitingHighView.getView(),1,1);
     }
 
 }
