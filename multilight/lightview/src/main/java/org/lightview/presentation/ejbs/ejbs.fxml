@@ -9,14 +9,18 @@
 
 <AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="737.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.lightview.presentation.ejbs.EJBsPresenter">
   <children>
-    <SplitPane dividerPositions="0.4" focusTraversable="true" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <SplitPane dividerPositions="0.3741496598639456" focusTraversable="true" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <items>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="-1.0" prefWidth="-1.0">
           <children>
             <ListView id="methodList" fx:id="ejbsList" prefHeight="398.0" prefWidth="256.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
           </children>
         </AnchorPane>
-        <AnchorPane id="statisticPane" fx:id="statisticsPane" minHeight="0.0" minWidth="0.0" prefHeight="398.0" prefWidth="346.0" />
+        <AnchorPane id="statisticPane" minHeight="0.0" minWidth="0.0" prefHeight="398.0" prefWidth="346.0">
+          <children>
+            <HBox id="chartsBox" fx:id="statisticsPane" prefHeight="398.0" prefWidth="438.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+          </children>
+        </AnchorPane>
       </items>
     </SplitPane>
   </children>

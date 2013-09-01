@@ -18,6 +18,8 @@ import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.AnchorPane;
 import javax.inject.Inject;
+
+import javafx.scene.layout.HBox;
 import org.lightview.business.pool.boundary.EJBPoolMonitoring;
 import org.lightview.business.pool.entity.PoolStatistics;
 import org.lightview.model.Application;
@@ -34,7 +36,7 @@ public class EJBsPresenter implements Initializable {
     ListView<String> ejbsList;
 
     @FXML
-    AnchorPane statisticsPane;
+    HBox statisticsPane;
 
     private ObservableList<String> ejbs;
 
@@ -42,7 +44,6 @@ public class EJBsPresenter implements Initializable {
 
     @Inject
     EJBPoolMonitoring poolMonitoring;
-    private PoolView currentView;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -87,13 +88,35 @@ public class EJBsPresenter implements Initializable {
     }
 
     void activateStatistics(String ejb) {
-        this.currentView = new PoolView();
-        PoolPresenter presenter = (PoolPresenter) currentView.getPresenter();
-        presenter.monitor((PoolStatistics p)->
-            p.getTotalBeansCreated()
-        ,"Created beans", "Number of beans", this.monitoredApplication, ejb);
+        PoolView beansCreatedView = new PoolView();
+        PoolPresenter beansCreatedPresenter = (PoolPresenter) beansCreatedView.getPresenter();
+        beansCreatedPresenter.monitor((PoolStatistics p) ->
+                p.getTotalBeansCreated()
+                , "Created beans", "Number of beans", this.monitoredApplication, ejb);
+
+        PoolView beansDestroyedView = new PoolView();
+        PoolPresenter beansDestroyedViewPresenter = (PoolPresenter) beansDestroyedView.getPresenter();
+        beansDestroyedViewPresenter.monitor((PoolStatistics p) ->
+                p.getTotalBeansDestroyed()
+                , "Destroyed beans", "Number of beans", this.monitoredApplication, ejb);
+
+        PoolView totalThreadsWaitingView = new PoolView();
+        PoolPresenter totalThreadsWaitingViewPresenter = (PoolPresenter) totalThreadsWaitingView.getPresenter();
+        totalThreadsWaitingViewPresenter.monitor((PoolStatistics p) ->
+                p.getCurrentThreadsWaiting()
+                , "Total Threads Waiting", "Number of beans", this.monitoredApplication, ejb);
+
+        PoolView totalThreadsWaitingHighView = new PoolView();
+        PoolPresenter totalThreadsWaitingViewPresenterHigh = (PoolPresenter) totalThreadsWaitingHighView.getPresenter();
+        totalThreadsWaitingViewPresenterHigh.monitor((PoolStatistics p) ->
+                p.getThreadsWaitingHighwatermark()
+                , "Total Threads Waiting High", "Number of beans", this.monitoredApplication, ejb);
+
         this.statisticsPane.getChildren().clear();
-        this.statisticsPane.getChildren().add(this.currentView.getView());
+        this.statisticsPane.getChildren().add(beansCreatedView.getView());
+        this.statisticsPane.getChildren().add(beansDestroyedView.getView());
+        this.statisticsPane.getChildren().add(totalThreadsWaitingView.getView());
+        this.statisticsPane.getChildren().add(totalThreadsWaitingHighView.getView());
     }
 
 }
