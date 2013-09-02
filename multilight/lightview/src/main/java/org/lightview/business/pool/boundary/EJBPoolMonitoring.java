@@ -22,8 +22,6 @@ public class EJBPoolMonitoring {
 
     private Client client;
 
-    private String URI = "";
-
     @Inject
     DashboardModel model;
 
