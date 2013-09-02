@@ -41,7 +41,7 @@ import org.lightview.presentation.dashboard.DashboardModel;
  */
 public class PoolPresenter implements Initializable {
 
-    private static final int MAX_SIZE = 10;
+    private static final int MAX_SIZE = 8;
     private static final double FADE_VALUE = 0.3;
 
     @FXML
