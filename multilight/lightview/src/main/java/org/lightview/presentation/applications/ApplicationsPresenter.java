@@ -59,10 +59,8 @@ public class ApplicationsPresenter implements Initializable {
 
             }
         });
-        widgets.getChildren().add(applicationsList);
-        final Parent ejbView = this.ejbView.getView();
-        widgets.getChildren().add(ejbView);
 
+        final Parent ejbView = this.ejbView.getView();
         final ObservableList<String> items = applicationsList.getItems();
 
         this.dashboardModel.applicationsSetProperty().addListener(new SetChangeListener<Application>() {
@@ -76,6 +74,7 @@ public class ApplicationsPresenter implements Initializable {
                 }
             }
         });
+        widgets.getChildren().addAll(applicationsList,ejbView);
     }
 
 }
