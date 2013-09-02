@@ -24,6 +24,8 @@ import javafx.scene.layout.HBox;
 import org.lightview.business.pool.boundary.EJBPoolMonitoring;
 import org.lightview.business.pool.entity.PoolStatistics;
 import org.lightview.model.Application;
+import org.lightview.presentation.methods.MethodsPresenter;
+import org.lightview.presentation.methods.MethodsView;
 import org.lightview.presentation.pool.PoolPresenter;
 import org.lightview.presentation.pool.PoolView;
 
@@ -39,12 +41,17 @@ public class EJBsPresenter implements Initializable {
     @FXML
     GridPane statisticsPane;
 
+    @FXML
+    AnchorPane methods;
+
     private ObservableList<String> ejbs;
 
     private String monitoredApplication;
 
     @Inject
     EJBPoolMonitoring poolMonitoring;
+
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -82,13 +89,16 @@ public class EJBsPresenter implements Initializable {
     }
 
     void ejbSelected(String selectedEjb) {
-        PoolStatistics poolStats = poolMonitoring.getPoolStats(this.monitoredApplication, selectedEjb);
-        System.out.println("Selected EJB: " + selectedEjb + " from application: " + this.monitoredApplication + " with stats: " + poolStats);
         activateStatistics(selectedEjb);
 
     }
 
     void activateStatistics(String ejb) {
+        activatePoolStatistics(ejb);
+        activateMethodStatistics(ejb);
+    }
+
+    private void activatePoolStatistics(String ejb) {
         PoolView beansCreatedView = new PoolView();
         PoolPresenter beansCreatedPresenter = (PoolPresenter) beansCreatedView.getPresenter();
         beansCreatedPresenter.monitor((PoolStatistics p) ->
@@ -118,6 +128,15 @@ public class EJBsPresenter implements Initializable {
         this.statisticsPane.add(beansDestroyedView.getView(),0,1);
         this.statisticsPane.add(totalThreadsWaitingView.getView(),1,0);
         this.statisticsPane.add(totalThreadsWaitingHighView.getView(),1,1);
+    }
+
+    private void activateMethodStatistics(String ejb) {
+        MethodsView methodsView
+                = new MethodsView();
+        MethodsPresenter methodsPresenter = (MethodsPresenter) methodsView.getPresenter();
+        methodsPresenter.monitor(this.monitoredApplication,ejb);
+        methods.getChildren().clear();
+        methods.getChildren().add(methodsView.getView());
     }
 
 }
