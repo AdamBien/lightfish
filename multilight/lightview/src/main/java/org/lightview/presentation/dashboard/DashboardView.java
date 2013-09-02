@@ -26,10 +26,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.lightview.presentation.applications.ApplicationsPresenter;
+import org.lightview.presentation.applications.ApplicationsView;
 import org.lightview.presenter.ConnectionPoolBindings;
 import org.lightview.presenter.DashboardPresenterBindings;
-import org.lightview.presenter.EscalationsPresenter;
-import org.lightview.presentation.applications.ApplicationsPresenter;
 import org.lightview.view.Browser;
 import org.lightview.view.ConnectionPool;
 import org.lightview.view.Escalations;
@@ -61,8 +61,7 @@ public class DashboardView {
     private Snapshot successfulTXPerf;
     private Snapshot failedTXPerf;
     private VBox vertical;
-    private SnapshotTable snapshotsGrid;
-    private ApplicationsPresenter applicationList;
+    private ApplicationsView applicationsView;
     private TabPane tabPane;
     private Status status;
 
@@ -87,6 +86,7 @@ public class DashboardView {
     }
 
     private void createViews() {
+        this.applicationsView = new ApplicationsView();
         this.vertical = new VBox();
         HBox threadsAndMemory = new HBox();
         VBox paranormal = new VBox();
@@ -94,7 +94,6 @@ public class DashboardView {
         HBox transactions = new HBox();
         HBox web = new HBox();
         HBox performance = new HBox();
-        HBox applications = new HBox();
 
         String hBoxClass = "boxSpacing";
         this.vertical.getStyleClass().add(hBoxClass);
@@ -113,14 +112,12 @@ public class DashboardView {
         performance.getChildren().addAll(this.failedTXPerf.view());
         web.getChildren().addAll(this.activeSessions.view());
         web.getChildren().addAll(this.expiredSessions.view());
-        applications.getChildren().add(this.applicationList.view());
-
         Tab threadsAndMemoryTab = createTab(threadsAndMemory, "Threads And Memory");
         Tab transactionsTab = createTab(transactions, "Transactions");
         Tab paranormalTab = createTab(paranormal, "Paranormal Activity");
         Tab performanceTab = createTab(performance, "Performance");
         Tab webTab = createTab(web, "Web");
-        Tab applicationsTab = createTab(applications, "Applications");
+        Tab applicationsTab = createTab(this.applicationsView.getView(), "Applications");
         this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab,performanceTab, webTab,applicationsTab);
 
         this.vertical.getChildren().addAll(uriInputView, this.browser.view(), this.tabPane, this.escalations.view());
@@ -144,7 +141,6 @@ public class DashboardView {
         this.failedTXPerf = new Snapshot(id, "Rollbacks Per Second", "#");
         final Node liveStream = new SnapshotTable(this.dashboardPresenter.getSnapshots()).createTable();
         this.escalations = new Escalations(liveStream,this.dashboardPresenter.getEscalationsPresenterBindings());
-        this.applicationList = new ApplicationsPresenter(this.dashboardPresenter.getApplications());
         this.status = new Status(this.dashboardPresenter.getDeadlockedThreads());
     }
 

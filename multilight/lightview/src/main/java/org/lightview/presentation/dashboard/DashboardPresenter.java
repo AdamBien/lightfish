@@ -53,7 +53,6 @@ public class DashboardPresenter implements DashboardPresenterBindings, Initializ
 
     private ObservableList<Snapshot> snapshots;
     private ObservableMap<String, ConnectionPoolBindings> pools;
-    private ObservableSet<Application> apps;
     SnapshotProvider service;
     private LongProperty usedHeapSizeInMB;
     private LongProperty threadCount;
@@ -84,7 +83,6 @@ public class DashboardPresenter implements DashboardPresenterBindings, Initializ
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.snapshots = FXCollections.observableArrayList();
-        this.apps = FXCollections.observableSet(new HashSet<Application>());
         this.pools = FXCollections.observableHashMap();
         this.escalationsPresenter = new EscalationsPresenter(this.dashboardModel.serverUriProperty());
         this.usedHeapSizeInMB = new SimpleLongProperty();
@@ -170,7 +168,7 @@ public class DashboardPresenter implements DashboardPresenterBindings, Initializ
         this.deadlockedThreads.set(snapshot.getDeadlockedThreads());
         this.id.set(snapshot.getId());
         this.updatePools(snapshot);
-        this.apps.addAll(snapshot.getApps());
+        this.dashboardModel.updateApplications(snapshot.getApps());
         long current = System.currentTimeMillis();
         long delta = current - lastTimeStamp;
         if (old == null) {
@@ -296,7 +294,7 @@ public class DashboardPresenter implements DashboardPresenterBindings, Initializ
 
     @Override
     public ObservableSet<Application> getApplications() {
-        return this.apps;
+        return this.dashboardModel.applicationsSetProperty();
     }
 
     @Override

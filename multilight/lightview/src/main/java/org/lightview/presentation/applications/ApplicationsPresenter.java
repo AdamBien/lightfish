@@ -8,17 +8,20 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import javafx.collections.SetChangeListener.Change;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
+import javafx.scene.layout.*;
 import org.lightview.model.Application;
+import org.lightview.presentation.dashboard.DashboardModel;
 import org.lightview.presentation.ejbs.EJBsPresenter;
 import org.lightview.presentation.ejbs.EJBsView;
+
+import javax.inject.Inject;
 
 import static javafx.scene.layout.Priority.*;
 
@@ -28,39 +31,41 @@ import static javafx.scene.layout.Priority.*;
  */
 public class ApplicationsPresenter implements Initializable {
 
-    private ObservableSet<Application> applications;
     private EJBsPresenter ejbPresenter;
     private EJBsView ejbView;
 
-    public ApplicationsPresenter(ObservableSet<Application> applications) {
-        this.applications = applications;
-        this.ejbView = new EJBsView();
-        this.ejbPresenter = (EJBsPresenter) ejbView.getPresenter();
-    }
+    @FXML
+    private HBox widgets;
+
+    @Inject
+    private DashboardModel dashboardModel;
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        this.ejbView = new EJBsView();
+        this.ejbPresenter = (EJBsPresenter) ejbView.getPresenter();
+        this.setupViews();
     }
 
-    public Node view() {
-        HBox view = new HBox();
+    void setupViews() {
         ListView<String> applicationsList = new ListView<>();
         MultipleSelectionModel<String> selectionModel = applicationsList.getSelectionModel();
         selectionModel.setSelectionMode(SelectionMode.SINGLE);
         selectionModel.selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String newSelection) {
-                ejbPresenter.showComponentsForApp(applications, newSelection);
+                ejbPresenter.showComponentsForApp(dashboardModel.applicationsSetProperty(), newSelection);
 
             }
         });
-        view.getChildren().add(applicationsList);
+        widgets.getChildren().add(applicationsList);
         final Parent ejbView = this.ejbView.getView();
-        view.getChildren().add(ejbView);
+        widgets.getChildren().add(ejbView);
 
         final ObservableList<String> items = applicationsList.getItems();
 
-        this.applications.addListener(new SetChangeListener<Application>() {
+        this.dashboardModel.applicationsSetProperty().addListener(new SetChangeListener<Application>() {
             @Override
             public void onChanged(Change<? extends Application> change) {
                 if (change.wasAdded()) {
@@ -71,7 +76,6 @@ public class ApplicationsPresenter implements Initializable {
                 }
             }
         });
-        return view;
     }
 
 }
