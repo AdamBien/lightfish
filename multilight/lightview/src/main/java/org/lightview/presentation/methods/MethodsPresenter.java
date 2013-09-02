@@ -58,12 +58,11 @@ public class MethodsPresenter implements Initializable{
         this.name.setCellValueFactory(new PropertyValueFactory<MethodStatistics, String>("name"));
         this.lastExecutionTime.setCellValueFactory(new PropertyValueFactory<MethodStatistics, String>("lastExecutionTime"));
         this.numberSuccess.setCellValueFactory(new PropertyValueFactory<MethodStatistics, String>("totalNumSuccess"));
-        this.error.setCellValueFactory(new PropertyValueFactory<MethodStatistics, String>("totalNumSuccess"));
+        this.error.setCellValueFactory(new PropertyValueFactory<MethodStatistics, String>("totalNumError"));
         this.methodStatistics = methods.getItems();
     }
 
     private void setupRefresh() {
-         //ChangeListener<Snapshot> c = (o,oldValue,newValue) -> monitor();
          this.dashboardModel.currentSnapshotProperty().addListener((o,oldValue,newValue) -> monitor());
     }
 
