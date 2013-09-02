@@ -4,10 +4,16 @@
 package org.lightview.business.pool.boundary;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.lightview.business.pool.entity.PoolStatistics;
+import org.lightview.presentation.dashboard.DashboardModel;
 
 /**
  *
@@ -21,6 +27,9 @@ public class EJBPoolMonitoringIT {
     public void init() {
         this.cut = new EJBPoolMonitoring();
         this.cut.init();
+        this.cut.model = mock(DashboardModel.class);
+        StringProperty property = new SimpleStringProperty("http://localhost:8080/lightfish");
+        when(this.cut.model.serverUriProperty()).thenReturn(property);
     }
 
     @Test
