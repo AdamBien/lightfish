@@ -1,5 +1,7 @@
 package org.lightview.presentation.methods;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -8,6 +10,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.lightview.business.methods.boundary.MethodMonitoring;
 import org.lightview.business.methods.entity.MethodStatistics;
+import org.lightview.business.pool.boundary.EJBPoolMonitoring;
+import org.lightview.model.Snapshot;
+import org.lightview.presentation.dashboard.DashboardModel;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -20,6 +25,11 @@ public class MethodsPresenter implements Initializable{
 
     @Inject
     MethodMonitoring methodMonitoring;
+
+
+    @Inject
+    DashboardModel dashboardModel;
+
 
     @FXML
     TableView methods;
@@ -34,11 +44,15 @@ public class MethodsPresenter implements Initializable{
     TableColumn error;
     
     private ObservableList<MethodStatistics> methodStatistics;
+    private String monitoriedApplication;
+    private String ejb;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
          this.setupBinding();
+         this.setupRefresh();
     }
+
 
     void setupBinding(){
         this.name.setCellValueFactory(new PropertyValueFactory<MethodStatistics, String>("name"));
@@ -48,9 +62,19 @@ public class MethodsPresenter implements Initializable{
         this.methodStatistics = methods.getItems();
     }
 
+    private void setupRefresh() {
+         //ChangeListener<Snapshot> c = (o,oldValue,newValue) -> monitor();
+         this.dashboardModel.currentSnapshotProperty().addListener((o,oldValue,newValue) -> monitor());
+    }
+
+    public void monitor(){
+        this.monitor(this.monitoriedApplication,this.ejb);
+    }
 
     public void monitor(String monitoredApplication, String ejb) {
+        this.monitoriedApplication = monitoredApplication;
+        this.ejb = ejb;
         this.methodStatistics.clear();
-        this.methodStatistics.addAll(methodMonitoring.getMethodStatistics(monitoredApplication,ejb).all());
+        this.methodStatistics.addAll(methodMonitoring.getMethodStatistics(monitoredApplication, ejb).all());
     }
 }
