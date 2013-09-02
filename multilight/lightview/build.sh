@@ -1,3 +1,3 @@
 #!/bin/bash
-JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home/
+JAVA_HOME=$JAVA_8_HOME
 mvn -e clean install
