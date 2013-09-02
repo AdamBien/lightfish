@@ -9,7 +9,7 @@
 
 <AnchorPane id="AnchorPane" prefHeight="-1.0" prefWidth="858.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.lightview.presentation.ejbs.EJBsPresenter">
   <children>
-    <SplitPane dividerPositions="0.2616822429906542, 0.6670560747663551" focusTraversable="true" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <SplitPane dividerPositions="0.3294392523364486, 0.6600467289719626" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <items>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="-1.0" prefWidth="-1.0">
           <children>
@@ -30,7 +30,7 @@
             </GridPane>
           </children>
         </AnchorPane>
-        <AnchorPane fx:id="methods" prefHeight="398.0" prefWidth="196.9998779296875" />
+        <AnchorPane fx:id="methods" prefHeight="-1.0" prefWidth="-1.0" />
       </items>
     </SplitPane>
   </children>

@@ -61,6 +61,7 @@ public class MethodsPresenter implements Initializable{
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+         this.methods.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
          this.setupBinding();
          this.setupRefresh();
     }

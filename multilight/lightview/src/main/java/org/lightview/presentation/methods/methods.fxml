@@ -7,17 +7,17 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" xmlns:fx="http://javafx.com/fxml" fx:controller="org.lightview.presentation.methods.MethodsPresenter">
+<AnchorPane id="AnchorPane" prefWidth="-1" xmlns:fx="http://javafx.com/fxml" fx:controller="org.lightview.presentation.methods.MethodsPresenter">
   <children>
-    <TableView fx:id="methods" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <TableView fx:id="methods" prefWidth="-1.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <columns>
         <TableColumn prefWidth="100.0" text="Methods" fx:id="name" />
-        <TableColumn prefWidth="80.0" text="Execution Time" fx:id="lastExecutionTime" />
-        <TableColumn prefWidth="80.0" text="Success" fx:id="numberSuccess" />
-        <TableColumn prefWidth="80.0" text="Inv.count" fx:id="invocationCount" />
-        <TableColumn prefWidth="80.0" text="Max time" fx:id="maxTime" />
-        <TableColumn prefWidth="80.0" text="Total time" fx:id="totalInvocationTime" />
-        <TableColumn prefWidth="80.0" text="Error" fx:id="error" />
+        <TableColumn prefWidth="50.0" text="Execution Time" fx:id="lastExecutionTime" />
+        <TableColumn prefWidth="50.0" text="Success" fx:id="numberSuccess" />
+        <TableColumn prefWidth="50.0" text="Inv.count" fx:id="invocationCount" />
+        <TableColumn prefWidth="50.0" text="Max time" fx:id="maxTime" />
+        <TableColumn prefWidth="50.0" text="Total time" fx:id="totalInvocationTime" />
+        <TableColumn prefWidth="50.0" text="Error" fx:id="error" />
       </columns>
     </TableView>
   </children>
