@@ -18,8 +18,6 @@ import javax.ws.rs.core.Response;
 public class MethodMonitoring {
     private Client client;
 
-    private String URI = "";
-
     @Inject
     DashboardModel model;
 

@@ -15,14 +15,15 @@ public class MethodStatistics {
     public MethodStatistics(String name,JsonObject statistics) {
         this.statistics = statistics;
         this.name = name;
+        System.out.println("Method: " + name + " statistics: " + statistics);
     }
 
     public long getLastExecutionTime() {
-        return this.statistics.getJsonObject("executionTime").getJsonNumber("count").longValue();
+        return this.statistics.getJsonObject("executiontime").getJsonNumber("count").longValue();
     }
 
     public long getTotalInvocationTime() {
-        return this.statistics.getJsonObject("methodstatistic").getJsonNumber("totalTime").longValue();
+        return this.statistics.getJsonObject("methodstatistic").getJsonNumber("totaltime").longValue();
     }
 
     public long getMaxTime() {
