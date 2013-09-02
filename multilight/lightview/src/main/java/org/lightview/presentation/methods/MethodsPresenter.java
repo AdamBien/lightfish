@@ -36,13 +36,25 @@ public class MethodsPresenter implements Initializable{
 
     @FXML
     TableColumn name;
+
     @FXML
     TableColumn lastExecutionTime;
+
+    @FXML
+    TableColumn totalInvocationTime;
+
+    @FXML
+    TableColumn maxTime;
+
     @FXML
     TableColumn numberSuccess;
+
+    @FXML
+    TableColumn invocationCount;
+
     @FXML
     TableColumn error;
-    
+
     private ObservableList<MethodStatistics> methodStatistics;
     private String monitoriedApplication;
     private String ejb;
@@ -59,6 +71,9 @@ public class MethodsPresenter implements Initializable{
         this.lastExecutionTime.setCellValueFactory(new PropertyValueFactory<MethodStatistics, String>("lastExecutionTime"));
         this.numberSuccess.setCellValueFactory(new PropertyValueFactory<MethodStatistics, String>("totalNumSuccess"));
         this.error.setCellValueFactory(new PropertyValueFactory<MethodStatistics, String>("totalNumError"));
+        this.totalInvocationTime.setCellValueFactory(new PropertyValueFactory<MethodStatistics, String>("totalInvocationTime"));
+        this.maxTime.setCellValueFactory(new PropertyValueFactory<MethodStatistics, String>("maxTime"));
+        this.invocationCount.setCellValueFactory(new PropertyValueFactory<MethodStatistics, String>("invocationCount"));
         this.methodStatistics = methods.getItems();
     }
 
