@@ -143,6 +143,9 @@ public class EJBsPresenter implements Initializable {
         methods.getChildren().clear();
         final Parent view = methodsView.getView();
         AnchorPane.setRightAnchor(view, 0.0);
+        AnchorPane.setLeftAnchor(view, 0.0);
+        AnchorPane.setBottomAnchor(view, 0.0);
+        AnchorPane.setTopAnchor(view, 0.0);
         methods.getChildren().add(view);
     }
 
