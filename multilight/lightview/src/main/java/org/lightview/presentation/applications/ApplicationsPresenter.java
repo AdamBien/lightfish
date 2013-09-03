@@ -76,7 +76,7 @@ public class ApplicationsPresenter implements Initializable {
                 }
             }
         });
-        ejbs.getChildren().add(ejbPresenter.getSplitPane());
+        ejbs.getChildren().add(this.ejbView.getViewWithoutAnchorPane());
     }
 
 }

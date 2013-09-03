@@ -148,9 +148,4 @@ public class EJBsPresenter implements Initializable {
         AnchorPane.setTopAnchor(view, 0.0);
         methods.getChildren().add(view);
     }
-
-    public SplitPane getSplitPane(){
-        return this.splitPane;
-    }
-
 }
