@@ -18,6 +18,7 @@ package org.lightfish.business.servermonitoring.boundary;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -105,13 +106,23 @@ public class MonitoringController {
     @Inject
     private Instance<Integer> interval;
 
-    public void startTimer() throws Exception {
+    public void startTimer() {
         sessionTokenProvider.retrieveSessionToken();
-
         ScheduleExpression expression = new ScheduleExpression();
         expression.minute("*").second("*/" + interval.get()).hour("*");
         this.timer = this.timerService.createCalendarTimer(expression);
+    }
 
+    public void restart() {
+        stopTimer();
+        startTimer();
+    }
+
+    public Date nextTimeout() {
+        if (timer != null) {
+            return timer.getNextTimeout();
+        }
+        return null;
     }
 
     @Timeout
