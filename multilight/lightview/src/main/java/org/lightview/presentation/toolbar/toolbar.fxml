@@ -8,15 +8,24 @@
 
 <AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0000999999975" prefWidth="816.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.lightview.presentation.toolbar.ToolbarPresenter">
   <children>
-    <ToolBar fx:id="toolbar" layoutX="34.0" layoutY="174.0">
+    <ToolBar fx:id="toolbar" layoutX="14.0" layoutY="174.0">
       <items>
         <ProgressIndicator fx:id="progress" progress="0.0" />
         <TextField fx:id="location" prefWidth="200.0" text="localhost:8080" />
-        <Button id="startButton" fx:id="start" mnemonicParsing="false" onAction="#startMonitoring" text="Start" />
-        <Button id="stopButton" fx:id="stop" mnemonicParsing="false" onAction="#stopMonitoring" text="Stop" />
-        <Button fx:id="activate" mnemonicParsing="false" onAction="#activateMonitoring" text="Activate Monitoring" />
-        <Button fx:id="deactivate" mnemonicParsing="false" onAction="#deactivateMonitoring" text="Deactivate Monitoring" />
-        <Button fx:id="status" mnemonicParsing="false" text="Status" />
+        <ToggleButton fx:id="start" mnemonicParsing="false" onAction="#startMonitoring" text="Start">
+          <toggleGroup>
+            <ToggleGroup fx:id="polling" />
+          </toggleGroup>
+        </ToggleButton>
+        <ToggleButton fx:id="stop" mnemonicParsing="false" onAction="#stopMonitoring" text="Stop" toggleGroup="$polling" />
+        <TextField fx:id="intervall" prefWidth="41.0" text="10" />
+        <ToggleButton fx:id="activate" mnemonicParsing="false" onAction="#activateMonitoring" text="Activate Monitoring">
+          <toggleGroup>
+            <ToggleGroup fx:id="monitoring" />
+          </toggleGroup>
+        </ToggleButton>
+        <ToggleButton fx:id="deactivate" mnemonicParsing="false" text="Deactivate Monitoring" toggleGroup="$monitoring" />
+        <Button fx:id="status" mnemonicParsing="false" onAction="#status" text="Status" />
       </items>
     </ToolBar>
   </children>
