@@ -63,7 +63,6 @@ public class ApplicationsPresenter implements Initializable {
             }
         });
 
-        final Parent ejbView = this.ejbView.getView();
         final ObservableList<String> items = applicationsList.getItems();
 
         this.dashboardModel.applicationsSetProperty().addListener(new SetChangeListener<Application>() {
