@@ -13,9 +13,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
 import javax.inject.Inject;
 
@@ -43,6 +45,9 @@ public class EJBsPresenter implements Initializable {
 
     @FXML
     AnchorPane methods;
+
+    @FXML
+    SplitPane splitPane;
 
     private ObservableList<String> ejbs;
 
@@ -134,9 +139,15 @@ public class EJBsPresenter implements Initializable {
         MethodsView methodsView
                 = new MethodsView();
         MethodsPresenter methodsPresenter = (MethodsPresenter) methodsView.getPresenter();
-        methodsPresenter.monitor(this.monitoredApplication,ejb);
+        methodsPresenter.monitor(this.monitoredApplication, ejb);
         methods.getChildren().clear();
-        methods.getChildren().add(methodsView.getView());
+        final Parent view = methodsView.getView();
+        AnchorPane.setRightAnchor(view, 0.0);
+        methods.getChildren().add(view);
+    }
+
+    public SplitPane getSplitPane(){
+        return this.splitPane;
     }
 
 }

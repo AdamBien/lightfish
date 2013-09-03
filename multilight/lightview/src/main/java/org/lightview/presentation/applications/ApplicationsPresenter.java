@@ -35,10 +35,14 @@ public class ApplicationsPresenter implements Initializable {
     private EJBsView ejbView;
 
     @FXML
-    private HBox widgets;
+    private AnchorPane ejbs;
+
+    @FXML
+    private ListView<String> applicationsList;
 
     @Inject
     private DashboardModel dashboardModel;
+
 
 
     @Override
@@ -49,7 +53,6 @@ public class ApplicationsPresenter implements Initializable {
     }
 
     void setupViews() {
-        ListView<String> applicationsList = new ListView<>();
         MultipleSelectionModel<String> selectionModel = applicationsList.getSelectionModel();
         selectionModel.setSelectionMode(SelectionMode.SINGLE);
         selectionModel.selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -74,7 +77,7 @@ public class ApplicationsPresenter implements Initializable {
                 }
             }
         });
-        widgets.getChildren().addAll(applicationsList,ejbView);
+        ejbs.getChildren().add(ejbPresenter.getSplitPane());
     }
 
 }

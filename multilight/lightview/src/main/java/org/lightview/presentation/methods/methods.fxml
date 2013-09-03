@@ -7,7 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefWidth="-1" xmlns:fx="http://javafx.com/fxml" fx:controller="org.lightview.presentation.methods.MethodsPresenter">
+<AnchorPane id="AnchorPane" prefWidth="-1.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.lightview.presentation.methods.MethodsPresenter">
   <children>
     <TableView fx:id="methods" prefWidth="-1.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <columns>
