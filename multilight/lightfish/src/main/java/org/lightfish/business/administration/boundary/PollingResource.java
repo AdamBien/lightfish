@@ -51,7 +51,7 @@ public class PollingResource {
     public JsonObject status() {
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
         Date nextTimeout = controller.nextTimeout();
-        String timeoutAsString = "-not running-";
+        String timeoutAsString = "-";
         if (nextTimeout != null) {
             timeoutAsString = nextTimeout.toString();
         }
