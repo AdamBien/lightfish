@@ -1,4 +1,4 @@
-package org.lightview.presentation.toolbar;
+package org.lightview.presentation.dashboard.toolbar;
 
 import com.airhacks.afterburner.views.FXMLView;
 
