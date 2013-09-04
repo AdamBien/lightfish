@@ -117,10 +117,8 @@ public class DashboardView {
         Tab paranormalTab = createTab(paranormal, "Paranormal Activity");
         Tab performanceTab = createTab(performance, "Performance");
         Tab webTab = createTab(web, "Web");
-        Tab applicationsTab = createTab(this.applicationsView.getView(), "Applications");
-        this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab,performanceTab, webTab,applicationsTab);
-
-        this.vertical.getChildren().addAll(uriInputView, this.browser.view(), this.tabPane, this.escalations.view());
+        this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab,performanceTab, webTab);
+        this.vertical.getChildren().addAll(uriInputView, this.tabPane, this.applicationsView.getView(), this.escalations.view());
     }
 
     private void instantiateViews() {
