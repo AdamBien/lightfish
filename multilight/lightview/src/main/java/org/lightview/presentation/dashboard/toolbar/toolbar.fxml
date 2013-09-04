@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0000999999975" prefWidth="816.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.lightview.presentation.dashboard.toolbar.ToolbarPresenter">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0000999999975" prefWidth="1016.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.lightview.presentation.dashboard.toolbar.ToolbarPresenter">
   <children>
     <ToolBar fx:id="toolbar" layoutX="14.0" layoutY="174.0">
       <items>
@@ -18,7 +18,7 @@
           </toggleGroup>
         </ToggleButton>
         <ToggleButton fx:id="stop" mnemonicParsing="false" onAction="#stopMonitoring" text="Stop" toggleGroup="$polling" />
-        <TextField fx:id="intervall" prefWidth="41.0" text="10" />
+        <TextField fx:id="interval" prefWidth="41.0" text="10" />
         <ToggleButton fx:id="activate" mnemonicParsing="false" onAction="#activateMonitoring" text="Activate Monitoring">
           <toggleGroup>
             <ToggleGroup fx:id="monitoring" />

@@ -2,8 +2,9 @@ package org.lightview.presentation.dashboard.toolbar;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
-import org.lightview.business.administration.boundary.LightfishAdministration;
+import org.lightview.business.administration.boundary.PollingSetup;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -17,8 +18,15 @@ public class ToolbarPresenter implements Initializable{
     @FXML
     ToolBar toolbar;
 
+    @FXML
+    TextField location;
+
+    @FXML
+    public TextField interval;
+
     @Inject
-    LightfishAdministration administration;
+    PollingSetup administration;
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -27,11 +35,14 @@ public class ToolbarPresenter implements Initializable{
 
 
     public void startMonitoring(){
+        final String location = this.location.getText();
+        final String intervalText = this.interval.getText();
+        final String nextTimeout = administration.changeInterval(location, Integer.valueOf(intervalText));
 
     }
 
     public void stopMonitoring(){
-
+       administration.stopPolling();
     }
 
     public void activateMonitoring(){}

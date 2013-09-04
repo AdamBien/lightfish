@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response;
 /**
  * @author: adam-bien.com
  */
-public class LightfishAdministration {
+public class PollingSetup {
 
     private Client client;
 
@@ -57,7 +57,7 @@ public class LightfishAdministration {
  }
 
     public String getUri() {
-        return model.serverUriProperty().get() + "/resources/administration";
+        return model.serverUriProperty().get() + "/resources/polling";
     }
 
 
