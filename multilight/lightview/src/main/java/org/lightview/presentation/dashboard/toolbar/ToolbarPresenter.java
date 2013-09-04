@@ -48,31 +48,23 @@ public class ToolbarPresenter implements Initializable {
 
 
     public void startMonitoring() {
-        showProgress();
         final String location = this.location.getText();
         final String intervalText = this.interval.getText();
         final String nextTimeout = administration.changeInterval(location, Integer.valueOf(intervalText));
-        hideProgress();
         status();
     }
 
     public void stopMonitoring() {
-        showProgress();
         administration.stopPolling();
-        hideProgress();
         status();
     }
 
     public void activateMonitoring() {
-        showProgress();
         monitoringLevelActivation.activateMonitoring();
-        hideProgress();
     }
 
     public void deactivateMonitoring() {
-        showProgress();
         monitoringLevelActivation.deactivateMonitoring();
-        hideProgress();
     }
 
     public void status() {
@@ -90,14 +82,6 @@ public class ToolbarPresenter implements Initializable {
         fadeTransition.setAutoReverse(true);
         fadeTransition.setCycleCount(2);
         fadeTransition.play();
-
     }
-
-    void showProgress() {
-    }
-
-    void hideProgress() {
-    }
-
 
 }
