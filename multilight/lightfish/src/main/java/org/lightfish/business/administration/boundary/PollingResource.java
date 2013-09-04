@@ -43,9 +43,7 @@ public class PollingResource {
         String location = pollingInfo.getString(LOCATION, "localhost:4848");
         configurator.setValue(LOCATION, location);
         controller.restart();
-        Date nextTimeout = controller.nextTimeout();
-        objectBuilder.add("nextTimeout", nextTimeout.toString());
-        return objectBuilder.build();
+        return status();
 
     }
 

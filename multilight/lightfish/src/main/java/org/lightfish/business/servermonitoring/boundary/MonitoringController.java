@@ -107,7 +107,7 @@ public class MonitoringController {
     private Instance<Integer> interval;
 
     public void startTimer() {
-        sessionTokenProvider.retrieveSessionToken();
+        //sessionTokenProvider.retrieveSessionToken();
         ScheduleExpression expression = new ScheduleExpression();
         expression.minute("*").second("*/" + interval.get()).hour("*");
         this.timer = this.timerService.createCalendarTimer(expression);
