@@ -73,8 +73,6 @@ public class ToolbarPresenter implements Initializable {
         message.setText("Interval: " + status.getKey() + " next timeout: " + status.getValue());
     }
 
-
-
     void showMessage() {
         final FadeTransition fadeTransition = new FadeTransition(Duration.seconds(3),this.message);
         fadeTransition.setFromValue(0);

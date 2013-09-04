@@ -19,6 +19,7 @@ import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.collections.MapChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -61,7 +62,7 @@ public class DashboardView {
     private Snapshot peakThreadCount;
     private Snapshot successfulTXPerf;
     private Snapshot failedTXPerf;
-    private VBox vertical;
+    private SplitPane vertical;
     private ApplicationsView applicationsView;
     private ToolbarView toolbarView;
     private TabPane tabPane;
@@ -96,7 +97,8 @@ public class DashboardView {
 
     private void createViews() {
         this.applicationsView = new ApplicationsView();
-        this.vertical = new VBox();
+        this.vertical = new SplitPane();
+        this.vertical.setOrientation(Orientation.VERTICAL);
         HBox threadsAndMemory = new HBox();
         VBox paranormal = new VBox();
         HBox paranormalContent = new HBox();
@@ -127,7 +129,8 @@ public class DashboardView {
         Tab performanceTab = createTab(performance, "Performance");
         Tab webTab = createTab(web, "Web");
         this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab,performanceTab, webTab);
-        this.vertical.getChildren().addAll(uriInputView, this.tabPane, this.applicationsView.getView(), this.escalations.view());
+        this.vertical.getItems().addAll(uriInputView, this.tabPane, this.applicationsView.getView(), this.escalations.view());
+        this.vertical.setDividerPositions(0.0,0.3,0.7,0.9);
     }
 
     private void instantiateViews() {
