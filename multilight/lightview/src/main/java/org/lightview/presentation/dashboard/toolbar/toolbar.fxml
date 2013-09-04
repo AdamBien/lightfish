@@ -6,11 +6,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0000999999975" prefWidth="1016.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.lightview.presentation.dashboard.toolbar.ToolbarPresenter">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0000999999975" prefWidth="1016.0" visible="true" xmlns:fx="http://javafx.com/fxml" fx:controller="org.lightview.presentation.dashboard.toolbar.ToolbarPresenter">
   <children>
     <ToolBar fx:id="toolbar" layoutX="14.0" layoutY="174.0">
       <items>
-        <ProgressIndicator fx:id="progress" progress="0.0" />
+        <Label text="Monitorable Server:" />
         <TextField fx:id="location" prefWidth="200.0" text="localhost:4848" />
         <ToggleButton fx:id="start" mnemonicParsing="false" onAction="#startMonitoring" text="Start">
           <toggleGroup>
@@ -18,14 +18,16 @@
           </toggleGroup>
         </ToggleButton>
         <ToggleButton fx:id="stop" mnemonicParsing="false" onAction="#stopMonitoring" text="Stop" toggleGroup="$polling" />
+        <Label text="Interval:" />
         <TextField fx:id="interval" prefWidth="41.0" text="10" />
         <ToggleButton fx:id="activate" mnemonicParsing="false" onAction="#activateMonitoring" text="Activate Monitoring">
           <toggleGroup>
             <ToggleGroup fx:id="monitoring" />
           </toggleGroup>
         </ToggleButton>
-        <ToggleButton fx:id="deactivate" mnemonicParsing="false" text="Deactivate Monitoring" toggleGroup="$monitoring" />
+        <ToggleButton fx:id="deactivate" mnemonicParsing="false" onAction="#deactivateMonitoring" text="Deactivate Monitoring" toggleGroup="$monitoring" />
         <Button fx:id="status" mnemonicParsing="false" onAction="#status" text="Status" />
+        <Label fx:id="message" opacity="0.0" prefWidth="312.0" text="" />
       </items>
     </ToolBar>
   </children>
