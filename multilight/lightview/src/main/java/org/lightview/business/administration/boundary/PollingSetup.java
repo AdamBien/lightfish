@@ -45,7 +45,7 @@ public class PollingSetup {
         JsonObject status = response.readEntity(JsonObject.class);
         String nextTimeout = status.getString("nextTimeout");
         String currentInterval = status.getString("interval");
-        return new Pair<String, String>(nextTimeout,currentInterval);
+        return new Pair<String, String>(currentInterval,nextTimeout);
 
 
     }
