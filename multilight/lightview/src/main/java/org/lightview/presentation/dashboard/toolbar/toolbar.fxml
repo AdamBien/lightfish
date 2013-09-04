@@ -11,7 +11,7 @@
     <ToolBar fx:id="toolbar" layoutX="14.0" layoutY="174.0">
       <items>
         <ProgressIndicator fx:id="progress" progress="0.0" />
-        <TextField fx:id="location" prefWidth="200.0" text="localhost:8080" />
+        <TextField fx:id="location" prefWidth="200.0" text="localhost:4848" />
         <ToggleButton fx:id="start" mnemonicParsing="false" onAction="#startMonitoring" text="Start">
           <toggleGroup>
             <ToggleGroup fx:id="polling" />
