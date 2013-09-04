@@ -68,7 +68,6 @@ public class DashboardView {
     private TabPane tabPane;
     private Status status;
 
-    private Node uriInputView;
     private Escalations escalations;
     private Scene scene;
 
@@ -129,12 +128,11 @@ public class DashboardView {
         Tab performanceTab = createTab(performance, "Performance");
         Tab webTab = createTab(web, "Web");
         this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab,performanceTab, webTab);
-        this.vertical.getItems().addAll(uriInputView, this.tabPane, this.applicationsView.getView(), this.escalations.view());
-        this.vertical.setDividerPositions(0.0,0.3,0.7,0.9);
+        this.vertical.getItems().addAll(this.tabPane, this.applicationsView.getView(), this.escalations.view());
+        this.vertical.setDividerPositions(0.3,0.7,0.9);
     }
 
     private void instantiateViews() {
-        this.uriInputView = createURIInputView();
         this.browser = new Browser();
         ReadOnlyLongProperty id = this.dashboardPresenter.getId();
         this.heap = new Snapshot(id, "Heap Size", "Used Heap");
@@ -197,27 +195,6 @@ public class DashboardView {
         Node view = connectionPool.view();
         Tab tab = createTab(view, "Resource: " + jndiName);
         this.tabPane.getTabs().add(tab);
-    }
-
-    private Node createURIInputView() {
-        final Button button = new Button();
-        button.setText("-");
-        button.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent actionEvent) {
-                toggleBrowserSize(button);
-            }
-        });
-        HBox hBox = HBoxBuilder.create().spacing(10).build();
-        this.txtUri = TextFieldBuilder.
-                create().
-                editable(true).
-                text(getBaseURI()).
-                prefColumnCount(40).
-                minHeight(20).
-                build();
-        Label uri = LabelBuilder.create().labelFor(txtUri).text("LightFish location:").build();
-        hBox.getChildren().addAll(uri, txtUri, button);
-        return hBox;
     }
 
     private String getBaseURI() {
