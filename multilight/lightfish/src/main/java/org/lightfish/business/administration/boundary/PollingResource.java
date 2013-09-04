@@ -53,7 +53,11 @@ public class PollingResource {
     public JsonObject status() {
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
         Date nextTimeout = controller.nextTimeout();
-        objectBuilder.add("nextTimeout", nextTimeout.toString()).add(INTERVAL, configurator.getValue(INTERVAL));
+        String timeoutAsString = "-not running-";
+        if (nextTimeout != null) {
+            timeoutAsString = nextTimeout.toString();
+        }
+        objectBuilder.add("nextTimeout", timeoutAsString).add(INTERVAL, configurator.getValue(INTERVAL));
         return objectBuilder.build();
     }
 
