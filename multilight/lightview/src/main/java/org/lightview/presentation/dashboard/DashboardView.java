@@ -22,12 +22,14 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.lightview.presentation.applications.ApplicationsPresenter;
 import org.lightview.presentation.applications.ApplicationsView;
+import org.lightview.presentation.toolbar.ToolbarView;
 import org.lightview.presenter.ConnectionPoolBindings;
 import org.lightview.presenter.DashboardPresenterBindings;
 import org.lightview.view.Browser;
@@ -62,11 +64,13 @@ public class DashboardView {
     private Snapshot failedTXPerf;
     private VBox vertical;
     private ApplicationsView applicationsView;
+    private ToolbarView toolbarView;
     private TabPane tabPane;
     private Status status;
 
     private Node uriInputView;
     private Escalations escalations;
+    private Scene scene;
 
     public DashboardView(Stage stage, DashboardPresenterBindings dashboardPresenter) {
         this.dashboardPresenter = dashboardPresenter;
@@ -78,7 +82,13 @@ public class DashboardView {
     }
 
     public void open() {
-        Scene scene = new Scene(this.vertical);
+        this.toolbarView = new ToolbarView();
+        ToolBar toolbar = (ToolBar) toolbarView.getViewWithoutRootContainer();
+
+        BorderPane pane = new BorderPane();
+        pane.setTop(toolbar);
+        pane.setCenter(this.vertical);
+        this.scene = new Scene(pane);
         scene.getStylesheets().add(this.getClass().getResource("lightview.css").toExternalForm());
         stage.setFullScreen(false);
         stage.setScene(scene);
