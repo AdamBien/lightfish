@@ -1,7 +1,5 @@
-package org.lightview.presentation.methods;
+package org.lightview.presentation.applications.methods;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -10,8 +8,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.lightview.business.methods.boundary.MethodMonitoring;
 import org.lightview.business.methods.entity.MethodStatistics;
-import org.lightview.business.pool.boundary.EJBPoolMonitoring;
-import org.lightview.model.Snapshot;
 import org.lightview.presentation.dashboard.DashboardModel;
 
 import javax.inject.Inject;

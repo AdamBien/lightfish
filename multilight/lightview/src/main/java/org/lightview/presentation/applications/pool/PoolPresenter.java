@@ -13,7 +13,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-package org.lightview.presentation.pool;
+package org.lightview.presentation.applications.pool;
 
 import java.net.URL;
 import java.util.ResourceBundle;

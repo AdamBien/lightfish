@@ -1,7 +1,7 @@
 /*
  *
  */
-package org.lightview.presentation.ejbs;
+package org.lightview.presentation.applications.pool;
 
 import com.airhacks.afterburner.views.FXMLView;
 
@@ -9,6 +9,6 @@ import com.airhacks.afterburner.views.FXMLView;
  *
  * @author adam-bien.com
  */
-public class EJBsView extends FXMLView {
+public class PoolView extends FXMLView {
 
 }

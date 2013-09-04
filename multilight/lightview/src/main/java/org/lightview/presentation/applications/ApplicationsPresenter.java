@@ -5,25 +5,19 @@ import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
-import javafx.collections.SetChangeListener.Change;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.*;
 import org.lightview.model.Application;
 import org.lightview.presentation.dashboard.DashboardModel;
-import org.lightview.presentation.ejbs.EJBsPresenter;
-import org.lightview.presentation.ejbs.EJBsView;
+import org.lightview.presentation.applications.ejbs.EJBsPresenter;
+import org.lightview.presentation.applications.ejbs.EJBsView;
 
 import javax.inject.Inject;
-
-import static javafx.scene.layout.Priority.*;
 
 /**
  *
@@ -76,7 +70,7 @@ public class ApplicationsPresenter implements Initializable {
                 }
             }
         });
-        ejbs.getChildren().add(this.ejbView.getViewWithoutAnchorPane());
+        ejbs.getChildren().add(this.ejbView.getViewWithoutRootContainer());
     }
 
 }

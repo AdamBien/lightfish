@@ -1,4 +1,4 @@
-package org.lightview.presentation.methods;
+package org.lightview.presentation.applications.methods;
 
 import com.airhacks.afterburner.views.FXMLView;
 

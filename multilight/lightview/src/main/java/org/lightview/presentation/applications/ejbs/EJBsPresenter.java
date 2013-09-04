@@ -1,13 +1,8 @@
 /*
  *
  */
-package org.lightview.presentation.ejbs;
+package org.lightview.presentation.applications.ejbs;
 
-import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -19,17 +14,21 @@ import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
-import javax.inject.Inject;
-
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import org.lightview.business.pool.boundary.EJBPoolMonitoring;
 import org.lightview.business.pool.entity.PoolStatistics;
 import org.lightview.model.Application;
-import org.lightview.presentation.methods.MethodsPresenter;
-import org.lightview.presentation.methods.MethodsView;
-import org.lightview.presentation.pool.PoolPresenter;
-import org.lightview.presentation.pool.PoolView;
+import org.lightview.presentation.applications.methods.MethodsPresenter;
+import org.lightview.presentation.applications.methods.MethodsView;
+import org.lightview.presentation.applications.pool.PoolPresenter;
+import org.lightview.presentation.applications.pool.PoolView;
+
+import javax.inject.Inject;
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  *
