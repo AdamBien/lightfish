@@ -51,8 +51,6 @@ public interface DashboardPresenterBindings {
 
     ObservableSet<Application> getApplications();
 
-    String getBaseURI();
-
     EscalationsPresenterBindings getEscalationsPresenterBindings();
 
 }

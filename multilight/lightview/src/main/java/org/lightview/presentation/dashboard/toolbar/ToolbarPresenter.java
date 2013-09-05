@@ -11,6 +11,7 @@ import javafx.util.Duration;
 import javafx.util.Pair;
 import org.lightview.business.administration.boundary.MonitoringLevelActivation;
 import org.lightview.business.administration.boundary.PollingSetup;
+import org.lightview.presentation.dashboard.DashboardModel;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -28,6 +29,9 @@ public class ToolbarPresenter implements Initializable {
     TextField location;
 
     @FXML
+    TextField lightfishLocation;
+
+    @FXML
     public TextField interval;
 
     @FXML
@@ -39,11 +43,14 @@ public class ToolbarPresenter implements Initializable {
     @Inject
     MonitoringLevelActivation monitoringLevelActivation;
 
+    @Inject
+    DashboardModel dashboardModel;
+
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
+        lightfishLocation.setText(this.dashboardModel.getUri());
     }
 
 

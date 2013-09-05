@@ -67,7 +67,6 @@ public class DashboardPresenter implements DashboardPresenterBindings, Initializ
     private DoubleProperty commitsPerSecond;
     private DoubleProperty rollbacksPerSecond;
     private LongProperty id;
-    private String baseURI;
     private StringProperty deadlockedThreads;
     private EscalationsPresenter escalationsPresenter;
     private Snapshot old;
@@ -76,9 +75,6 @@ public class DashboardPresenter implements DashboardPresenterBindings, Initializ
     @Inject
     DashboardModel dashboardModel;
 
-    public DashboardPresenter(String baseURI) {
-        this.baseURI = baseURI;
-    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -100,6 +96,7 @@ public class DashboardPresenter implements DashboardPresenterBindings, Initializ
         this.rollbacksPerSecond = new SimpleDoubleProperty();
         this.deadlockedThreads = new SimpleStringProperty();
         this.initializeListeners();
+        this.restartService();
     }
 
     public void initializeListeners() {
@@ -284,13 +281,6 @@ public class DashboardPresenter implements DashboardPresenterBindings, Initializ
         return rollbacksPerSecond;
     }
 
-    @Override
-    public String getBaseURI() {
-        if (this.baseURI == null) {
-            return "http://localhost:8080";
-        }
-        return this.baseURI;
-    }
 
     @Override
     public ObservableSet<Application> getApplications() {

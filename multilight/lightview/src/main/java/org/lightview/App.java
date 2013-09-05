@@ -29,36 +29,18 @@ import org.lightview.presentation.dashboard.DashboardView;
  */
 public class App extends Application {
 
-    private static final String VERSION = "scriptr";
+    private static final String VERSION = "1.3-snapshot";
 
     @Override
     public void start(Stage primaryStage) {
         System.out.println("Launching LighView " + VERSION);
-        String serverURI = getServerURI();
-        System.out.println("Base URI: " + serverURI);
-        DashboardPresenter dashboardPresenter = new DashboardPresenter(serverURI);
+        DashboardPresenter dashboardPresenter = new DashboardPresenter();
         InjectionProvider.registerExistingAndInject(dashboardPresenter);
         dashboardPresenter.initialize(null, null);
         new DashboardView(primaryStage, dashboardPresenter);
     }
 
-    String getServerURI() {
-        HostServices hostServices = getHostServices();
-        if (runsInBrowser(hostServices)) {
-            return extractHostWithPort(hostServices.getDocumentBase());
-        }
-        return null;
-    }
 
-    boolean runsInBrowser(HostServices hostServices) {
-        return (!hostServices.getDocumentBase().startsWith("file:"));
-    }
-
-    String extractHostWithPort(String uri) {
-        int fromIndex = "https://".length();
-        int index = uri.indexOf("/", fromIndex);
-        return uri.substring(0, index);
-    }
 
     public static void main(String[] args) throws MalformedURLException {
         launch(args);

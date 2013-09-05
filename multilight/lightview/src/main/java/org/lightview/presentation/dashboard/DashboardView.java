@@ -48,7 +48,6 @@ public class DashboardView {
 
     DashboardPresenterBindings dashboardPresenter;
     Stage stage;
-    private TextField txtUri;
     private Browser browser;
     private Snapshot heap;
     private Snapshot threadCount;
@@ -154,8 +153,6 @@ public class DashboardView {
 
 
     private void bind() {
-        this.dashboardPresenter.getUriProperty().bind(txtUri.textProperty());
-        this.browser.getURI().bind(txtUri.textProperty());
         this.heap.value().bind(this.dashboardPresenter.getUsedHeapSizeInMB());
 
         this.threadCount.value().bind(this.dashboardPresenter.getThreadCount());
@@ -195,19 +192,5 @@ public class DashboardView {
         Node view = connectionPool.view();
         Tab tab = createTab(view, "Resource: " + jndiName);
         this.tabPane.getTabs().add(tab);
-    }
-
-    private String getBaseURI() {
-        String base = this.dashboardPresenter.getBaseURI();
-        return base + "/lightfish";
-    }
-
-    private void toggleBrowserSize(Button button) {
-        boolean minimized = this.browser.toggleMinimize();
-        if (minimized) {
-            button.setText("+");
-        } else {
-            button.setText("-");
-        }
     }
 }

@@ -10,6 +10,8 @@
   <children>
     <ToolBar fx:id="toolbar" layoutX="14.0" layoutY="174.0">
       <items>
+        <Label text="LightFish:" />
+        <TextField fx:id="lightfishLocation" prefWidth="200.0" />
         <Label text="Monitorable Server:" />
         <TextField fx:id="location" prefWidth="200.0" text="localhost:4848" />
         <ToggleButton fx:id="start" mnemonicParsing="false" onAction="#startMonitoring" text="Start">
@@ -27,7 +29,7 @@
         </ToggleButton>
         <ToggleButton fx:id="deactivate" mnemonicParsing="false" onAction="#deactivateMonitoring" text="Deactivate Monitoring" toggleGroup="$monitoring" />
         <Button fx:id="status" mnemonicParsing="false" onAction="#status" text="Status" />
-        <Label fx:id="message" opacity="0.0" prefWidth="312.0" text="" />
+        <Label fx:id="message" opacity="0.0" prefWidth="382.0" text="" />
       </items>
     </ToolBar>
   </children>
