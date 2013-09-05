@@ -34,4 +34,11 @@ public class ServerInfoResourceIT extends RESTSupport {
         assertNotNull(uptime);
     }
 
+    @Test
+    public void fetchLightFishInfo() {
+        JsonObject lightfishInfo = super.mainTarget.path("lightfish").request().get(JsonObject.class);
+        System.out.println("-- " + lightfishInfo);
+        assertNotNull(lightfishInfo);
+    }
+
 }
