@@ -24,7 +24,7 @@ public class MethodsStatistics {
         for (Map.Entry<String, JsonValue> entry : entries) {
             final String methodName = entry.getKey();
             final JsonValue value = entry.getValue();
-
+            //this bean has no methods, the content is: {"-- no methods --":null}
             if(!(value instanceof JsonObject)){
                 continue;
             }

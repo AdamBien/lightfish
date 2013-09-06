@@ -89,4 +89,8 @@ public class PoolStatistics {
         return statistics.getJsonObject(THREADS_STATISTICS);
     }
 
+    public boolean isValid(){
+        return this.getTotalBeansCreated() != -1 && this.getTotalBeansDestroyed() != -1;
+    }
+
 }

@@ -133,7 +133,8 @@ public class PoolPresenter implements Initializable {
 
     void fetchValues(long id) {
         PoolStatistics poolStats = poolMonitoring.getPoolStats(this.applicationName, this.ejbName);
-        this.onNewEntry(id, extractor.apply(poolStats));
+        if(poolStats.isValid())
+            this.onNewEntry(id, extractor.apply(poolStats));
     }
 
 
