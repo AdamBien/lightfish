@@ -14,6 +14,7 @@ import org.lightview.business.administration.boundary.PollingSetup;
 import org.lightview.presentation.dashboard.DashboardModel;
 
 import javax.inject.Inject;
+import java.beans.EventHandler;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -51,6 +52,11 @@ public class ToolbarPresenter implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         lightfishLocation.setText(this.dashboardModel.getUri());
+        lightfishLocation.setOnAction(EventHandler -> updateUri());
+    }
+
+    void updateUri() {
+        this.dashboardModel.setUri(lightfishLocation.getText());
     }
 
 
