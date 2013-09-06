@@ -23,7 +23,12 @@ public class MethodsStatistics {
         final Set<Map.Entry<String,JsonValue>> entries = this.statistics.entrySet();
         for (Map.Entry<String, JsonValue> entry : entries) {
             final String methodName = entry.getKey();
-            final JsonObject methodStatistics = (JsonObject) entry.getValue();
+            final JsonValue value = entry.getValue();
+
+            if(!(value instanceof JsonObject)){
+                continue;
+            }
+            JsonObject methodStatistics = (JsonObject)value;
             statistics.add(new MethodStatistics(methodName,methodStatistics));
         }
         return statistics;
