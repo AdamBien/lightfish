@@ -12,7 +12,9 @@ import org.lightview.business.pool.boundary.EJBPoolMonitoring;
 import org.lightview.presentation.dashboard.DashboardModel;
 
 import java.util.List;
+import java.util.function.Consumer;
 
+import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -34,13 +36,17 @@ public class MethodMonitoringIT {
 
     @Test
     public void fetchMethodStatistics(){
-        final MethodsStatistics methodStatistics = this.cut.getMethodStatistics("lightfish","ConfigurationStore");
-        TestCase.assertNotNull(methodStatistics);
+        this.cut.getMethodStatistics(s -> assertNotNull(s), t -> {
+        }, "lightfish", "ConfigurationStore");
     }
 
     @Test
     public void extractMethodsFromRequest(){
-        final MethodsStatistics methodStatistics = this.cut.getMethodStatistics("lightfish","ConfigurationStore");
+        this.cut.getMethodStatistics(s->validateStatistics(s),t->{System.err.print(t);},"lightfish","ConfigurationStore");
+
+    }
+
+    public void validateStatistics(MethodsStatistics methodStatistics){
         final List<MethodStatistics> all = methodStatistics.all();
         assertFalse(all.isEmpty());
         for (MethodStatistics statistics : all) {

@@ -1,5 +1,6 @@
 package org.lightview.business.methods.boundary;
 
+import org.lightview.business.methods.entity.MethodStatistics;
 import org.lightview.business.methods.entity.MethodsStatistics;
 import org.lightview.presentation.dashboard.DashboardModel;
 
@@ -8,9 +9,11 @@ import javax.inject.Inject;
 import javax.json.JsonObject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.InvocationCallback;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.function.Consumer;
 
 /**
  * @author: adam-bien.com
@@ -26,20 +29,26 @@ public class MethodMonitoring {
         this.client = ClientBuilder.newClient();
     }
 
-    public MethodsStatistics getMethodStatistics(String application, String ejbName) {
+    public void getMethodStatistics(Consumer<MethodsStatistics> consumer, Consumer<Throwable> error, String application, String ejbName) {
         final String uri = getUri();
         System.out.println("Uri: " + uri);
         WebTarget target = this.client.target(uri);
 
-        Response response = target.
+        target.
                 resolveTemplate("application", application).
                 resolveTemplate("ejb", ejbName).
-                request(MediaType.APPLICATION_JSON).get(Response.class);
+                request(MediaType.APPLICATION_JSON).async().get(new InvocationCallback<JsonObject>() {
+            @Override
+            public void completed(JsonObject jsonObject) {
+                consumer.accept(new MethodsStatistics(jsonObject));
+            }
 
-        if (response.getStatus() == 404) {
-            return null;
-        }
-        return new MethodsStatistics(response.readEntity(JsonObject.class));
+            @Override
+            public void failed(Throwable throwable) {
+                error.accept(throwable);
+            }
+        });
+
     }
 
     public String getUri() {
