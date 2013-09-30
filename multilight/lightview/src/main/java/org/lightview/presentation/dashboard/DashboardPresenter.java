@@ -120,15 +120,12 @@ public class DashboardPresenter implements DashboardPresenterBindings, Initializ
         this.service = new SnapshotProvider(appendLive(getUri()));
         service.start();
         service.valueProperty().addListener(
-                new ChangeListener<Snapshot>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Snapshot> observable, Snapshot old, Snapshot newValue) {
+                (observable,old,newValue) ->{
                         if (newValue != null) {
                             snapshots.add(newValue);
                             onSnapshotArrival(newValue);
                         }
-                    }
-                });
+                    });
         registerRestarting();
     }
 
