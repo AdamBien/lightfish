@@ -87,7 +87,7 @@ public class MethodsPresenter implements Initializable {
     public void monitor(String monitoredApplication, String ejb) {
         this.monitoriedApplication = monitoredApplication;
         this.ejb = ejb;
-        this.methodMonitoring.getMethodStatistics(s -> onArrival(s), t -> System.err.println(t), this.monitoriedApplication, ejb);
+        this.methodMonitoring.listenToMethodStatistics(s -> onArrival(s), t -> System.err.println(t), this.monitoriedApplication, ejb);
     }
 
     public void onArrival(MethodsStatistics statistics) {

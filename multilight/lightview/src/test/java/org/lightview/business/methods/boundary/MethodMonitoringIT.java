@@ -2,20 +2,16 @@ package org.lightview.business.methods.boundary;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import junit.framework.TestCase;
-import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.lightview.business.methods.entity.MethodStatistics;
 import org.lightview.business.methods.entity.MethodsStatistics;
-import org.lightview.business.pool.boundary.EJBPoolMonitoring;
 import org.lightview.presentation.dashboard.DashboardModel;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
@@ -43,7 +39,7 @@ public class MethodMonitoringIT {
 
     @Test
     public void fetchMethodStatistics() throws InterruptedException {
-        this.cut.getMethodStatistics(s -> {
+        this.cut.listenToMethodStatistics(s -> {
             this.response = s;
             this.blockSupport.countDown();
         }, t -> {
@@ -54,7 +50,7 @@ public class MethodMonitoringIT {
 
     @Test
     public void extractMethodsFromRequest() throws InterruptedException {
-        this.cut.getMethodStatistics(s ->{
+        this.cut.listenToMethodStatistics(s -> {
             this.response = s;
             this.blockSupport.countDown();
         }, t -> {

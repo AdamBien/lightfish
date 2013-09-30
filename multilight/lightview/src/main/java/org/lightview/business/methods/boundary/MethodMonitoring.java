@@ -12,7 +12,6 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.InvocationCallback;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.function.Consumer;
 
 /**
@@ -29,7 +28,7 @@ public class MethodMonitoring {
         this.client = ClientBuilder.newClient();
     }
 
-    public void getMethodStatistics(Consumer<MethodsStatistics> consumer, Consumer<Throwable> error, String application, String ejbName) {
+    public void listenToMethodStatistics(Consumer<MethodsStatistics> consumer, Consumer<Throwable> error, String application, String ejbName) {
         final String uri = getUri();
         System.out.println("Uri: " + uri);
         WebTarget target = this.client.target(uri);
