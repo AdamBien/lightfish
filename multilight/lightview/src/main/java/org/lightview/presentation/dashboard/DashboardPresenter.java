@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.LongProperty;
@@ -36,7 +37,9 @@ import javafx.collections.ObservableMap;
 import javafx.collections.ObservableSet;
 import javafx.concurrent.Worker;
 import javafx.fxml.Initializable;
+
 import javax.inject.Inject;
+
 import org.lightview.model.Application;
 import org.lightview.model.ConnectionPool;
 import org.lightview.model.Snapshot;
@@ -44,7 +47,7 @@ import org.lightview.presenter.ConnectionPoolBindings;
 import org.lightview.presenter.DashboardPresenterBindings;
 import org.lightview.presenter.EscalationsPresenter;
 import org.lightview.presenter.EscalationsPresenterBindings;
-import org.lightview.service.SnapshotProvider;
+import org.lightview.service.SnapshotSocketListener;
 
 /**
  * User: blog.adam-bien.com Date: 21.11.11 Time: 17:50
@@ -53,7 +56,6 @@ public class DashboardPresenter implements DashboardPresenterBindings, Initializ
 
     private ObservableList<Snapshot> snapshots;
     private ObservableMap<String, ConnectionPoolBindings> pools;
-    SnapshotProvider service;
     private LongProperty usedHeapSizeInMB;
     private LongProperty threadCount;
     private IntegerProperty peakThreadCount;
@@ -74,6 +76,9 @@ public class DashboardPresenter implements DashboardPresenterBindings, Initializ
 
     @Inject
     DashboardModel dashboardModel;
+
+    @Inject
+    SnapshotSocketListener listener;
 
 
     @Override
@@ -96,52 +101,15 @@ public class DashboardPresenter implements DashboardPresenterBindings, Initializ
         this.rollbacksPerSecond = new SimpleDoubleProperty();
         this.deadlockedThreads = new SimpleStringProperty();
         this.initializeListeners();
-        this.restartService();
     }
 
     public void initializeListeners() {
-        this.dashboardModel.serverUriProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String s, String newUri) {
-                restartService();
-            }
+        this.dashboardModel.serverUriProperty().addListener((observableValue, s, newUri) -> {
+            //re-initialize socket listener
         });
-    }
-
-    void restartService() {
-        if (this.service != null && this.service.isRunning()) {
-            this.service.cancel();
-            this.service.reset();
-        }
-        this.startFetching();
-    }
-
-    void startFetching() {
-        this.service = new SnapshotProvider(appendLive(getUri()));
-        service.start();
-        service.valueProperty().addListener(
-                (observable,old,newValue) ->{
-                        if (newValue != null) {
-                            snapshots.add(newValue);
-                            onSnapshotArrival(newValue);
-                        }
-                    });
-        registerRestarting();
-    }
-
-    String appendLive(String liveDataURL) {
-        if (!liveDataURL.endsWith("/live/")) {
-            return liveDataURL + "/live/";
-        }
-        return liveDataURL;
-    }
-
-    void registerRestarting() {
-        service.stateProperty().addListener((observable,oldState,newState) -> {
-                if (newState.equals(Worker.State.SUCCEEDED) || newState.equals(Worker.State.FAILED)) {
-                    service.reset();
-                    service.start();
-            }
+        this.listener.snapshotProperty().addListener((o, oldValue, newValue) -> {
+            snapshots.add(newValue);
+            onSnapshotArrival(newValue);
         });
     }
 

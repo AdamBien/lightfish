@@ -77,7 +77,8 @@ public class MethodsPresenter implements Initializable {
     }
 
     private void setupRefresh() {
-        this.dashboardModel.currentSnapshotProperty().addListener((o, oldValue, newValue) -> monitor());
+        this.dashboardModel.currentSnapshotProperty().
+                addListener((o, oldValue, newValue) -> monitor());
     }
 
     public void monitor() {
