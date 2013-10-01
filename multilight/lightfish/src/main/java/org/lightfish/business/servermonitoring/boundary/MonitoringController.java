@@ -127,7 +127,7 @@ public class MonitoringController {
 
     @Timeout
     public void gatherAndPersist() {
-        handleCompletedFutures(false);
+        handleCompletedFutures(true);
         handleTimedOutFutures();
         notifyBeatListeners();
 
@@ -185,12 +185,6 @@ public class MonitoringController {
             } catch (TimeoutException ex) {
                 LOG.log(Level.FINEST, "The snapshot collection for " + entry.getKey() + " has not completed", ex);
             }
-
-            //  em.flush();
-            for (Snapshot snapshot : handledSnapshots) {
-                fireHeartbeat(snapshot);
-            }
-
         }
     }
 
@@ -215,6 +209,7 @@ public class MonitoringController {
         LOG.info("All snapshots collected for this round!");
         Snapshot combinedSnapshot = combineSnapshots(currentSnapshots.values());
         em.persist(combinedSnapshot);
+        em.flush();
         fireHeartbeat(combinedSnapshot);
 
         currentSnapshots.clear();
