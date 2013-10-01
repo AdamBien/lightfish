@@ -55,6 +55,7 @@ public class SnapshotSocketIT {
         Unmarshaller unmarshaller = jaxb.createUnmarshaller();
         Snapshot snapshot = (Snapshot) unmarshaller.unmarshal(new StringReader(message));
         assertNotNull(snapshot);
+        assertTrue(snapshot.getId() != 0);
     }
 
 }
