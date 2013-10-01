@@ -12,6 +12,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 import org.lightfish.business.appmonitoring.control.EJBStatisticsCollector;
+import org.lightfish.business.logging.Log;
 
 /**
  *
@@ -22,6 +23,9 @@ public class ApplicationMonitoring {
 
     @Inject
     EJBStatisticsCollector collector;
+
+    @Inject
+    Log LOG;
 
     public JsonObject getApplicationsContainerStatistics() {
         JsonObjectBuilder builder = Json.createObjectBuilder();
@@ -47,7 +51,11 @@ public class ApplicationMonitoring {
             String beanName = entry.getKey();
             if (!"server".equals(beanName)) {
                 final JsonObject beanStatistics = getBeanStatistics(applicationName, beanName);
-                builder.add(beanName, beanStatistics);
+                if (beanName == null || beanStatistics == null) {
+                    LOG.info("!!!NULL -> Beanname: " + beanName + " -> " + beanStatistics);
+                } else {
+                    builder.add(beanName, beanStatistics);
+                }
             }
         }
         return builder.build();
@@ -63,7 +71,11 @@ public class ApplicationMonitoring {
         for (Map.Entry<String, JsonValue> component : entrySet) {
             String methodName = component.getKey();
             JsonObject methodStatistics = collector.fetchMethodStatistics(applicationName, beanName, methodName);
-            builder.add(methodName, methodStatistics);
+            if (beanName == null || methodStatistics == null) {
+                LOG.info("!!!NULL -> Beanname: " + beanName + " -> " + methodStatistics);
+            } else {
+                builder.add(methodName, methodStatistics);
+            }
         }
         return builder.build();
     }
