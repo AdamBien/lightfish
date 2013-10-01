@@ -1,5 +1,6 @@
 package org.lightfish.business.heartbeat.boundary;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.concurrent.CopyOnWriteArraySet;
 import javax.annotation.PostConstruct;
@@ -10,6 +11,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.websocket.OnClose;
 import javax.websocket.OnOpen;
+import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 import org.lightfish.business.heartbeat.control.Serializer;
@@ -52,9 +54,15 @@ public class SnapshotsSocket {
         LOG.info("SnapshotsSocket.oneNewSnapshot: " + snapshot.getId());
         for (Session session : sessions) {
             if (session != null && session.isOpen()) {
+                LOG.info("Sending: " + snapshot.getId() + " to " + session.getId());
                 StringWriter writer = new StringWriter();
                 this.serializer.serialize(snapshot, writer);
-                session.getAsyncRemote().sendText(writer.getBuffer().toString());
+                try {
+                    final RemoteEndpoint.Basic remote = session.getBasicRemote();
+                    remote.sendText(writer.getBuffer().toString());
+                } catch (IOException ex) {
+                    LOG.error("Problem sending Snapshot", ex);
+                }
             }
         }
     }
