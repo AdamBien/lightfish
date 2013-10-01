@@ -16,6 +16,7 @@ import javax.websocket.WebSocketContainer;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import org.junit.After;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
@@ -30,6 +31,7 @@ public class SnapshotSocketIT {
 
     private MessageEndpoint endpoint;
     private CountDownLatch latch;
+    private Session session;
 
     @Before
     public void init() throws DeploymentException, IOException {
@@ -39,7 +41,7 @@ public class SnapshotSocketIT {
         ClientEndpointConfig config = ClientEndpointConfig.Builder.create().build();
         String uri = "ws://localhost:8080/lightfish/snapshots/";
         System.out.println("Connecting to " + uri);
-        Session session = container.connectToServer(this.endpoint, config, URI.create(uri));
+        this.session = container.connectToServer(this.endpoint, config, URI.create(uri));
     }
 
     /**
@@ -47,7 +49,7 @@ public class SnapshotSocketIT {
      */
     @Test
     public void statisticsArrived() throws InterruptedException, JAXBException {
-        assertTrue(this.latch.await(5, TimeUnit.SECONDS));
+        assertTrue(this.latch.await(15, TimeUnit.SECONDS));
         String message = endpoint.getMessage();
         assertNotNull(message);
         System.out.println("Message: " + message);
@@ -56,6 +58,11 @@ public class SnapshotSocketIT {
         Snapshot snapshot = (Snapshot) unmarshaller.unmarshal(new StringReader(message));
         assertNotNull(snapshot);
         assertTrue(snapshot.getId() != 0);
+    }
+
+    @After
+    public void disconnect() throws IOException {
+        this.session.close();
     }
 
 }
