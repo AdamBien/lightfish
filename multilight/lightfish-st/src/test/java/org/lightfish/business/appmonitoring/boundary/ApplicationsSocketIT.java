@@ -5,12 +5,15 @@ package org.lightfish.business.appmonitoring.boundary;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import javax.websocket.ClientEndpointConfig;
 import javax.websocket.ContainerProvider;
 import javax.websocket.DeploymentException;
 import javax.websocket.Session;
 import javax.websocket.WebSocketContainer;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,10 +24,12 @@ import org.junit.Test;
 public class ApplicationsSocketIT {
 
     private MessageEndpoint endpoint;
+    private CountDownLatch latch;
 
     @Before
     public void init() throws DeploymentException, IOException {
-        this.endpoint = new MessageEndpoint();
+        this.latch = new CountDownLatch(1);
+        this.endpoint = new MessageEndpoint(this.latch);
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         ClientEndpointConfig config = ClientEndpointConfig.Builder.create().build();
         String uri = "ws://localhost:8080/lightfish/applications/lightfish";
@@ -35,9 +40,9 @@ public class ApplicationsSocketIT {
     /**
      * Setup updates to 2 seconds before performing this test
      */
-    @Test(timeout = 5000)
+    @Test
     public void statisticsArrived() throws InterruptedException {
-        Thread.sleep(3000);
+        assertTrue(this.latch.await(5, TimeUnit.SECONDS));
         String message = endpoint.getMessage();
         assertNotNull(message);
         System.out.println("Message: " + message);
