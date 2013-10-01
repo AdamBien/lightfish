@@ -137,13 +137,10 @@ public class DashboardPresenter implements DashboardPresenterBindings, Initializ
     }
 
     void registerRestarting() {
-        service.stateProperty().addListener(new ChangeListener<Worker.State>() {
-            @Override
-            public void changed(ObservableValue<? extends Worker.State> observable, Worker.State oldState, Worker.State newState) {
+        service.stateProperty().addListener((observable,oldState,newState) -> {
                 if (newState.equals(Worker.State.SUCCEEDED) || newState.equals(Worker.State.FAILED)) {
                     service.reset();
                     service.start();
-                }
             }
         });
     }
