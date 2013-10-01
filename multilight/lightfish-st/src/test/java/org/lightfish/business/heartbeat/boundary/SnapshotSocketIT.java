@@ -4,6 +4,7 @@
 package org.lightfish.business.heartbeat.boundary;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URI;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -12,6 +13,9 @@ import javax.websocket.ContainerProvider;
 import javax.websocket.DeploymentException;
 import javax.websocket.Session;
 import javax.websocket.WebSocketContainer;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
@@ -42,11 +46,15 @@ public class SnapshotSocketIT {
      * Setup updates to 2 seconds before performing this test
      */
     @Test
-    public void statisticsArrived() throws InterruptedException {
+    public void statisticsArrived() throws InterruptedException, JAXBException {
         assertTrue(this.latch.await(5, TimeUnit.SECONDS));
         String message = endpoint.getMessage();
         assertNotNull(message);
         System.out.println("Message: " + message);
+        JAXBContext jaxb = JAXBContext.newInstance(Snapshot.class);
+        Unmarshaller unmarshaller = jaxb.createUnmarshaller();
+        Snapshot snapshot = (Snapshot) unmarshaller.unmarshal(new StringReader(message));
+        assertNotNull(snapshot);
     }
 
 }

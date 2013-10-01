@@ -3,7 +3,6 @@
  */
 package org.lightfish.business.appmonitoring.boundary;
 
-import org.lightfish.business.MessageEndpoint;
 import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.CountDownLatch;
@@ -17,6 +16,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
+import org.lightfish.business.MessageEndpoint;
 
 /**
  *
