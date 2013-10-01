@@ -1,9 +1,8 @@
 /*
  *
  */
-package org.lightfish.business.appmonitoring.boundary;
+package org.lightfish.business.heartbeat.boundary;
 
-import org.lightfish.business.MessageEndpoint;
 import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.CountDownLatch;
@@ -17,12 +16,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
+import org.lightfish.business.MessageEndpoint;
 
 /**
  *
  * @author adam-bien.com
  */
-public class ApplicationsSocketIT {
+public class SnapshotSocketIT {
 
     private MessageEndpoint endpoint;
     private CountDownLatch latch;
@@ -33,7 +33,7 @@ public class ApplicationsSocketIT {
         this.endpoint = new MessageEndpoint(this.latch);
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         ClientEndpointConfig config = ClientEndpointConfig.Builder.create().build();
-        String uri = "ws://localhost:8080/lightfish/applications/lightfish";
+        String uri = "ws://localhost:8080/lightfish/snapshots/";
         System.out.println("Connecting to " + uri);
         Session session = container.connectToServer(this.endpoint, config, URI.create(uri));
     }

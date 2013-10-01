@@ -1,7 +1,7 @@
 /*
  *
  */
-package org.lightfish.business.appmonitoring.boundary;
+package org.lightfish.business;
 
 import java.util.concurrent.CountDownLatch;
 import javax.websocket.Endpoint;
