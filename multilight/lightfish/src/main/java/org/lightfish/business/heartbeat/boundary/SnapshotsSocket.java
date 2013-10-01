@@ -49,13 +49,13 @@ public class SnapshotsSocket {
     }
 
     public void onNewSnapshot(@Observes @Severity(Severity.Level.HEARTBEAT) Snapshot snapshot) {
+        LOG.info("SnapshotsSocket.oneNewSnapshot: " + snapshot.getId());
         for (Session session : sessions) {
             if (session != null && session.isOpen()) {
                 StringWriter writer = new StringWriter();
                 this.serializer.serialize(snapshot, writer);
                 session.getAsyncRemote().sendText(writer.getBuffer().toString());
             }
-
         }
     }
 }

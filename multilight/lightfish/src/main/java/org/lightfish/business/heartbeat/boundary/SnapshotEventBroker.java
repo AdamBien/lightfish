@@ -54,6 +54,7 @@ public class SnapshotEventBroker {
     }
 
     public void onNewSnapshot(@Observes @Severity(Severity.Level.HEARTBEAT) Snapshot snapshot) {
+        LOG.info("SnapshotEventBroker.oneNewSnapshot: " + snapshot.getId());
         List<BrowserWindow> currentBrowsers = new ArrayList<>(browsers);
         List<BrowserWindow> staging = new ArrayList<>(browsers.size());
         AsyncMultiWriter multiWriter = new AsyncMultiWriter();
