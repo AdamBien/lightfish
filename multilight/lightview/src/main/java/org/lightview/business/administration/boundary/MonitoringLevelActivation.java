@@ -1,22 +1,18 @@
 package org.lightview.business.administration.boundary;
 
-import javafx.util.Pair;
-import org.lightview.presentation.dashboard.DashboardModel;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.json.Json;
-import javax.json.JsonObject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
+import org.lightview.presentation.dashboard.DashboardModel;
 
 /**
  * @author: adam-bien.com
  */
 public class MonitoringLevelActivation {
+
     private Client client;
 
     @Inject
@@ -40,7 +36,6 @@ public class MonitoringLevelActivation {
     private WebTarget getAdministrationTarget() {
         return this.client.target(getUri());
     }
-
 
     public String getUri() {
         return model.serverUriProperty().get() + "/resources/monitoring";

@@ -37,7 +37,6 @@ public class SnapshotEndpoint extends Endpoint {
 
     @Override
     public void onOpen(Session session, EndpointConfig ec) {
-        System.out.println("Opening session: " + session);
         session.addMessageHandler(new MessageHandler.Whole<String>() {
             @Override
             public void onMessage(String message) {
