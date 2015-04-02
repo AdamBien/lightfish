@@ -1,6 +1,6 @@
 language: java
 jdk:
-  - oraclejdk7
+  - oraclejdk8
 install: .travisci/script install
 before_script: .travisci/script before_script
 script: .travisci/script test
