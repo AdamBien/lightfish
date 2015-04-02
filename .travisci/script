@@ -44,7 +44,7 @@ case $BUILDSTAGE in
       			;;
 
       		test )
-            	mvn -f lightfish-st/pom.xml test
+            	mvn -f lightfish-st/pom.xml failsafe:integration-test failsafe:verify -fae
             	;;
 
         	after_script )
