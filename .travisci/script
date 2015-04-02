@@ -2,14 +2,16 @@
 
 ACTION=$1
 
+cd multilight
+
 case $BUILDSTAGE in
     unittest )
       	case $ACTION in
       		install )
-      			mvn -f multilight/pom.xml test-compile
+      			mvn test-compile
       			;;            
       		test )
-      			mvn -f multilight/pom.xml test -fae
+      			mvn test -fae
       			;;
    		esac
        	;;
@@ -17,10 +19,10 @@ case $BUILDSTAGE in
     integrationtest )
       	case $ACTION in
       		install )
-      			mvn -f multilight/pom.xml test-compile
+      			mvn test-compile
       			;;            
    	 		test )
-      			mvn -f multilight/pom.xml failsafe:integration-test failsafe:verify -fae
+      			mvn failsafe:integration-test failsafe:verify -fae
       			;;
       	esac
       	;;
@@ -28,7 +30,7 @@ case $BUILDSTAGE in
     systemtest )
 	  	case $ACTION in
 	    	install ) 
-	        	mvn -f multilight/pom.xml -Djarsigner.skip clean install -DskipTests
+	        	mvn -Djarsigner.skip clean install -DskipTests
 	        	mvn -f lightfish-st/pom.xml test-compile
 	        	;;
 
