@@ -6,53 +6,53 @@ cd multilight
 
 case $BUILDSTAGE in
     unittest )
-      	case $ACTION in
-      		install )
-      			mvn test-compile
-      			;;            
-      		test )
-      			mvn test -fae
-      			;;
-   		esac
-       	;;
+        case $ACTION in
+            install )
+                mvn test-compile
+                ;;
+            test )
+                mvn test -fae
+                ;;
+        esac
+        ;;
 
     integrationtest )
-      	case $ACTION in
-      		install )
-      			mvn test-compile
-      			;;            
-   	 		test )
-      			mvn failsafe:integration-test failsafe:verify -fae
-      			;;
-      	esac
-      	;;
+        case $ACTION in
+            install )
+                mvn test-compile
+                ;;
+            test )
+                mvn failsafe:integration-test failsafe:verify -fae
+                ;;
+        esac
+        ;;
 
     systemtest )
-	  	case $ACTION in
-	    	install ) 
-	        	mvn -Djarsigner.skip clean install -DskipTests
-	        	mvn -f lightfish-st/pom.xml test-compile
-	        	;;
+        case $ACTION in
+            install ) 
+                mvn -Djarsigner.skip clean install -DskipTests
+                mvn -f lightfish-st/pom.xml test-compile
+                ;;
 
-	    	before_script )	
-            	mvn -f lightfish-st/pom.xml org.apache.maven.plugins:maven-dependency-plugin:2.7:copy -Dartifact=org.glassfish.main.distributions:glassfish:4.1:zip
-      			cd lightfish-st/target/dependency
-      			unzip glassfish-4.1.zip
-      			glassfish4/bin/asadmin start-domain
-      			glassfish4/bin/asadmin start-database --jvmoptions -Xmx128m
-      			glassfish4/bin/asadmin deploy ../../../lightfish/target/lightfish.war 
-      			;;
+            before_script )
+                mvn -f lightfish-st/pom.xml org.apache.maven.plugins:maven-dependency-plugin:2.7:copy -Dartifact=org.glassfish.main.distributions:glassfish:4.1:zip
+                cd lightfish-st/target/dependency
+                unzip glassfish-4.1.zip
+                glassfish4/bin/asadmin start-domain
+                glassfish4/bin/asadmin start-database --jvmoptions -Xmx128m
+                glassfish4/bin/asadmin deploy ../../../lightfish/target/lightfish.war
+                ;;
 
-      		test )
-            	mvn -f lightfish-st/pom.xml failsafe:integration-test failsafe:verify -fae
-            	;;
+            test )
+                mvn -f lightfish-st/pom.xml failsafe:integration-test failsafe:verify -fae
+                ;;
 
-        	after_script )
-				cd lightfish-st/target/dependency/glassfish4/bin
-				./asadmin stop-domain
-				./asadmin stop-database
-				;;
-      	esac
-	  	;;
+            after_script )
+                cd lightfish-st/target/dependency/glassfish4/bin
+                ./asadmin stop-domain
+                ./asadmin stop-database
+                ;;
+        esac
+        ;;
 esac
 exit $?

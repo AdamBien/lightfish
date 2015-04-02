@@ -1,11 +1,11 @@
 #!/usr/bin/env sh
 
-for stage in  unittest integrationtest systemtest
+for stage in unittest integrationtest systemtest
 do
-  export BUILDSTAGE=$stage
-  for action in install before_script test after_script
-  do
-    echo Running $stage / $action
-    .travisci/script $action
-  done
+    export BUILDSTAGE=$stage
+    for action in install before_script test after_script
+    do
+        echo Running $stage / $action
+        .travisci/script $action
+    done
 done
