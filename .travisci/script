@@ -35,12 +35,12 @@ case $BUILDSTAGE in
 	        	;;
 
 	    	before_script )	
-            	mvn -f lightfish-st/pom.xml org.apache.maven.plugins:maven-dependency-plugin:2.7:copy -Dartifact=org.glassfish.main.distributions:glassfish:3.1.2.2:zip
+            	mvn -f lightfish-st/pom.xml org.apache.maven.plugins:maven-dependency-plugin:2.7:copy -Dartifact=org.glassfish.main.distributions:glassfish:4.0:zip
       			cd lightfish-st/target/dependency
-      			unzip glassfish-3.1.2.2.zip
-      			glassfish3/bin/asadmin start-domain
-      			glassfish3/bin/asadmin start-database --jvmoptions -Xmx128m
-      			glassfish3/bin/asadmin deploy ../../../lightfish/target/lightfish.war 
+      			unzip glassfish-4.0.zip
+      			glassfish4/bin/asadmin start-domain
+      			glassfish4/bin/asadmin start-database --jvmoptions -Xmx128m
+      			glassfish4/bin/asadmin deploy ../../../lightfish/target/lightfish.war 
       			;;
 
       		test )
@@ -48,7 +48,7 @@ case $BUILDSTAGE in
             	;;
 
         	after_script )
-				cd lightfish-st/target/dependency/glassfish3/bin
+				cd lightfish-st/target/dependency/glassfish4/bin
 				./asadmin stop-domain
 				./asadmin stop-database
 				;;
