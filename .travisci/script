@@ -35,9 +35,9 @@ case $BUILDSTAGE in
 	        	;;
 
 	    	before_script )	
-            	mvn -f lightfish-st/pom.xml org.apache.maven.plugins:maven-dependency-plugin:2.7:copy -Dartifact=org.glassfish.main.distributions:glassfish:4.0:zip
+            	mvn -f lightfish-st/pom.xml org.apache.maven.plugins:maven-dependency-plugin:2.7:copy -Dartifact=org.glassfish.main.distributions:glassfish:4.1:zip
       			cd lightfish-st/target/dependency
-      			unzip glassfish-4.0.zip
+      			unzip glassfish-4.1.zip
       			glassfish4/bin/asadmin start-domain
       			glassfish4/bin/asadmin start-database --jvmoptions -Xmx128m
       			glassfish4/bin/asadmin deploy ../../../lightfish/target/lightfish.war 
