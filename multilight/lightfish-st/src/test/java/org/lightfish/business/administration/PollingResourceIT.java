@@ -32,8 +32,12 @@ public class PollingResourceIT extends RESTSupport {
     public void startStopPollingWithoutLocation() {
         final int INTERVAL_VALUE = 5;
         //activation
-        JsonObject interval = Json.createObjectBuilder().add("interval", INTERVAL_VALUE).build();
-        Response response = super.mainTarget.request().post(Entity.json(interval));
+        JsonObject interval = Json.createObjectBuilder().
+                add("interval", INTERVAL_VALUE).
+                build();
+        Response response = super.mainTarget.
+                request().
+                post(Entity.json(interval));
         Assert.assertThat(response.getStatus(), is(200));
         JsonObject jsonObject = response.readEntity(JsonObject.class);
         String nextTimeout = jsonObject.getString("nextTimeout");
