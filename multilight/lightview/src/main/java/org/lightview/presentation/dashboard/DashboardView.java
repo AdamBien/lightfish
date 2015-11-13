@@ -12,26 +12,22 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-*/
+ */
 package org.lightview.presentation.dashboard;
 
 import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.collections.MapChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.lightview.presentation.applications.ApplicationsView;
 import org.lightview.presentation.dashboard.toolbar.ToolbarView;
 import org.lightview.presenter.ConnectionPoolBindings;
-import org.lightview.presenter.DashboardPresenterBindings;
 import org.lightview.view.Browser;
 import org.lightview.view.ConnectionPool;
 import org.lightview.view.Escalations;
@@ -40,13 +36,11 @@ import org.lightview.view.SnapshotTable;
 import org.lightview.view.Status;
 
 /**
- * User: blog.adam-bien.com
- * Date: 18.11.11
- * Time: 17:19
+ * User: blog.adam-bien.com Date: 18.11.11 Time: 17:19
  */
 public class DashboardView {
 
-    DashboardPresenterBindings dashboardPresenter;
+    DashboardPresenter dashboardPresenter;
     Stage stage;
     private Browser browser;
     private Snapshot heap;
@@ -70,7 +64,7 @@ public class DashboardView {
     private Escalations escalations;
     private Scene scene;
 
-    public DashboardView(Stage stage, DashboardPresenterBindings dashboardPresenter) {
+    public DashboardView(Stage stage, DashboardPresenter dashboardPresenter) {
         this.dashboardPresenter = dashboardPresenter;
         this.stage = stage;
         this.tabPane = new TabPane();
@@ -116,7 +110,7 @@ public class DashboardView {
         threadsAndMemory.getChildren().addAll(this.heap.view(), this.threadCount.view(), this.peakThreadCount.view());
         transactions.getChildren().addAll(this.commitCount.view(), this.rollbackCount.view());
         paranormalContent.getChildren().addAll(this.queuedConnections.view(), this.totalErrors.view(), this.busyThread.view());
-        paranormal.getChildren().addAll(paranormalContent,this.status.view());
+        paranormal.getChildren().addAll(paranormalContent, this.status.view());
         performance.getChildren().addAll(this.successfulTXPerf.view());
         performance.getChildren().addAll(this.failedTXPerf.view());
         web.getChildren().addAll(this.activeSessions.view());
@@ -126,9 +120,9 @@ public class DashboardView {
         Tab paranormalTab = createTab(paranormal, "Paranormal Activity");
         Tab performanceTab = createTab(performance, "Performance");
         Tab webTab = createTab(web, "Web");
-        this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab,performanceTab, webTab);
+        this.tabPane.getTabs().addAll(threadsAndMemoryTab, transactionsTab, paranormalTab, performanceTab, webTab);
         this.vertical.getItems().addAll(this.tabPane, this.applicationsView.getView(), this.escalations.view());
-        this.vertical.setDividerPositions(0.3,0.7,0.9);
+        this.vertical.setDividerPositions(0.3, 0.7, 0.9);
     }
 
     private void instantiateViews() {
@@ -147,10 +141,9 @@ public class DashboardView {
         this.successfulTXPerf = new Snapshot(id, "Commits Per Second", "#");
         this.failedTXPerf = new Snapshot(id, "Rollbacks Per Second", "#");
         final Node liveStream = new SnapshotTable(this.dashboardPresenter.getSnapshots()).createTable();
-        this.escalations = new Escalations(liveStream,this.dashboardPresenter.getEscalationsPresenterBindings());
+        this.escalations = new Escalations(liveStream, this.dashboardPresenter.getEscalationsPresenterBindings());
         this.status = new Status(this.dashboardPresenter.getDeadlockedThreads());
     }
-
 
     private void bind() {
         this.heap.value().bind(this.dashboardPresenter.getUsedHeapSizeInMB());
@@ -172,8 +165,9 @@ public class DashboardView {
         this.dashboardPresenter.getPools().addListener(new MapChangeListener<String, ConnectionPoolBindings>() {
             public void onChanged(Change<? extends String, ? extends ConnectionPoolBindings> change) {
                 ConnectionPoolBindings valueAdded = change.getValueAdded();
-                if (valueAdded != null)
+                if (valueAdded != null) {
                     createPoolTab(valueAdded);
+                }
             }
         });
     }

@@ -16,10 +16,8 @@
 package org.lightview.presentation.dashboard;
 
 import java.net.URL;
-import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
-
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.LongProperty;
@@ -29,22 +27,16 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.collections.ObservableSet;
-import javafx.concurrent.Worker;
 import javafx.fxml.Initializable;
-
 import javax.inject.Inject;
-
 import org.lightview.model.Application;
 import org.lightview.model.ConnectionPool;
 import org.lightview.model.Snapshot;
 import org.lightview.presenter.ConnectionPoolBindings;
-import org.lightview.presenter.DashboardPresenterBindings;
 import org.lightview.presenter.EscalationsPresenter;
 import org.lightview.presenter.EscalationsPresenterBindings;
 import org.lightview.service.SnapshotSocketListener;
@@ -52,7 +44,7 @@ import org.lightview.service.SnapshotSocketListener;
 /**
  * User: blog.adam-bien.com Date: 21.11.11 Time: 17:50
  */
-public class DashboardPresenter implements DashboardPresenterBindings, Initializable {
+public class DashboardPresenter implements Initializable {
 
     private ObservableList<Snapshot> snapshots;
     private ObservableMap<String, ConnectionPoolBindings> pools;
@@ -79,7 +71,6 @@ public class DashboardPresenter implements DashboardPresenterBindings, Initializ
 
     @Inject
     SnapshotSocketListener listener;
-
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -158,98 +149,78 @@ public class DashboardPresenter implements DashboardPresenterBindings, Initializ
         }
     }
 
-    @Override
     public EscalationsPresenterBindings getEscalationsPresenterBindings() {
         return this.escalationsPresenter;
     }
 
-    @Override
     public LongProperty getUsedHeapSizeInMB() {
         return usedHeapSizeInMB;
     }
 
-    @Override
     public LongProperty getThreadCount() {
         return threadCount;
     }
 
-    @Override
     public IntegerProperty getPeakThreadCount() {
         return peakThreadCount;
     }
 
-    @Override
     public IntegerProperty getBusyThreads() {
         return busyThreads;
     }
 
-    @Override
     public IntegerProperty getQueuedConnections() {
         return queuedConnections;
     }
 
-    @Override
     public IntegerProperty getCommitCount() {
         return commitCount;
     }
 
-    @Override
     public IntegerProperty getRollbackCount() {
         return rollbackCount;
     }
 
-    @Override
     public IntegerProperty getTotalErrors() {
         return totalErrors;
     }
 
-    @Override
     public IntegerProperty getActiveSessions() {
         return activeSessions;
     }
 
-    @Override
     public IntegerProperty getExpiredSessions() {
         return expiredSessions;
     }
 
-    @Override
     public LongProperty getId() {
         return id;
     }
 
-    @Override
     public ObservableList<Snapshot> getSnapshots() {
         return snapshots;
     }
 
-    @Override
     public ObservableMap<String, ConnectionPoolBindings> getPools() {
         return pools;
     }
 
-    @Override
     public StringProperty getDeadlockedThreads() {
         return this.deadlockedThreads;
     }
 
-    @Override
     public DoubleProperty getCommitsPerSecond() {
         return commitsPerSecond;
     }
 
-    @Override
     public ReadOnlyDoubleProperty getRollbacksPerSecond() {
         return rollbacksPerSecond;
     }
 
-
-    @Override
     public ObservableSet<Application> getApplications() {
         return this.dashboardModel.applicationsSetProperty();
     }
 
-    @Override
     public StringProperty getUriProperty() {
         return this.dashboardModel.serverUriProperty();
     }
