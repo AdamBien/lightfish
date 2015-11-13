@@ -11,7 +11,7 @@
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-client</artifactId>
-            <version>2.21</version>
+            <version>2.22.1</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
@@ -21,7 +21,7 @@
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-json-processing</artifactId>
-            <version>2.21</version>
+            <version>2.22.1</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.tyrus</groupId>
