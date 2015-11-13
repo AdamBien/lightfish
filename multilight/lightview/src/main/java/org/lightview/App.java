@@ -15,10 +15,9 @@
  */
 package org.lightview;
 
-import com.airhacks.afterburner.injection.InjectionProvider;
+import com.airhacks.afterburner.injection.Injector;
 import java.net.MalformedURLException;
 import javafx.application.Application;
-import javafx.application.HostServices;
 import javafx.stage.Stage;
 import org.lightview.presentation.dashboard.DashboardPresenter;
 import org.lightview.presentation.dashboard.DashboardView;
@@ -35,12 +34,10 @@ public class App extends Application {
     public void start(Stage primaryStage) {
         System.out.println("Launching LighView " + VERSION);
         DashboardPresenter dashboardPresenter = new DashboardPresenter();
-        InjectionProvider.registerExistingAndInject(dashboardPresenter);
+        Injector.registerExistingAndInject(dashboardPresenter);
         dashboardPresenter.initialize(null, null);
         new DashboardView(primaryStage, dashboardPresenter);
     }
-
-
 
     public static void main(String[] args) throws MalformedURLException {
         launch(args);

@@ -1,9 +1,6 @@
 package org.lightview.business.methods.boundary;
 
-import org.lightview.business.methods.entity.MethodStatistics;
-import org.lightview.business.methods.entity.MethodsStatistics;
-import org.lightview.presentation.dashboard.DashboardModel;
-
+import java.util.function.Consumer;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.json.JsonObject;
@@ -12,12 +9,14 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.InvocationCallback;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
-import java.util.function.Consumer;
+import org.lightview.business.methods.entity.MethodsStatistics;
+import org.lightview.presentation.dashboard.DashboardModel;
 
 /**
  * @author: adam-bien.com
  */
 public class MethodMonitoring {
+
     private Client client;
 
     @Inject
@@ -36,17 +35,19 @@ public class MethodMonitoring {
         target.
                 resolveTemplate("application", application).
                 resolveTemplate("ejb", ejbName).
-                request(MediaType.APPLICATION_JSON).async().get(new InvocationCallback<JsonObject>() {
-            @Override
-            public void completed(JsonObject jsonObject) {
-                consumer.accept(new MethodsStatistics(jsonObject));
-            }
+                request(MediaType.APPLICATION_JSON).
+                async().
+                get(new InvocationCallback<JsonObject>() {
+                    @Override
+                    public void completed(JsonObject jsonObject) {
+                        consumer.accept(new MethodsStatistics(jsonObject));
+                    }
 
-            @Override
-            public void failed(Throwable throwable) {
-                error.accept(throwable);
-            }
-        });
+                    @Override
+                    public void failed(Throwable throwable) {
+                        error.accept(throwable);
+                    }
+                });
 
     }
 
