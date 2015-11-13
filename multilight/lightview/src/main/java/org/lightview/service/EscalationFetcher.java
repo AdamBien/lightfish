@@ -35,6 +35,8 @@ public class EscalationFetcher {
     }
 
     public Escalation getEscalation() {
-        return client.target(this.url).request(MediaType.APPLICATION_XML).get(Escalation.class);
+        return client.target(this.url).
+                request(MediaType.APPLICATION_XML).
+                get(Escalation.class);
     }
 }
