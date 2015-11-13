@@ -3,19 +3,17 @@
  */
 package org.lightview.presentation.dashboard;
 
+import java.util.HashSet;
+import java.util.List;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javax.annotation.PostConstruct;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
+import javax.annotation.PostConstruct;
 import org.lightview.model.Application;
 import org.lightview.model.Snapshot;
-
-import java.util.HashSet;
-import java.util.List;
 
 /**
  *
@@ -28,17 +26,16 @@ public class DashboardModel {
     private StringProperty serverUri;
     private ObservableSet<Application> applications;
 
-
     @PostConstruct
     public void init() {
         this.current = new SimpleObjectProperty<>();
         this.serverUri = new SimpleStringProperty();
-        this.serverUri.setValue("http://localhost:8080/lightfish/");
+        this.serverUri.setValue("http://localhost:8080/lightfish");
         this.applications = FXCollections.observableSet(new HashSet<Application>());
 
     }
 
-    public ObservableSet<Application> applicationsSetProperty(){
+    public ObservableSet<Application> applicationsSetProperty() {
         return this.applications;
     }
 

@@ -11,7 +11,6 @@ import static javax.ws.rs.client.Entity.json;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.glassfish.jersey.jsonp.JsonProcessingFeature;
 import org.lightview.presentation.dashboard.DashboardModel;
 
 /**
@@ -26,7 +25,7 @@ public class PollingSetup {
 
     @PostConstruct
     public void init() {
-        this.client = ClientBuilder.newClient().register(new JsonProcessingFeature());
+        this.client = ClientBuilder.newClient();
     }
 
     public String changeInterval(String location, int newValue) {
@@ -35,9 +34,11 @@ public class PollingSetup {
                 add("location", location)
                 .build();
         WebTarget administrationTarget = getAdministrationTarget();
+        System.out.println("Chaning interval with: " + administrationTarget.getUri());
         final Response response = administrationTarget.
                 request(MediaType.APPLICATION_JSON).
                 post(json(interval));
+        System.out.println("response = " + response);
         return response.
                 readEntity(JsonObject.class).
                 getString("nextTimeout");
