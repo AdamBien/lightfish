@@ -29,7 +29,8 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
     protected SessionTokenRetriever tokenProvider;
     private String serverInstance;
 
-    @Inject Logger LOG;
+    @Inject
+    Logger LOG;
 
     @Override
     public String getServerInstance() {
@@ -88,9 +89,16 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
 
     protected JsonObject getJsonObject(Response result, String name) {
         JsonObject response = result.readEntity(JsonObject.class);
-        JsonObject retVal = response.getJsonObject("extraProperties").
-                getJsonObject("entity").
-                getJsonObject(name);
+        JsonObject extraProperties = response.getJsonObject("extraProperties");
+        JsonObject retVal = null;
+        if (extraProperties != null) {
+            retVal = extraProperties.
+                    getJsonObject("entity").
+                    getJsonObject(name);
+        } else {
+            LOG.info("Null retrieved");
+        }
+
         LOG.info("Retrieved JsonObject: " + retVal + " for " + result + " " + name);
         return retVal;
     }
