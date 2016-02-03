@@ -10,12 +10,12 @@ import org.lightfish.business.servermonitoring.control.collectors.SnapshotDataCo
  */
 @SnapshotDataCollector
 public class CommitedTransactionsCollector extends AbstractRestDataCollector<Integer> {
-    
+
     public static final String COMMITTED_TX = "transaction-service/committedcount";
 
     @Override
-    public DataPoint<Integer> collect() throws Exception{
-        return new DataPoint<>("commitedTransactions",getInt(COMMITTED_TX, "committedcount"));
+    public DataPoint<Integer> collect() {
+        return new DataPoint<>("commitedTransactions", getInt(COMMITTED_TX, "committedcount"));
     }
-    
+
 }

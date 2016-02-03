@@ -16,22 +16,15 @@
 package org.lightfish.business.servermonitoring.boundary;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PreDestroy;
@@ -58,8 +51,6 @@ import javax.ws.rs.core.MediaType;
 import org.lightfish.business.servermonitoring.control.BeatListener;
 import org.lightfish.business.servermonitoring.control.SessionTokenRetriever;
 import org.lightfish.business.servermonitoring.control.collectors.DataPoint;
-import org.lightfish.business.servermonitoring.control.collectors.ParallelDataCollectionAction;
-import org.lightfish.business.servermonitoring.control.collectors.ParallelDataCollectionExecutor;
 import org.lightfish.business.servermonitoring.entity.Application;
 import org.lightfish.business.servermonitoring.entity.ConnectionPool;
 import org.lightfish.business.servermonitoring.entity.LogRecord;
@@ -79,11 +70,7 @@ public class MonitoringController {
     @Inject
     private Logger LOG;
     @Inject
-    Instance<SnapshotCollector> snapshotCollectorInstance;
-    @Inject
-    ParallelDataCollectionExecutor parallelCollector;
-    @Inject
-    ParallelDataCollectionAction parallelAction;
+    SnapshotCollector snapshotCollectorInstance;
     @PersistenceContext
     EntityManager em;
     @Inject
@@ -98,7 +85,6 @@ public class MonitoringController {
     @Inject
     SessionTokenRetriever sessionTokenProvider;
     int nextInstanceIndex = 0;
-    ConcurrentMap<String, SnapshotCollectionAction> currentCollectionActions = new ConcurrentHashMap<>();
     ConcurrentMap<String, Snapshot> currentSnapshots = new ConcurrentHashMap<>();
     @Resource
     TimerService timerService;
@@ -127,82 +113,16 @@ public class MonitoringController {
 
     @Timeout
     public void gatherAndPersist() {
-        handleCompletedFutures(true);
-        handleTimedOutFutures();
         notifyBeatListeners();
 
         startNextInstanceCollection(nextInstanceIndex++);
 
         if (nextInstanceIndex >= serverInstances.get().length) {
-            if (!currentCollectionActions.isEmpty()) {
-                LOG.info("Waiting for completed futures");
-                handleCompletedFutures(true);
-            } else {
-                LOG.info("Nothing todo, no data to collect");
-            }
             handleRoundCompletion();
             nextInstanceIndex = 0;
         }
 
         LOG.info(".");
-    }
-
-    private void handleCompletedFutures(Boolean wait) {
-        List<Snapshot> handledSnapshots = new ArrayList<>();
-
-        Iterator<Entry<String, SnapshotCollectionAction>> it = currentCollectionActions.entrySet().iterator();
-        while (it.hasNext()) {
-            Entry<String, SnapshotCollectionAction> entry = it.next();
-            try {
-                DataPoint<Snapshot> dataPoint;
-                if (wait) {
-                    dataPoint = entry.getValue().getFuture().get();
-                } else {
-                    dataPoint = entry.getValue().getFuture().get(0, TimeUnit.NANOSECONDS);
-                }
-
-                LOG.log(Level.FINE, "Handling completed snapshot for {0}", entry.getKey());
-                it.remove();
-                if (dataPoint == null) {
-                    LOG.log(Level.WARNING, "An exception occured while retrieving data for " + entry);
-                    continue;
-                }
-
-                LOG.fine("Adding completed snapshot to currentSnapshots list");
-                currentSnapshots.put(entry.getKey(), dataPoint.getValue());
-
-                LOG.log(Level.FINER, "Persisting {0}", dataPoint.getValue());
-
-                handledSnapshots.add(dataPoint.getValue());
-
-                LOG.log(Level.FINE, "Done handling completed snapshot for {0}", entry.getKey());
-            } catch (InterruptedException ex) {
-                LOG.log(Level.FINE, "The snapshot collection for " + entry.getKey() + " was interrupted", ex);
-            } catch (ExecutionException ex) {
-                LOG.log(Level.SEVERE, "The snapshot collection for " + entry.getKey() + " resulted in an exception", ex);
-                entry.getValue().getFuture().cancel(false);
-                it.remove();
-            } catch (TimeoutException ex) {
-                LOG.log(Level.FINEST, "The snapshot collection for " + entry.getKey() + " has not completed", ex);
-            }
-        }
-    }
-
-    private void handleTimedOutFutures() {
-
-        Calendar timedOutCal = Calendar.getInstance();
-        timedOutCal.add(Calendar.SECOND, -(collectionTimeout.get()));
-
-        Long timedOutTime = timedOutCal.getTimeInMillis();
-
-        Iterator<Entry<String, SnapshotCollectionAction>> it = currentCollectionActions.entrySet().iterator();
-        while (it.hasNext()) {
-            Entry<String, SnapshotCollectionAction> entry = it.next();
-            if (timedOutTime > entry.getValue().getStarted()) {
-                LOG.log(Level.WARNING, "The snapshot collection for {0} timed out.", entry.getKey());
-                it.remove();
-            }
-        }
     }
 
     private void handleRoundCompletion() {
@@ -211,9 +131,6 @@ public class MonitoringController {
         em.persist(combinedSnapshot);
         em.flush();
         fireHeartbeat(combinedSnapshot);
-
-        currentSnapshots.clear();
-        currentCollectionActions.clear();
     }
 
     private void startNextInstanceCollection(int index) {
@@ -225,14 +142,10 @@ public class MonitoringController {
             LOG.warning("It appears you changed the server instances you are monitoring while the timer is running, this is not recommended...");
             return;
         }
-
-        SnapshotCollector collector = snapshotCollectorInstance.get();
-        collector.setServerInstance(currentServerInstance);
-
+        snapshotCollectorInstance.setServerInstance(currentServerInstance);
         LOG.log(Level.INFO, "Starting data collection for {0}", currentServerInstance);
-        Future<DataPoint<Snapshot>> future = parallelAction.compute(collector);
-        currentCollectionActions.put(currentServerInstance,
-                new SnapshotCollectionAction(future));
+        DataPoint<Snapshot> dataPoint = snapshotCollectorInstance.collect();
+        currentSnapshots.put(currentServerInstance, dataPoint.getValue());
     }
 
     private Snapshot combineSnapshots(Collection<Snapshot> snapshots) {
@@ -345,23 +258,4 @@ public class MonitoringController {
         }
     }
 
-    private class SnapshotCollectionAction {
-
-        private final Long started;
-        private Future<DataPoint<Snapshot>> future;
-
-        public SnapshotCollectionAction(Future<DataPoint<Snapshot>> future) {
-            this.started = Calendar.getInstance().getTimeInMillis();
-            LOG.info("Got future: " + future);
-            this.future = future;
-        }
-
-        public Long getStarted() {
-            return started;
-        }
-
-        public Future<DataPoint<Snapshot>> getFuture() {
-            return future;
-        }
-    }
 }

@@ -10,12 +10,12 @@ import org.lightfish.business.servermonitoring.control.collectors.SnapshotDataCo
  */
 @SnapshotDataCollector
 public class BusyThreadCollector extends AbstractRestDataCollector<Integer> {
-    
+
     public static final String BUSY_THREAD_URI = "network/thread-pool/currentthreadsbusy";
 
     @Override
-    public DataPoint<Integer> collect() throws Exception{
-        return new DataPoint<>("busyThreadCount",getInt(BUSY_THREAD_URI, "currentthreadsbusy"));
+    public DataPoint<Integer> collect() {
+        return new DataPoint<>("busyThreadCount", getInt(BUSY_THREAD_URI, "currentthreadsbusy"));
     }
-    
+
 }

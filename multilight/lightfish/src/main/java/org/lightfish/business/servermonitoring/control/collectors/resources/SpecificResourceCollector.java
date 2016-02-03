@@ -26,7 +26,7 @@ public class SpecificResourceCollector extends AbstractRestDataCollector<Connect
     }
 
     @Override
-    public DataPoint<ConnectionPool> collect() throws Exception {
+    public DataPoint<ConnectionPool> collect() {
         Response clientResponse = getResponse(constructResourceString());
         JsonObject response = clientResponse.readEntity(JsonObject.class);
         JsonObject entity = response.getJsonObject("extraProperties").
@@ -40,7 +40,7 @@ public class SpecificResourceCollector extends AbstractRestDataCollector<Connect
         return new DataPoint<>(resourceName, new ConnectionPool(resourceName, numconnfree, numconnused, waitqueuelength, numpotentialconnleak));
     }
 
-    private int getIntVal(JsonObject entity, String name, String key) throws Exception {
+    private int getIntVal(JsonObject entity, String name, String key) {
         return entity.getJsonObject(name).getInt(key);
     }
 

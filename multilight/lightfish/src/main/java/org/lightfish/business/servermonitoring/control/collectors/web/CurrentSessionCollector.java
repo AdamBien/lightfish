@@ -10,12 +10,12 @@ import org.lightfish.business.servermonitoring.control.collectors.SnapshotDataCo
  */
 @SnapshotDataCollector
 public class CurrentSessionCollector extends AbstractRestDataCollector<Integer> {
-    
+
     public static final String SESSION_COUNT_URI = "web/session/activesessionscurrent";
 
     @Override
-    public DataPoint<Integer> collect() throws Exception{
-        return new DataPoint<>("sessionCount",getInt(SESSION_COUNT_URI, "activesessionscurrent", "current"));
+    public DataPoint<Integer> collect() {
+        return new DataPoint<>("sessionCount", getInt(SESSION_COUNT_URI, "activesessionscurrent", "current"));
     }
-    
+
 }

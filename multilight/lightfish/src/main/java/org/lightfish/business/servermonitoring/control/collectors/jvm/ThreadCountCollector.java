@@ -10,12 +10,12 @@ import org.lightfish.business.servermonitoring.control.collectors.SnapshotDataCo
  */
 @SnapshotDataCollector
 public class ThreadCountCollector extends AbstractRestDataCollector<Integer> {
-    
+
     public static final String THREAD_COUNT_URI = "jvm/thread-system/threadcount";
 
     @Override
-    public DataPoint<Integer> collect() throws Exception{
-        return new DataPoint<>("threadCount",getInt(THREAD_COUNT_URI, "threadcount"));
+    public DataPoint<Integer> collect() {
+        return new DataPoint<>("threadCount", getInt(THREAD_COUNT_URI, "threadcount"));
     }
-    
+
 }

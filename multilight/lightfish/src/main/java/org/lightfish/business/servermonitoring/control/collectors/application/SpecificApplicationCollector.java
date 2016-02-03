@@ -24,7 +24,7 @@ public class SpecificApplicationCollector extends AbstractRestDataCollector<Appl
     }
 
     @Override
-    public DataPoint<Application> collect() throws Exception {
+    public DataPoint<Application> collect() {
         String[] components = getStringArray(APPLICATIONS + "/" + applicationName, "childResources");
         Application app = new Application(applicationName, Arrays.asList(components));
         return new DataPoint<>(getApplicationName(), app);

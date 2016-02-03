@@ -10,12 +10,12 @@ import org.lightfish.business.servermonitoring.control.collectors.SnapshotDataCo
  */
 @SnapshotDataCollector
 public class ExpiredSessionCollector extends AbstractRestDataCollector<Integer> {
-    
+
     public static final String EXPIRED_SESSIONS_URI = "web/session/expiredsessionstotal";
 
     @Override
-    public DataPoint<Integer> collect() throws Exception{
-        return new DataPoint<>("expiredSessionCount",getInt(EXPIRED_SESSIONS_URI, "expiredsessionstotal", "count"));
+    public DataPoint<Integer> collect() {
+        return new DataPoint<>("expiredSessionCount", getInt(EXPIRED_SESSIONS_URI, "expiredsessionstotal", "count"));
     }
-    
+
 }

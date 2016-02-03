@@ -14,9 +14,9 @@ public class SnapshotCollector implements DataCollector<Snapshot> {
 
     @Inject
     SnapshotProvider dataProvider;
-    
+
     private String serverInstance;
-    
+
     @Override
     public String getServerInstance() {
         return this.serverInstance;
@@ -24,11 +24,11 @@ public class SnapshotCollector implements DataCollector<Snapshot> {
 
     @Override
     public void setServerInstance(String serverInstance) {
-        this.serverInstance= serverInstance;
+        this.serverInstance = serverInstance;
     }
 
     @Override
-    public DataPoint<Snapshot> collect() throws Exception {
+    public DataPoint<Snapshot> collect() {
         Snapshot current = dataProvider.fetchSnapshot(getServerInstance());
         current.setInstanceName(getServerInstance());
         return new DataPoint<>(getServerInstance(), current);

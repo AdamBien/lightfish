@@ -9,7 +9,6 @@ import org.lightfish.business.authenticator.GlassfishAuthenticator;
 import org.lightfish.business.configuration.boundary.Configurator;
 import org.lightfish.business.servermonitoring.control.collectors.AbstractRestDataCollector;
 import org.lightfish.business.servermonitoring.control.collectors.DataPoint;
-import org.lightfish.business.servermonitoring.control.collectors.logs.LogCollector;
 
 /**
  *
@@ -18,7 +17,8 @@ import org.lightfish.business.servermonitoring.control.collectors.logs.LogCollec
 @Authentication
 public class SessionTokenCollector extends AbstractRestDataCollector<String> {
 
-    @Inject Logger LOG;
+    @Inject
+    Logger LOG;
     @Inject
     Instance<String> username;
     @Inject
@@ -36,7 +36,7 @@ public class SessionTokenCollector extends AbstractRestDataCollector<String> {
     }
 
     @Override
-    public DataPoint<String> collect() throws Exception {
+    public DataPoint<String> collect() {
         authenticator.get().addAuthenticator(client, username.get(), password.get());
         Response response = getResponse("sessions");
         JsonObject result = response.readEntity(JsonObject.class);

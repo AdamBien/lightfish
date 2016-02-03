@@ -10,12 +10,12 @@ import org.lightfish.business.servermonitoring.control.collectors.SnapshotDataCo
  */
 @SnapshotDataCollector
 public class ErrorCountCollector extends AbstractRestDataCollector<Integer> {
-    
+
     public static final String ERROR_COUNT_URI = "http-service/server/request/errorcount";
 
     @Override
-    public DataPoint<Integer> collect() throws Exception{
-        return new DataPoint<>("errorCount",getInt(ERROR_COUNT_URI, "errorcount"));
+    public DataPoint<Integer> collect() {
+        return new DataPoint<>("errorCount", getInt(ERROR_COUNT_URI, "errorcount"));
     }
-    
+
 }

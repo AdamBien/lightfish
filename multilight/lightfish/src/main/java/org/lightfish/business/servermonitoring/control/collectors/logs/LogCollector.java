@@ -25,7 +25,8 @@ import org.lightfish.business.servermonitoring.entity.LogRecord;
 @SnapshotDataCollector
 public class LogCollector extends AbstractRestDataCollector<List<LogRecord>> {
 
-    @Inject Logger LOG;
+    @Inject
+    Logger LOG;
     @Inject
     Configurator configurator;
     @Inject
@@ -38,7 +39,7 @@ public class LogCollector extends AbstractRestDataCollector<List<LogRecord>> {
     }
 
     @Override
-    public DataPoint<List<LogRecord>> collect() throws Exception {
+    public DataPoint<List<LogRecord>> collect() {
         if (!collectLogs.get()) {
             return null;
         }
