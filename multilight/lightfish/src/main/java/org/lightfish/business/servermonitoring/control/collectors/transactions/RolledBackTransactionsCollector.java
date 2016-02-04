@@ -1,21 +1,20 @@
 package org.lightfish.business.servermonitoring.control.collectors.transactions;
 
-import org.lightfish.business.servermonitoring.control.collectors.AbstractRestDataCollector;
-import org.lightfish.business.servermonitoring.control.collectors.DataPoint;
-import org.lightfish.business.servermonitoring.control.collectors.SnapshotDataCollector;
+import java.util.function.BiFunction;
+import org.lightfish.business.servermonitoring.control.collectors.Pair;
+import org.lightfish.business.servermonitoring.control.collectors.RestDataCollector;
 
 /**
  *
  * @author Rob Veldpaus
  */
-@SnapshotDataCollector
-public class RolledBackTransactionsCollector extends AbstractRestDataCollector<Integer> {
+public class RolledBackTransactionsCollector implements BiFunction<RestDataCollector, String, Pair> {
 
     public static final String ROLLED_BACK_TX = "transaction-service/rolledbackcount";
 
     @Override
-    public DataPoint<Integer> collect() {
-        return new DataPoint<>("rolledBackTransactions", getInt(ROLLED_BACK_TX, "rolledbackcount"));
+    public Pair apply(RestDataCollector collector, String serverInstance) {
+        return new Pair("rolledBackTransactions", collector.getInt(serverInstance, ROLLED_BACK_TX, "rolledbackcount"));
     }
 
 }

@@ -8,8 +8,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.LocalBean;
-import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -23,8 +22,7 @@ import org.lightfish.business.servermonitoring.control.SnapshotProvider;
  *
  * @author cdelahunt
  */
-@Singleton
-@LocalBean
+@ApplicationScoped
 public class GlassfishAuthenticator {
 
     private static TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {

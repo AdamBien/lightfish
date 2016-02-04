@@ -4,15 +4,16 @@ package org.lightfish.business.servermonitoring.control.collectors;
  *
  * @author Rob Veldpaus
  */
-public class DataPoint<TYPE> {
-    private String name;
-    private TYPE value;
+public class Pair {
 
-    public DataPoint(String name, TYPE value) {
+    private String name;
+    private Object value;
+
+    public Pair(String name, Object value) {
         this.name = name;
         this.value = value;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -21,13 +22,12 @@ public class DataPoint<TYPE> {
         this.name = name;
     }
 
-    public TYPE getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(TYPE value) {
+    public void setValue(Object value) {
         this.value = value;
     }
-    
-    
+
 }

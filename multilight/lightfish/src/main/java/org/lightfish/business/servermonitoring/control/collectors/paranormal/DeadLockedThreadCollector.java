@@ -1,18 +1,16 @@
 package org.lightfish.business.servermonitoring.control.collectors.paranormal;
 
+import java.util.function.BiFunction;
 import java.util.logging.Logger;
-import org.lightfish.business.servermonitoring.control.collectors.AbstractRestDataCollector;
-import org.lightfish.business.servermonitoring.control.collectors.DataPoint;
-import org.lightfish.business.servermonitoring.control.collectors.SnapshotDataCollector;
-
 import javax.inject.Inject;
+import org.lightfish.business.servermonitoring.control.collectors.Pair;
+import org.lightfish.business.servermonitoring.control.collectors.RestDataCollector;
 
 /**
  *
  * @author Rob Veldpaus
  */
-@SnapshotDataCollector
-public class DeadLockedThreadCollector extends AbstractRestDataCollector<String> {
+public class DeadLockedThreadCollector implements BiFunction<RestDataCollector, String, Pair> {
 
     private static final String DEADLOCKED_THREADS = "jvm/thread-system/deadlockedthreads";
 
@@ -20,9 +18,9 @@ public class DeadLockedThreadCollector extends AbstractRestDataCollector<String>
     Logger LOG;
 
     @Override
-    public DataPoint<String> collect() {
-        String value = getString(DEADLOCKED_THREADS, "deadlockedthreads", "current");
-        return new DataPoint<>("deadLockedThreads", value);
+    public Pair apply(RestDataCollector collector, String serverInstance) {
+        String value = collector.getString(serverInstance, DEADLOCKED_THREADS, "deadlockedthreads", "current");
+        return new Pair("deadLockedThreads", value);
     }
 
 }

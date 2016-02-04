@@ -1,21 +1,20 @@
 package org.lightfish.business.servermonitoring.control.collectors.paranormal;
 
-import org.lightfish.business.servermonitoring.control.collectors.AbstractRestDataCollector;
-import org.lightfish.business.servermonitoring.control.collectors.DataPoint;
-import org.lightfish.business.servermonitoring.control.collectors.SnapshotDataCollector;
+import java.util.function.BiFunction;
+import org.lightfish.business.servermonitoring.control.collectors.Pair;
+import org.lightfish.business.servermonitoring.control.collectors.RestDataCollector;
 
 /**
  *
  * @author Rob Veldpaus
  */
-@SnapshotDataCollector
-public class QueuedConnectionCollector extends AbstractRestDataCollector<Integer> {
+public class QueuedConnectionCollector implements BiFunction<RestDataCollector, String, Pair> {
 
     public static final String QUEUED_CONNS = "network/connection-queue/countqueued";
 
     @Override
-    public DataPoint<Integer> collect() {
-        return new DataPoint<>("queuedConnectionCount", getInt(QUEUED_CONNS, "countqueued"));
+    public Pair apply(RestDataCollector collector, String serverInstance) {
+        return new Pair("queuedConnectionCount", collector.getInt(serverInstance, QUEUED_CONNS, "countqueued"));
     }
 
 }

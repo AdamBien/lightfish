@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.inject.Instance;
@@ -13,17 +14,15 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.ws.rs.core.Response;
 import org.lightfish.business.configuration.boundary.Configurator;
-import org.lightfish.business.servermonitoring.control.collectors.AbstractRestDataCollector;
-import org.lightfish.business.servermonitoring.control.collectors.DataPoint;
-import org.lightfish.business.servermonitoring.control.collectors.SnapshotDataCollector;
+import org.lightfish.business.servermonitoring.control.collectors.Pair;
+import org.lightfish.business.servermonitoring.control.collectors.RestDataCollector;
 import org.lightfish.business.servermonitoring.entity.LogRecord;
 
 /**
  *
  * @author Rob Veldpaus
  */
-@SnapshotDataCollector
-public class LogCollector extends AbstractRestDataCollector<List<LogRecord>> {
+public class LogCollector implements BiFunction<RestDataCollector, String, Pair> {
 
     @Inject
     Logger LOG;
@@ -34,25 +33,22 @@ public class LogCollector extends AbstractRestDataCollector<List<LogRecord>> {
     public static final String VIEW_LOG_BASE_URI = "view-log/details.json";
 
     @Override
-    protected String getBaseURI() {
-        return getProtocol() + getLocation() + "/management/domain/";
-    }
-
-    @Override
-    public DataPoint<List<LogRecord>> collect() {
+    public Pair apply(RestDataCollector collector, String serverInstance) {
         if (!collectLogs.get()) {
             return null;
         }
 
         StringBuilder uriBuilder = new StringBuilder(VIEW_LOG_BASE_URI);
         uriBuilder.append("?instanceName=")
-                .append(getServerInstance())
+                .append(serverInstance)
                 .append("&fromTime=")
-                .append(getLastRunTime() + 1)
+                .append(getLastRunTime(serverInstance) + 1)
                 .append("&toTime=")
                 .append(System.currentTimeMillis() + 1000)
                 .append("&maximumNumberOfResults=1000");
-        Response response = getResponse(uriBuilder.toString());
+        String fullUri = collector.getProtocol() + collector.getLocation() + "/management/domain/" + uriBuilder.toString();
+        LOG.info("LogCollector with: " + fullUri);
+        Response response = collector.getResponse(fullUri);
         JsonObject result = response.readEntity(JsonObject.class);
         JsonArray recordsArray = result.getJsonArray("records");
         List<LogRecord> records = new ArrayList<>(recordsArray.size());
@@ -64,7 +60,7 @@ public class LogCollector extends AbstractRestDataCollector<List<LogRecord>> {
             }
             records.add(
                     new LogRecord.Builder()
-                    .instanceName(getServerInstance())
+                    .instanceName(serverInstance)
                     .level(currentRecord.getString("loggedLevel"))
                     .loggerName(currentRecord.getString("loggerName"))
                     .message(message)
@@ -75,10 +71,10 @@ public class LogCollector extends AbstractRestDataCollector<List<LogRecord>> {
         }
         LOG.log(Level.FINER, "Found {0} log records!", records.size());
         if (!records.isEmpty()) {
-            setLastRunTime(records.get(0).getMonitoringTime().getTime());
-            LOG.log(Level.FINE, "Last run time is now {0}", getLastRunTime());
+            setLastRunTime(serverInstance, records.get(0).getMonitoringTime().getTime());
+            LOG.log(Level.FINE, "Last run time is now {0}", getLastRunTime(serverInstance));
         }
-        return new DataPoint<>("logs", records);
+        return new Pair("logs", records);
 
     }
 
@@ -100,19 +96,19 @@ public class LogCollector extends AbstractRestDataCollector<List<LogRecord>> {
 
     }
 
-    private long getLastRunTime() {
-        String value = configurator.getValue(getLastRunTimeConfigKey());
+    private long getLastRunTime(String serverInstance) {
+        String value = configurator.getValue(getLastRunTimeConfigKey(serverInstance));
         if (value == null) {
             return System.currentTimeMillis() - 10000;
         }
         return Long.valueOf(value);
     }
 
-    private void setLastRunTime(long lastRunTime) {
-        configurator.setValue(getLastRunTimeConfigKey(), String.valueOf(lastRunTime));
+    private void setLastRunTime(String serverInstance, long lastRunTime) {
+        configurator.setValue(getLastRunTimeConfigKey(serverInstance), String.valueOf(lastRunTime));
     }
 
-    private String getLastRunTimeConfigKey() {
-        return "logs/" + getServerInstance() + "/last";
+    private String getLastRunTimeConfigKey(String serverInstance) {
+        return "logs/" + serverInstance + "/last";
     }
 }

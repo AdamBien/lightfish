@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PreDestroy;
@@ -50,7 +48,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.lightfish.business.servermonitoring.control.BeatListener;
 import org.lightfish.business.servermonitoring.control.SessionTokenRetriever;
-import org.lightfish.business.servermonitoring.control.collectors.DataPoint;
 import org.lightfish.business.servermonitoring.entity.Application;
 import org.lightfish.business.servermonitoring.entity.ConnectionPool;
 import org.lightfish.business.servermonitoring.entity.LogRecord;
@@ -84,8 +81,6 @@ public class MonitoringController {
     Instance<Integer> collectionTimeout;
     @Inject
     SessionTokenRetriever sessionTokenProvider;
-    int nextInstanceIndex = 0;
-    ConcurrentMap<String, Snapshot> currentSnapshots = new ConcurrentHashMap<>();
     @Resource
     TimerService timerService;
     private Timer timer;
@@ -114,38 +109,34 @@ public class MonitoringController {
     @Timeout
     public void gatherAndPersist() {
         notifyBeatListeners();
-
-        startNextInstanceCollection(nextInstanceIndex++);
-
-        if (nextInstanceIndex >= serverInstances.get().length) {
-            handleRoundCompletion();
-            nextInstanceIndex = 0;
+        List<Snapshot> cluster = new ArrayList<>();
+        for (int i = 0; i < serverInstances.get().length; i++) {
+            Snapshot result = startNextInstanceCollection(i);
+            cluster.add(result);
         }
-
+        handleRoundCompletion(cluster);
         LOG.info(".");
     }
 
-    private void handleRoundCompletion() {
+    private void handleRoundCompletion(Collection<Snapshot> cluster) {
         LOG.info("All snapshots collected for this round!");
-        Snapshot combinedSnapshot = combineSnapshots(currentSnapshots.values());
+        Snapshot combinedSnapshot = combineSnapshots(cluster);
         em.persist(combinedSnapshot);
         em.flush();
         fireHeartbeat(combinedSnapshot);
     }
 
-    private void startNextInstanceCollection(int index) {
+    private Snapshot startNextInstanceCollection(int index) {
         String currentServerInstance = null;
         try {
             currentServerInstance = serverInstances.get()[index];
             LOG.info("Monitoring instance: " + currentServerInstance);
         } catch (ArrayIndexOutOfBoundsException oobEx) {
             LOG.warning("It appears you changed the server instances you are monitoring while the timer is running, this is not recommended...");
-            return;
+            return null;
         }
-        snapshotCollectorInstance.setServerInstance(currentServerInstance);
         LOG.log(Level.INFO, "Starting data collection for {0}", currentServerInstance);
-        DataPoint<Snapshot> dataPoint = snapshotCollectorInstance.collect();
-        currentSnapshots.put(currentServerInstance, dataPoint.getValue());
+        return snapshotCollectorInstance.collect(currentServerInstance);
     }
 
     private Snapshot combineSnapshots(Collection<Snapshot> snapshots) {

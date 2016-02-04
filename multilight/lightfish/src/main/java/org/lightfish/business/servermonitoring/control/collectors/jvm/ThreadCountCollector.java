@@ -1,21 +1,20 @@
 package org.lightfish.business.servermonitoring.control.collectors.jvm;
 
-import org.lightfish.business.servermonitoring.control.collectors.AbstractRestDataCollector;
-import org.lightfish.business.servermonitoring.control.collectors.DataPoint;
-import org.lightfish.business.servermonitoring.control.collectors.SnapshotDataCollector;
+import java.util.function.BiFunction;
+import org.lightfish.business.servermonitoring.control.collectors.Pair;
+import org.lightfish.business.servermonitoring.control.collectors.RestDataCollector;
 
 /**
  *
  * @author Rob Veldpaus
  */
-@SnapshotDataCollector
-public class ThreadCountCollector extends AbstractRestDataCollector<Integer> {
+public class ThreadCountCollector implements BiFunction<RestDataCollector, String, Pair> {
 
     public static final String THREAD_COUNT_URI = "jvm/thread-system/threadcount";
 
     @Override
-    public DataPoint<Integer> collect() {
-        return new DataPoint<>("threadCount", getInt(THREAD_COUNT_URI, "threadcount"));
+    public Pair apply(RestDataCollector collector, String serverInstance) {
+        return new Pair("threadCount", collector.getInt(serverInstance, THREAD_COUNT_URI, "threadcount"));
     }
 
 }

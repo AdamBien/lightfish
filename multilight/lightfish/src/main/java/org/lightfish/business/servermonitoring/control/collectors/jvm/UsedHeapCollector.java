@@ -1,21 +1,20 @@
 package org.lightfish.business.servermonitoring.control.collectors.jvm;
 
-import org.lightfish.business.servermonitoring.control.collectors.AbstractRestDataCollector;
-import org.lightfish.business.servermonitoring.control.collectors.DataPoint;
-import org.lightfish.business.servermonitoring.control.collectors.SnapshotDataCollector;
+import java.util.function.BiFunction;
+import org.lightfish.business.servermonitoring.control.collectors.Pair;
+import org.lightfish.business.servermonitoring.control.collectors.RestDataCollector;
 
 /**
  *
  * @author Rob Veldpaus
  */
-@SnapshotDataCollector
-public class UsedHeapCollector extends AbstractRestDataCollector<Long> {
+public class UsedHeapCollector implements BiFunction<RestDataCollector, String, Pair> {
 
     public static final String HEAP_SIZE = "jvm/memory/usedheapsize-count";
 
     @Override
-    public DataPoint<Long> collect() {
-        return new DataPoint<>("usedHeap", getLong(HEAP_SIZE, "usedheapsize-count"));
+    public Pair apply(RestDataCollector collector, String serverInstance) {
+        return new Pair("usedHeap", collector.getLong(serverInstance, HEAP_SIZE, "usedheapsize-count"));
     }
 
 }

@@ -1,21 +1,20 @@
 package org.lightfish.business.servermonitoring.control.collectors.web;
 
-import org.lightfish.business.servermonitoring.control.collectors.AbstractRestDataCollector;
-import org.lightfish.business.servermonitoring.control.collectors.DataPoint;
-import org.lightfish.business.servermonitoring.control.collectors.SnapshotDataCollector;
+import java.util.function.BiFunction;
+import org.lightfish.business.servermonitoring.control.collectors.Pair;
+import org.lightfish.business.servermonitoring.control.collectors.RestDataCollector;
 
 /**
  *
  * @author Rob Veldpaus
  */
-@SnapshotDataCollector
-public class ExpiredSessionCollector extends AbstractRestDataCollector<Integer> {
+public class ExpiredSessionCollector implements BiFunction<RestDataCollector, String, Pair> {
 
     public static final String EXPIRED_SESSIONS_URI = "web/session/expiredsessionstotal";
 
     @Override
-    public DataPoint<Integer> collect() {
-        return new DataPoint<>("expiredSessionCount", getInt(EXPIRED_SESSIONS_URI, "expiredsessionstotal", "count"));
+    public Pair apply(RestDataCollector collector, String serverInstance) {
+        return new Pair("expiredSessionCount", collector.getInt(serverInstance, EXPIRED_SESSIONS_URI, "expiredsessionstotal", "count"));
     }
 
 }

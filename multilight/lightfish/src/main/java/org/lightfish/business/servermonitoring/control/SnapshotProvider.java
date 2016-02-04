@@ -15,18 +15,15 @@
  */
 package org.lightfish.business.servermonitoring.control;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.function.BiFunction;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
+import java.util.stream.StreamSupport;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import org.lightfish.business.servermonitoring.control.collectors.DataCollector;
-import org.lightfish.business.servermonitoring.control.collectors.DataPoint;
 import org.lightfish.business.servermonitoring.control.collectors.DataPointToSnapshotMapper;
-import org.lightfish.business.servermonitoring.control.collectors.ParallelDataCollectionActionBehaviour;
-import org.lightfish.business.servermonitoring.control.collectors.SnapshotDataCollector;
+import org.lightfish.business.servermonitoring.control.collectors.Pair;
+import org.lightfish.business.servermonitoring.control.collectors.RestDataCollector;
 import org.lightfish.business.servermonitoring.entity.Snapshot;
 
 /**
@@ -37,22 +34,14 @@ public class SnapshotProvider {
     @Inject
     Logger LOG;
     @Inject
-    @SnapshotDataCollector
-    Instance<DataCollector<?>> dataCollectors;
+    Instance<BiFunction<RestDataCollector, String, Pair>> dataCollectors;
     @Inject
     DataPointToSnapshotMapper mapper;
     @Inject
     Instance<Integer> dataCollectionRetries;
 
-    @PostConstruct
-    public void init() {
-        if (dataCollectors.isUnsatisfied()) {
-            LOG.warning("No DataCollector found!");
-        }
-        for (DataCollector collector : dataCollectors) {
-            LOG.info("Loaded DataCollector: " + collector);
-        }
-    }
+    @Inject
+    RestDataCollector collector;
 
     public Snapshot fetchSnapshot(String instanceName) {
         Date start = new Date();
@@ -68,34 +57,14 @@ public class SnapshotProvider {
     private Snapshot serialDataCollection(String instanceName) {
         Snapshot snapshot = new Snapshot.Builder().build();
         DataCollectionBehaviour dataCollectionBehaviour = new DataCollectionBehaviour(mapper, snapshot);
-        List<DataCollector> collectors = retrieveDataCollectorList(instanceName);
-        collectors.stream().map(c -> c.collect()).forEach(dataCollectionBehaviour::perform);
+        StreamSupport.stream(this.dataCollectors.spliterator(), false).
+                map(c -> c.apply(collector, instanceName)).
+                map(p -> (Pair) p).
+                forEach(dataCollectionBehaviour::perform);
         return snapshot;
     }
 
-    private DataPoint serialDataCollect(DataCollector collector, int attempt) {
-        try {
-            return collector.collect();
-        } catch (Exception ex) {
-            if (attempt < dataCollectionRetries.get()) {
-                return serialDataCollect(collector, ++attempt);
-            } else {
-                throw ex;
-            }
-        }
-    }
-
-    private List<DataCollector> retrieveDataCollectorList(String instanceName) {
-        List<DataCollector> dataCollectorList = new ArrayList<>();
-        for (DataCollector collector : dataCollectors) {
-            collector.setServerInstance(instanceName);
-            dataCollectorList.add(collector);
-
-        }
-        return dataCollectorList;
-    }
-
-    private class DataCollectionBehaviour implements ParallelDataCollectionActionBehaviour {
+    private class DataCollectionBehaviour {
 
         private DataPointToSnapshotMapper mapper;
         private Snapshot snapshot;
@@ -105,8 +74,7 @@ public class SnapshotProvider {
             this.snapshot = snapshot;
         }
 
-        @Override
-        public void perform(DataPoint dataPoint) {
+        public void perform(Pair dataPoint) {
             if (dataPoint != null) {
                 mapper.mapDataPointToSnapshot(dataPoint, snapshot);
             }

@@ -2,46 +2,26 @@ package org.lightfish.business.servermonitoring.control.collectors.resources;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import org.lightfish.business.servermonitoring.control.collectors.AbstractRestDataCollector;
-import org.lightfish.business.servermonitoring.control.collectors.DataPoint;
-import org.lightfish.business.servermonitoring.control.collectors.SnapshotDataCollector;
+import java.util.function.BiFunction;
+import org.lightfish.business.servermonitoring.control.collectors.Pair;
+import org.lightfish.business.servermonitoring.control.collectors.RestDataCollector;
 import org.lightfish.business.servermonitoring.entity.ConnectionPool;
 
 /**
  *
  * @author Rob Veldpaus
  */
-@SnapshotDataCollector
-public class ResourceCollector extends AbstractRestDataCollector<List<ConnectionPool>> {
+public class ResourceCollector implements BiFunction<RestDataCollector, String, Pair> {
 
     private static final String RESOURCES = "resources";
 
-    @Inject
-    @ResourceDataCollector
-    Instance<SpecificResourceCollector> specificCollector;
-
     @Override
-    public DataPoint<List<ConnectionPool>> collect() {
-        String[] resourceNames = resources();
-        List<SpecificResourceCollector> collectors = new ArrayList<>(resourceNames.length);
+    public Pair apply(RestDataCollector collector, String serverInstance) {
+        String[] resourceNames = collector.getStringArray(serverInstance, RESOURCES, "childResources");
+        List<ConnectionPool> results = new ArrayList<>();
         for (String jdbcPoolName : resourceNames) {
-            SpecificResourceCollector collector = specificCollector.get();
-            collector.setResourceName(jdbcPoolName);
-            collector.setServerInstance(getServerInstance());
-            collectors.add(collector);
+            results.add(SpecificResourceCollector.apply(collector, serverInstance, jdbcPoolName));
         }
-        List<ConnectionPool> resources = serialRetrieveResources(collectors);
-        return new DataPoint<>("resources", resources);
-    }
-
-    private List<ConnectionPool> serialRetrieveResources(List<SpecificResourceCollector> collectors) {
-        return collectors.stream().map(c -> c.collect()).map(d -> d.getValue()).collect(Collectors.toList());
-    }
-
-    private String[] resources() {
-        return getStringArray(RESOURCES, "childResources");
+        return new Pair("resources", results);
     }
 }

@@ -17,7 +17,7 @@ import org.lightfish.business.servermonitoring.control.SessionTokenRetriever;
  *
  * @author Rob Veldpaus
  */
-public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<TYPE> {
+public class RestDataCollector {
 
     @Inject
     protected Client client;
@@ -27,47 +27,36 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
     protected Instance<String> sessionToken;
     @Inject
     protected SessionTokenRetriever tokenProvider;
-    private String serverInstance;
 
     @Inject
     Logger LOG;
 
-    @Override
-    public String getServerInstance() {
-        return serverInstance;
+    public long getLong(String serverInstance, String uri, String name) {
+        return getLong(serverInstance, uri, name, "count");
     }
 
-    @Override
-    public void setServerInstance(String serverInstance) {
-        this.serverInstance = serverInstance;
+    public int getInt(String serverInstance, String uri, String name) {
+        return getInt(serverInstance, uri, name, "count");
     }
 
-    protected long getLong(String uri, String name) {
-        return getLong(uri, name, "count");
-    }
-
-    protected int getInt(String uri, String name) {
-        return getInt(uri, name, "count");
-    }
-
-    protected long getLong(String uri, String name, String key) {
-        Response result = getResponse(uri);
+    public long getLong(String serverInstance, String uri, String name, String key) {
+        Response result = getResponse(serverInstance, uri);
         return getJsonObject(result, name).getJsonNumber(key).longValue();
     }
 
-    protected int getInt(String uri, String name, String key) {
-        Response result = getResponse(uri);
+    public int getInt(String serverInstance, String uri, String name, String key) {
+        Response result = getResponse(serverInstance, uri);
         return getJsonObject(result, name).getInt(key);
     }
 
-    protected String getString(String uri, String name, String key) {
-        Response result = getResponse(uri);
+    public String getString(String serverInstance, String uri, String name, String key) {
+        Response result = getResponse(serverInstance, uri);
         return getJsonObject(result, name).getString(key);
     }
 
-    protected String[] getStringArray(String name, String key) {
+    public String[] getStringArray(String serverInstance, String name, String key) {
         String[] empty = new String[0];
-        Response result = getResponse(name);
+        Response result = getResponse(serverInstance, name);
         JsonObject response = result.readEntity(JsonObject.class);
         response = response.getJsonObject("extraProperties");
         if (response == null) {
@@ -87,7 +76,7 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
         return retVal;
     }
 
-    protected JsonObject getJsonObject(Response result, String name) {
+    public JsonObject getJsonObject(Response result, String name) {
         JsonObject response = result.readEntity(JsonObject.class);
         JsonObject extraProperties = response.getJsonObject("extraProperties");
         JsonObject retVal = null;
@@ -103,11 +92,11 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
         return retVal;
     }
 
-    protected String getBaseURI() {
+    public String getBaseURI(String serverInstance) {
         return getProtocol() + location.get() + "/monitoring/domain/" + serverInstance + "/";
     }
 
-    protected String getProtocol() {
+    public String getProtocol() {
         String protocol = "http://";
         //TODO Error, if username == null, use http anyway
         if (sessionToken != null && sessionToken.get() != null && !sessionToken.get().isEmpty()) {
@@ -116,21 +105,23 @@ public abstract class AbstractRestDataCollector<TYPE> implements DataCollector<T
         return protocol;
     }
 
-    protected String getLocation() {
+    public String getLocation() {
         return location.get();
     }
 
-    protected Response getResponse(String uri) {
-        return getResponse(uri, 0);
+    public Response getResponse(String serverInstance, String uri) {
+        String fullUri = getBaseURI(serverInstance) + uri;
+        return getResponse(fullUri);
     }
 
-    protected Response getResponse(String uri, int retries) {
-        String fullUri = getBaseURI() + uri;
+    public Response getResponse(String fullUri) {
         WebTarget resource = client.target(fullUri);
         Invocation.Builder builder = resource.request(MediaType.APPLICATION_JSON);
         if (sessionToken != null && sessionToken.get() != null && !sessionToken.get().isEmpty()) {
             builder.cookie(new Cookie("gfresttoken", sessionToken.get()));
         }
         return builder.get(Response.class);
+
     }
+
 }

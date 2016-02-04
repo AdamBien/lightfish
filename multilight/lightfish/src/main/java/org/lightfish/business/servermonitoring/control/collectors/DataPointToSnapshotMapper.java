@@ -15,7 +15,7 @@ import org.lightfish.business.servermonitoring.entity.Snapshot;
 public class DataPointToSnapshotMapper {
     private static final Logger LOG = Logger.getLogger(DataPointToSnapshotMapper.class.getName());
     
-    public void mapDataPointToSnapshot(DataPoint dataPoint, Snapshot snapshot) {
+    public void mapDataPointToSnapshot(Pair dataPoint, Snapshot snapshot) {
         switch (dataPoint.getName()) {
             case "applications":
                 LOG.finest("Applications mapped to snapshot");
