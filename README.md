@@ -5,7 +5,9 @@ LightFish is Licensed under the Apache License, Version 2.0
 
 Download the lightfish.war from [https://github.com/AdamBien/lightfish/releases](https://github.com/AdamBien/lightfish/releases)
 
-or
+To launch the lightview client, execute: `java -jar lightview-app.jar` 
+
+or from source:
 
 0. Setup JAVA_HOME to point to JDK 1.8 installation (lightfish uses JDK 1.8 features)
 1. `git clone https://github.com/AdamBien/lightfish.git`
