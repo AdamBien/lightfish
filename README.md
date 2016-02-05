@@ -3,7 +3,7 @@ LightFish is Licensed under the Apache License, Version 2.0
 
 #Installation:
 
-Download the lightfish.war from [https://github.com/AdamBien/lightfish/releases](https://github.com/AdamBien/lightfish/releases)
+Download the lightfish.war from [https://github.com/AdamBien/lightfish/releases](https://github.com/AdamBien/lightfish/releases) and deploy it to [http://www.payara.fish](Payara Server) or [https://glassfish.java.net](GlassFish)
 
 To launch the lightview client, execute: `java -jar lightview-app.jar` 
 
