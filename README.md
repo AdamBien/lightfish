@@ -15,5 +15,5 @@ Drop the lightfish/target/lightfish.war into /payara41/glassfish/domains/domain1
 
 Point your browser to: http://localhost:8080/lightfish
 
-LightFish should install the necessary connection pool and datasources on-the-fly. There is no setup needed. Tested with Payara v4.1X. (Payara)[http://www.payara.fish] is patched GlassFish 4.1, so lightfish should also run GlassFish.
+LightFish should install the necessary connection pool and datasources on-the-fly. There is no setup needed. Tested with Payara v4.1X. [Payara](http://www.payara.fish) is patched GlassFish 4.1, so lightfish should also run GlassFish.
 
