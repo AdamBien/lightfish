@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/AdamBien/lightfish.svg?branch=travisci)](https://travis-ci.org/AdamBien/lightfish)
 
 LightFish is Licensed under the Apache License, Version 2.0
 
