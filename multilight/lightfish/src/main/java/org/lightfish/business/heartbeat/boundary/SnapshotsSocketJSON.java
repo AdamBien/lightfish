@@ -2,6 +2,7 @@ package org.lightfish.business.heartbeat.boundary;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
 import javax.annotation.PostConstruct;
@@ -57,7 +58,6 @@ public class SnapshotsSocketJSON {
 
     public void onNewSnapshot(@Observes @Severity(Severity.Level.HEARTBEAT) Snapshot snapshot) {
         LOG.info("SnapshotsSocketJson.oneNewSnapshot: " + snapshot.getId());
-
         for (Session session : sessions) {
             if (session != null && session.isOpen()) {
                 LOG.info("Sending: " + snapshot.getId() + " to " + session.getId());
@@ -101,6 +101,17 @@ public class SnapshotsSocketJSON {
                             }
                         }
                         objectBuilder.add(property, arrayBuilder.build());
+                    } else // for nicer JSON message
+                    if (result instanceof Double) {
+                        objectBuilder.add(property, (double) result);
+                    } else if (result instanceof Integer) {
+                        objectBuilder.add(property, (int) result);
+                    } else if (result instanceof Boolean) {
+                        objectBuilder.add(property, (boolean) result);
+                    } else if (result instanceof Long) {
+                        objectBuilder.add(property, (long) result);
+                    } else if (result instanceof Date) {
+                        objectBuilder.add(property, ((Date) result).getTime());
                     } else {
                         objectBuilder.add(property, "" + result);
                     }
